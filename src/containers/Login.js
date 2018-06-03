@@ -2,7 +2,7 @@ import React from 'react';
 import { Authentication } from 'components';
 import { connect } from 'react-redux';
 import { loginRequest } from 'actions/authentication';
-import { browserHistory } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import Materialize from 'materialize-css';
 
 class Login extends React.Component {
@@ -23,7 +23,7 @@ class Login extends React.Component {
 
                     document.cookie = 'key=' + btoa(JSON.stringify(loginData));
                     Materialize.toast('Welcome, ' + id + '!', 2000);
-                    browserHistory.push('/');
+                    this.props.history.push('/');
                     return true;
                 } else {
                     let $toastContent = $('<span style="color: #FFB4BA">Incorrect username or password</span>');
@@ -58,4 +58,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

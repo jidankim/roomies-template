@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 class Authentication extends React.Component {
 
@@ -65,7 +65,7 @@ class Authentication extends React.Component {
 
     render() {
 
-        const inputBoxes = ( 
+        const inputBoxes = (
             <div>
                 <div className="input-field col s12 username">
                     <label>Username</label>
@@ -108,7 +108,7 @@ class Authentication extends React.Component {
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         );
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Authentication } from 'components';
 import { connect } from 'react-redux';
 import { registerRequest } from 'actions/authentication';
-import { browserHistory } from 'react-router';
+import { withRouter } from 'react-router-dom';
 
 class Register extends React.Component {
 
@@ -16,7 +16,7 @@ class Register extends React.Component {
             () => {
                 if (this.props.status === "SUCCESS") {
                     Materialize.toast('Success! Please log in', 2000);
-                    browserHistory.push('/login');
+                    this.props.history.push('/login');
                     return true;
                 } else {
                     /*
@@ -64,4 +64,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Register));

@@ -2,9 +2,10 @@ import React from 'react';
 import { Header } from 'components';
 import { connect } from 'react-redux';
 import { getStatusRequest, logoutRequest } from 'actions/authentication';
+import { withRouter } from 'react-router-dom';
 
 class App extends React.Component {
-    
+
     constructor(props) {
         super(props);
         this.handleLogout = this.handleLogout.bind(this);
@@ -26,7 +27,7 @@ class App extends React.Component {
 
         // decode base64 & parse json
         loginData = JSON.parse(atob(loginData));
-        
+
         // if not logged in, do nothing
         if (!loginData.isLoggedIn) return;
 
@@ -77,7 +78,7 @@ class App extends React.Component {
         return (
             <div>
                 { isAuth ? undefined : <Header isLoggedIn={this.props.status.isLoggedIn} onLogout={this.handleLogout}/> }
-                { this.props.children }
+                {/* { this.props.children } */}
             </div>
         );
     }
@@ -100,4 +101,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
