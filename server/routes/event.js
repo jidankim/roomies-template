@@ -1,11 +1,11 @@
 import express from 'express';
-import Memo from '../models/memo';
+import Event from '../models/event';
 import mongoose from 'mongoose';
 
 const router = express.Router();
 
 /*
-    WRITE MEMO: POST /api/memo
+    WRITE EVENT: POST /api/event
     BODY SAMPLE: { contents: "sample" }
     ERROR CODES
         1: NOT LOGGED IN
@@ -35,21 +35,21 @@ router.post('/', (req, res) => {
         });
     }
 
-    // CREATE NEW MEMO
-    let memo = new Memo({
+    // CREATE NEW EVENT 
+    let event = new Event({
         writer: req.session.loginInfo.username,
         contents: req.body.contents
     });
 
     // SAVE IN DATABASE
-    memo.save( err => {
+    event.save( err => {
         if (err) throw err;
         return res.json({ success: true });
     });
 });
 
 /*
-    MODIFY MEMO: PUT /api/memo/:id
+    MODIFY EVENT: PUT /api/event/:id
     BODY SAMPLE: { contents: "sample" }
     ERROR CODES
         1: INVALID ID,
@@ -59,7 +59,7 @@ router.post('/', (req, res) => {
         5: PERMISSION FAILURE
 */
 router.put('/:id', (req, res) => {
-    // CHECK MEMO ID VALIDITY
+    // CHECK EVENT ID VALIDITY
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({
             error: "INVALID ID",
@@ -90,12 +90,12 @@ router.put('/:id', (req, res) => {
         });
     }
 
-    // FIND MEMO
-    Memo.findById(req.params.id, (err, memo) => {
+    // FIND EVENT
+    Event.findById(req.params.id, (err, event) => {
         if (err) throw err;
 
-        // IF MEMO DOES NOT EXIST
-        if (!memo) {
+        // IF EVENT DOES NOT EXIST
+        if (!event) {
             return res.status(404).json({
                 error: "NO RESOURCE",
                 code: 4
@@ -103,7 +103,7 @@ router.put('/:id', (req, res) => {
         }
 
         // IF EXISTS, CHECK WRITER
-        if (memo.writer != req.session.loginInfo.username) {
+        if (event.writer != req.session.loginInfo.username) {
             return res.status(403).json({
                 error: "PERMISSION FAILURE",
                 code: 5
@@ -111,22 +111,22 @@ router.put('/:id', (req, res) => {
         }
 
         // MODIFY AND SAVE IN DATABASE
-        memo.contents = req.body.contents;
-        memo.date.edited = new Date();
-        memo.is_edited = true;
+        event.contents = req.body.contents;
+        event.date.edited = new Date();
+        event.is_edited = true;
 
-        memo.save((err, memo) => {
+        event.save((err, event) => {
             if (err) throw err;
             return res.json({
                 success: true,
-                memo
+                event
             });
         });
     });
 });
 
 /*
-    DELETE MEMO: DELETE /api/memo/:id
+    DELETE MEMO: DELETE /api/event/:id
     ERROR CODES
         1: INVALID ID
         2: NOT LOGGED IN
@@ -151,17 +151,17 @@ router.delete('/:id', (req, res) => {
     }
 
     // FIND MEMO AND CHECK FOR WRITER
-    Memo.findById(req.params.id, (err, memo) => {
+    Event.findById(req.params.id, (err, event) => {
         if (err) throw err;
 
-        if (!memo) {
+        if (!event) {
             return res.status(404).json({
                 error: "NO RESOURCE",
                 code: 3
             });
         }
 
-        if (memo.writer != req.session.loginInfo.username) {
+        if (event.writer != req.session.loginInfo.username) {
             return res.status(403).json({
                 error: "PERMISSION FAILURE",
                 code: 4
@@ -169,7 +169,7 @@ router.delete('/:id', (req, res) => {
         }
 
         // REMOVE THE MEMO
-        Memo.remove({ _id: req.params.id }, err => {
+        Event.remove({ _id: req.params.id }, err => {
             if (err) throw err;
             res.json({ success: true });
         });
@@ -177,15 +177,15 @@ router.delete('/:id', (req, res) => {
 });
 
 /*
-    READ MEMO: GET /api/memo
+    READ MEMO: GET /api/event
 */
 router.get('/', (req, res) => {
-    Memo.find()
+    Event.find()
     .sort({"_id": -1})
     .limit(6)
-    .exec((err, memos) => {
+    .exec((err, events) => {
         if (err) throw err;
-        res.json(memos);
+        res.json(events);
     });
 });
 

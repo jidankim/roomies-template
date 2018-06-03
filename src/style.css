@@ -2,6 +2,11 @@ body {
     background-color: #ECEFF1;
 }
 
+/* Home */
+.wrapper {
+  margin-top: 20px;
+}
+
 /* Authentication */
 .auth {
     margin-top: 50px;
@@ -82,7 +87,7 @@ a {
     text-align: right;
 }
 
-.write .root {
+.write .modalContainer {
   display: flex;
   justify-content: center;
 }

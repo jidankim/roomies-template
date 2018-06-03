@@ -78,7 +78,6 @@ class App extends React.Component {
         return (
             <div>
                 { isAuth ? undefined : <Header isLoggedIn={this.props.status.isLoggedIn} onLogout={this.handleLogout}/> }
-                {/* { this.props.children } */}
             </div>
         );
     }

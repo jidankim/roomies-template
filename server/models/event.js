@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const Memo = new Schema({
+const Event = new Schema({
     writer: String,
     contents: String,
     starred: [String],
@@ -13,4 +13,4 @@ const Memo = new Schema({
     is_edited: { type: Boolean, default: false }
 });
 
-export default mongoose.model('memo', Memo);
+export default mongoose.model('event', Event);

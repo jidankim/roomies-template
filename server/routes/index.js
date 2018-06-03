@@ -1,9 +1,9 @@
 import express from 'express';
 import account from './account';
-import memo from './memo';
+import event from './event';
 
 const router = express.Router();
 router.use('/account', account);
-router.use('/memo', memo);
+router.use('/event', event);
 
 export default router;
