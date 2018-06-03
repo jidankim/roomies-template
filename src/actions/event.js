@@ -7,7 +7,7 @@ import axios from 'axios';
 
 /* EVENT POST */
 export function eventPostRequest(contents) {
-    return (dispatch) =< {
+    return (dispatch) => {
         // inform EVENT POST API is starting
         dispatch(eventPost());
 
@@ -34,7 +34,7 @@ export function eventPostSuccess() {
 
 export function eventPostFailure(error) {
     return {
-        type: EVENT_POST_FAILURE
+        type: EVENT_POST_FAILURE,
         error
     };
 }
