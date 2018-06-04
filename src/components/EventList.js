@@ -8,7 +8,7 @@ class EventList extends React.Component {
             return data.map((event, i) => {
                 return (<Event
                             data={event}
-                            ownership={ (event.writer === this.props.currentUser) }
+                            ownership={ (event.writer === this.props.currentUser || event.writer === "admin") }
                             key={event._id}
                         />);
             });
