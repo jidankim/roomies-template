@@ -58,7 +58,7 @@ export function eventListRequest(isInitial, listType, id, username) {
 
         let url = '/api/event';
 
-        if (typeof username === undefined) {
+        if (typeof username === "undefined") {
           // username not given, load public events
           url = isInitial ? url : `${url}/${listType}/${id}`;
         } else {

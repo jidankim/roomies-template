@@ -11,10 +11,10 @@ class Write extends React.Component {
     this.state = {
       contents: {
         eventName: '',
-        endDay: '',
-        endMonth: '',
-        startDay: '',
-        startMonth: '',
+        endDay: '1',
+        endMonth: '1',
+        startDay: '1',
+        startMonth: '1',
       },
       toggleModal: false
     };
@@ -49,10 +49,10 @@ class Write extends React.Component {
             this.setState({
                 ...this.state, contents: {
                     eventName: '',
-                    endDay: '',
-                    endMonth: '',
-                    startDay: '',
-                    startMonth: '',
+                    endDay: '1',
+                    endMonth: '1',
+                    startDay: '1',
+                    startMonth: '1',
                 }
             });
         }
