@@ -4,12 +4,7 @@ const Schema = mongoose.Schema;
 
 const Event = new Schema({
     writer: String,
-    contents: String,
-    starred: [String],
-    date: {
-        created: { type: Date, default: Date.now },
-        edited: { type: Date, default: Date.npw }
-    },
+    contents: Object,
     is_edited: { type: Boolean, default: false }
 });
 

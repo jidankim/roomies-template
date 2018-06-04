@@ -1,13 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Write } from 'components';
-import { eventPostRequest } from 'actions/event';
+import { EventList, Write } from 'components';
+import { eventPostRequest, eventListRequest } from 'actions/event';
 
 class Home extends React.Component {
 
     constructor(props) {
         super(props);
         this.handlePost = this.handlePost.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.eventListRequest(true).then(
+            () => {
+                console.log(this.props.eventData);
+            }
+        );
     }
 
     /* POST EVENT */
@@ -47,10 +55,18 @@ class Home extends React.Component {
     }
 
     render() {
-        const write = ( <Write onPost={this.handlePose}/> );
         return (
             <div className="wrapper">
-                { this.props.isLoggedIn ? write : undefined }
+                { this.props.isLoggedIn ? (
+                  <div>
+                    <Write onPost={this.handlePost}/>
+                    <EventList data={this.props.eventData} currentUser={this.props.currentUser}/>
+                  </div>
+                ) : (
+                  <div>
+                    Welcome. Please log in.
+                  </div>
+                ) }
             </div>
         );
     }
@@ -59,7 +75,9 @@ class Home extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isLoggedIn: state.authentication.status.isLoggedIn,
-        postStatus: state.event.post
+        postStatus: state.event.post,
+        currentUser: state.authentication.status.currentUser,
+        eventData: state.event.list.data
     };
 };
 
@@ -67,6 +85,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         eventPostRequest: (contents) => {
             return dispatch(eventPostRequest(contents));
+        },
+        eventListRequest: (isInitial, listType, id, username) => {
+            return dispatch(eventListRequest(isInitial, listType, id, username));
         }
     };
 };

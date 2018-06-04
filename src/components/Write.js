@@ -88,7 +88,7 @@ class Write extends React.Component {
         >
           <div>
             <Row>
-              <Input s={12} label="Event Name" />
+              <Input s={12} label="Event Name" name="eventName" onChange={this.handleChange}/>
               <Row>
                 <Input
                   s={6}

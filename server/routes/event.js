@@ -21,14 +21,14 @@ router.post('/', (req, res) => {
     }
 
     // CHECK CONTENTS VALID
-    if (typeof req.body.contents !== 'string') {
+    if (typeof req.body.contents !== 'object') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
         });
     }
 
-    if (req.body.contents === "") {
+    if (req.body.contents.eventName === "") {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
@@ -68,14 +68,14 @@ router.put('/:id', (req, res) => {
     }
 
     // CHECK CONTENTS VALID
-    if (typeof req.body.contents !== 'string') {
+    if (typeof req.body.contents !== 'object') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
         });
     }
 
-    if (req.body.contents === "") {
+    if (req.body.contents.eventName === "") {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
@@ -112,7 +112,6 @@ router.put('/:id', (req, res) => {
 
         // MODIFY AND SAVE IN DATABASE
         event.contents = req.body.contents;
-        event.date.edited = new Date();
         event.is_edited = true;
 
         event.save((err, event) => {
@@ -126,7 +125,7 @@ router.put('/:id', (req, res) => {
 });
 
 /*
-    DELETE MEMO: DELETE /api/event/:id
+    DELETE EVENT: DELETE /api/event/:id
     ERROR CODES
         1: INVALID ID
         2: NOT LOGGED IN
@@ -134,7 +133,7 @@ router.put('/:id', (req, res) => {
         4: PERMISSION FAILURE
 */
 router.delete('/:id', (req, res) => {
-    // CHECK MEMO ID VALIDITY
+    // CHECK EVENT ID VALIDITY
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({
             error: "INVALID ID",
@@ -150,7 +149,7 @@ router.delete('/:id', (req, res) => {
         });
     }
 
-    // FIND MEMO AND CHECK FOR WRITER
+    // FIND EVENT AND CHECK FOR WRITER
     Event.findById(req.params.id, (err, event) => {
         if (err) throw err;
 
@@ -168,7 +167,7 @@ router.delete('/:id', (req, res) => {
             });
         }
 
-        // REMOVE THE MEMO
+        // REMOVE THE EVENT
         Event.remove({ _id: req.params.id }, err => {
             if (err) throw err;
             res.json({ success: true });
@@ -177,7 +176,7 @@ router.delete('/:id', (req, res) => {
 });
 
 /*
-    READ MEMO: GET /api/event
+    READ EVENT: GET /api/event
 */
 router.get('/', (req, res) => {
     Event.find()
