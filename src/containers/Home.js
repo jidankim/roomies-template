@@ -12,42 +12,50 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        // LOAD NEW EVENT EVERY 5 SECONDS
-        const loadEventLoop = () => {
-            this.loadNewEvent().then(
-                () => {
-                    this.eventLoaderTimeoutId = setTimeout(loadEventLoop, 5000);
-                }
-            );
-        };
-
-        this.props.eventListRequest(true).then(
-            () => {
-                // BEGIN NEW EVENT LOADING LOOP
-                loadEventLoop();
-            }
-        );
+      this.props.eventListRequest(true).then(
+              () => {
+                  console.log(this.props.eventData);
+              }
+          );
     }
 
-    componentWillUnmount() {
-        // STOPS THE loadEventLoop
-        clearTimeout(this.eventLoaderTimeoutId);
-    }
-
-    loadNewEvent() {
-        // CANCEL IF THERE IS A PENDING REQUEST
-        if (this.props.listStatus === 'WAITING')
-            return new Promise((resolve, reject) => {
-                resolve();
-            });
-
-        console.log(this.props.eventData);
-        // IF PAGE IS EMPTY, DO THE INITIAL LOADING
-        if (this.props.eventData.length === 0)
-            return this.props.eventListRequest(true);
-
-        return this.props.eventListRequest(false, 'new', this.props.eventData[0]._id);
-    }
+    // componentDidMount() {
+    //     // LOAD NEW EVENT EVERY 5 SECONDS
+    //     const loadEventLoop = () => {
+    //         this.loadNewEvent().then(
+    //             () => {
+    //                 this.eventLoaderTimeoutId = setTimeout(loadEventLoop, 5000);
+    //             }
+    //         );
+    //     };
+    //
+    //     this.props.eventListRequest(true).then(
+    //         () => {
+    //             // BEGIN NEW EVENT LOADING LOOP
+    //             loadEventLoop();
+    //         }
+    //     );
+    // }
+    //
+    // componentWillUnmount() {
+    //     // STOPS THE loadEventLoop
+    //     clearTimeout(this.eventLoaderTimeoutId);
+    // }
+    //
+    // loadNewEvent() {
+    //     // CANCEL IF THERE IS A PENDING REQUEST
+    //     if (this.props.listStatus === 'WAITING')
+    //         return new Promise((resolve, reject) => {
+    //             resolve();
+    //         });
+    //
+    //     console.log(this.props.eventData);
+    //     // IF PAGE IS EMPTY, DO THE INITIAL LOADING
+    //     if (this.props.eventData.length === 0)
+    //         return this.props.eventListRequest(true);
+    //
+    //     return this.props.eventListRequest(false, 'new', this.props.eventData[0]._id);
+    // }
 
     /* POST EVENT */
     handlePost(contents) {
@@ -97,7 +105,7 @@ class Home extends React.Component {
                     <EventList data={this.props.eventData} currentUser={this.props.currentUser}/>
                   </div>
                 ) : (
-                  <div>
+                  <div className="intro">
                     Welcome. Please log in.
                   </div>
                 ) }

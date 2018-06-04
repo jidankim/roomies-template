@@ -180,7 +180,7 @@ router.delete('/:id', (req, res) => {
 */
 router.get('/', (req, res) => {
     Event.find()
-    .sort({"_id": -1})
+    .sort({"contents.endDate": 1})
     .limit(6)
     .exec((err, events) => {
         if (err) throw err;
@@ -216,7 +216,7 @@ router.get('/:listType/:id', (req, res) => {
     if (listType === 'new') {
         // GET NEWER EVENT
         Event.find({ _id: { $gt: objId }})
-        .sort({ _id: -1 })
+        .sort({ "contents.endDate": 1 })
         .limit(6)
         .exec((err, events) => {
             if (err) throw err;
@@ -225,7 +225,7 @@ router.get('/:listType/:id', (req, res) => {
     } else {
         // GET OLDER EVENT
         Event.find({ _id: { $lt: objId }})
-        .sort({ _id: -1 })
+        .sort({ "contents.endDate" : 1 })
         .limit(6)
         .exec((err, memos) => {
             if (err) throw err;
