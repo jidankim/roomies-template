@@ -47,7 +47,6 @@ export default function event(state, action) {
                 }
             });
         case types.EVENT_LIST_SUCCESS:
-          console.log(action);
             if (action.isInitial) {
                 return update(state, {
                     list: {
@@ -55,7 +54,24 @@ export default function event(state, action) {
                         data: { $set: action.data },
                         isLast: { $set: action.data.length < 6 }
                     }
-                })
+                });
+            } else {
+              if (action.listType === 'new') {
+                return update(state, {
+                  list: {
+                    status:{ $set: 'SUCCESS' },
+                    data: { $unshift: action.data }
+                  }
+                });
+              } else {
+                return update(state, {
+                  list: {
+                    status: { $set: 'SUCCESS' },
+                    data: { $push: action.data },
+                    isLast: { $set: action.data.length <  6 }
+                  }
+                });
+              }
             }
 
             // loading older or newer event to be implemented..

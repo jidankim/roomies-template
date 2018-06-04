@@ -58,7 +58,12 @@ export function eventListRequest(isInitial, listType, id, username) {
 
         let url = '/api/event';
 
-        /* url setup depending on parameters to be implemented.. */
+        if (typeof username === undefined) {
+          // username not given, load public events
+          url = isInitial ? url : `${url}/${listType}/${id}`;
+        } else {
+          // load events of specific user
+        }
 
         return axios.get(url)
         .then((response) => {
