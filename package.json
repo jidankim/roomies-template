@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/jidankim/calendar-app#readme",
   "dependencies": {
+    "@material-ui/core": "^1.5.1",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
@@ -50,6 +51,7 @@
     "react-hot-loader": "^4.2.0",
     "style-loader": "^0.21.0",
     "webpack": "^4.10.2",
+    "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.4"
   }
 }
