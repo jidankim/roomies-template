@@ -1,6 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Input, Modal, Row } from 'react-materialize';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
+import TextField from '@material-ui/core/TextField';
+
+const styles = theme => ({
+  modal: {
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
+    display: 'flex',
+    flexWrap: 'wrap',
+    left: '25%',
+    padding: theme.spacing.unit * 4,
+    position: 'absolute',
+    top: '25%',
+    width: theme.spacing.unit * 50,
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  }
+});
 
 class Write extends React.Component {
   constructor(props) {
@@ -11,25 +33,11 @@ class Write extends React.Component {
     this.state = {
       contents: {
         eventName: '',
-        endDay: '1',
-        endMonth: '1',
-        startDay: '1',
-        startMonth: '1',
+        endDate: new Date(),
+        startDate: new Date(),
       },
       toggleModal: false
     };
-  }
-
-  createSelectItems(start, end) {
-    let items = [];
-    for (let i = start; i <= end; i++) {
-      items.push(
-        <option key={i} value={i}>
-          {i}
-        </option>
-      );
-    }
-    return items;
   }
 
   handleChange(e) {
@@ -49,10 +57,8 @@ class Write extends React.Component {
             this.setState({
                 ...this.state, contents: {
                     eventName: '',
-                    endDay: '1',
-                    endMonth: '1',
-                    startDay: '1',
-                    startMonth: '1',
+                    endDate: new Date(),
+                    startDate: new Date(),
                 }
             });
         }
@@ -66,71 +72,50 @@ class Write extends React.Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div className="modalContainer write">
-        <a className="btn" onClick={this.handleToggleModal}>
-          Add Event
-        </a>
+        <Button onClick={this.handleToggleModal}>Add Event</Button>
         <Modal
-          actions={
-            <div>
-              <Button modal="close" flat>
-                Close
-              </Button>
-              <Button modal="close" flat onClick={this.handlePost}>
-                Post
-              </Button>
-            </div>
-          }
-          header="Add Event"
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
           open={this.state.toggleModal}
-          modalOptions={{ complete: this.handleToggleModal }}
+          onClose={this.handleToggleModal}
         >
-          <div>
-            <Row>
-              <Input s={12} label="Event Name" name="eventName" onChange={this.handleChange}/>
-              <Row>
-                <Input
-                  s={6}
-                  type="select"
-                  label="Start Month"
-                  name="startMonth"
-                  onChange={this.handleChange}
-                >
-                  {this.createSelectItems(1, 10)}
-                </Input>
-                <Input
-                  s={6}
-                  type="select"
-                  label="Start Day"
-                  name="startDay"
-                  onChange={this.handleChange}
-                >
-                  {this.createSelectItems(1, 31)}
-                </Input>
-              </Row>
-              <Row>
-                <Input
-                  s={6}
-                  type="select"
-                  label="End Month"
-                  name="endMonth"
-                  onChange={this.handleChange}
-                >
-                  {this.createSelectItems(1, 10)}
-                </Input>
-                <Input
-                  s={6}
-                  type="select"
-                  label="End Day"
-                  name="endDay"
-                  onChange={this.handleChange}
-                >
-                  {this.createSelectItems(1, 31)}
-                </Input>
-              </Row>
-            </Row>
-          </div>
+          <form onSubmit={this.handlePost} className={classes.modal}>
+            <TextField
+              autoFocus
+              fullWidth
+              label="Event Name"
+              margin="normal"
+              name="eventName"
+              onChange={this.handleChange}
+            />
+            <TextField
+              className={classes.textField}
+              label="Start Date"
+              margin="normal"
+              name="startDate"
+              onChange={this.handleChange}
+              type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              className={classes.textField}
+              label="End Date"
+              margin="normal"
+              name="endDate"
+              onChange={this.handleChange}
+              type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Button type="submit">Post</Button>
+          </form>
         </Modal>
       </div>
     );
@@ -138,11 +123,12 @@ class Write extends React.Component {
 }
 
 Write.propTypes = {
-    onPost: PropTypes.func
+  classes: PropTypes.object.isRequired,
+  onPost: PropTypes.func
 };
 
 Write.defaultProps = {
     onPost: (contents) => { console.error('post function not defined'); }
 };
 
-export default Write;
+export default withStyles(styles)(Write);

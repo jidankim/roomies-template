@@ -18,10 +18,13 @@ class Event extends React.Component {
 
     render() {
       const { data, ownership } = this.props;
+      const eDate = data.contents.endDate.split('-');
+      const sDate = data.contents.startDate.split('-');
+
       const eventView = ( ownership ? (
           <div className="card">
               <div className="info">
-                  <span className="date">{`${data.contents.startMonth}/${data.contents.startDay} ~ ${data.contents.endMonth}/${data.contents.endDay}`}</span>
+                  <span className="date">{`${sDate[1]}/${sDate[2]} ~ ${eDate[1]}/${eDate[2]}`}</span>
                   <div className="option-button">
                       <a className='dropdown-button' id={`dropdown-button-${data.id}`} data-activates={`dropdown-${data.id}`}>
                           <i className="material-icons icon-button">more_vert</i>
