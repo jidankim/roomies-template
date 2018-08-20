@@ -4,7 +4,10 @@ import {
     EVENT_POST_FAILURE,
     EVENT_LIST,
     EVENT_LIST_SUCCESS,
-    EVENT_LIST_FAILURE
+    EVENT_LIST_FAILURE,
+    EVENT_EDIT,
+    EVENT_EDIT_SUCCESS,
+    EVENT_EDIT_FAILURE
 } from './ActionTypes';
 import axios from 'axios';
 
@@ -93,4 +96,39 @@ export function eventListFailure() {
     return {
         type: EVENT_LIST_FAILURE
     };
+}
+
+/* EVENT EDIT */
+export function eventEditRequest(id, index, contents) {
+    return (dispatch) => {
+        dispatch(eventEdit());
+
+        return axios.put('/api/event/' + id, { contents })
+        .then((response) => {
+            dispatch(eventEditSuccess(index, response.data.event));
+        }).catch((error) => {
+            dispatch(eventEditFailure(error.response.data.code));
+        });
+    };
+}
+
+export function eventEdit() {
+    return {
+        type: EVENT_EDIT
+    }
+}
+
+export function eventEditSuccess(index, event) {
+    return {
+        type: EVENT_EDIT_SUCCESS,
+        index,
+        event
+    }
+}
+
+export function eventEditFailure(error) {
+    return {
+        type: EVENT_EDIT_FAILURE,
+        error
+    }
 }

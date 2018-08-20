@@ -2,21 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
-  modal: {
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
-    display: 'flex',
-    flexWrap: 'wrap',
-    left: '25%',
-    padding: theme.spacing.unit * 4,
-    position: 'absolute',
-    top: '25%',
-    width: theme.spacing.unit * 50,
-  },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
@@ -29,14 +20,14 @@ class Write extends React.Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handlePost = this.handlePost.bind(this);
-    this.handleToggleModal = this.handleToggleModal.bind(this);
+    this.handleToggleDialog = this.handleToggleDialog.bind(this);
     this.state = {
       contents: {
         eventName: '',
-        endDate: new Date(),
-        startDate: new Date(),
+        endDate: '',
+        startDate: '',
       },
-      toggleModal: false
+      toggleDialog: false
     };
   }
 
@@ -55,19 +46,20 @@ class Write extends React.Component {
     this.props.onPost(contents).then(
         () => {
             this.setState({
-                ...this.state, contents: {
+                contents: {
                     eventName: '',
-                    endDate: new Date(),
-                    startDate: new Date(),
-                }
+                    endDate: '',
+                    startDate: '',
+                },
+                toggleDialog: !this.state.toggleDialog
             });
         }
     );
   }
 
-  handleToggleModal() {
+  handleToggleDialog() {
     this.setState({
-      toggleModal: !this.state.toggleModal
+      toggleDialog: !this.state.toggleDialog
     });
   }
 
@@ -76,14 +68,12 @@ class Write extends React.Component {
 
     return (
       <div className="modalContainer write">
-        <Button onClick={this.handleToggleModal}>Add Event</Button>
-        <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={this.state.toggleModal}
-          onClose={this.handleToggleModal}
+        <Button onClick={this.handleToggleDialog}>Add Event</Button>
+        <Dialog
+          open={this.state.toggleDialog}
+          onClose={this.handleToggleDialog}
         >
-          <form onSubmit={this.handlePost} className={classes.modal}>
+          <DialogContent>
             <TextField
               autoFocus
               fullWidth
@@ -114,9 +104,12 @@ class Write extends React.Component {
                 shrink: true,
               }}
             />
-            <Button type="submit">Post</Button>
-          </form>
-        </Modal>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleToggleDialog}>Cancel</Button>
+            <Button onClick={this.handlePost}>Post</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

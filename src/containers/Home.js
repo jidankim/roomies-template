@@ -1,7 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
 import { EventList, Write } from 'components';
-import { eventPostRequest, eventListRequest } from 'actions/event';
+import { eventPostRequest, eventListRequest, eventEditRequest } from 'actions/event';
+
+const styles = theme => {
+
+};
 
 class Home extends React.Component {
 
@@ -9,6 +14,7 @@ class Home extends React.Component {
         super(props);
         this.handlePost = this.handlePost.bind(this);
         // this.loadNewEvent = this.loadNewEvent.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
     }
 
     componentDidMount() {
@@ -63,11 +69,11 @@ class Home extends React.Component {
             () => {
                 if (this.props.postStatus.status === "SUCCESS") {
                     // TRIGGER LOAD NEW EVENT
-                    this.loadNewEvent().then(
-                        () => {
+                    // this.loadNewEvent().then(
+                    //     () => {
                             Materialize.toast('Success!', 2000);
-                        }
-                    );
+                    //     }
+                    // );
                 } else {
                     /*
                         ERROR CODES
@@ -88,8 +94,45 @@ class Home extends React.Component {
                             break;
                         default:
                             $toastContent = $('<span style="color: #FFB4BA">Something Broke</span>');
-                            Materialize.toast($toastContet, 2000);
+                            Materialize.toast($toastContent, 2000);
                             break;
+                    }
+                }
+            }
+        );
+    }
+
+    handleEdit(id, index, contents) {
+        return this.props.eventEditRequest(id, index, contents).then(
+            () => {
+                if (this.props.editStatus.status === "SUCCESS") {
+                    Materialize.toast('Success!', 2000);
+                } else {
+                    /*
+                        ERROR CODES
+                            1: INVALID ID,
+                            2: EMPTY CONTENTS,
+                            3: NOT LOGGED IN,
+                            4: NO RESOURCE,
+                            5: PERMISSION FAILURE
+                    */
+                    let errorMessage = [
+                        'Something broke',
+                        'Please write something',
+                        'You are not logged in',
+                        'That event does not exist anymore',
+                        'You do not have permission'
+                    ];
+
+                    let error = this.props.editStatus.error;
+
+                    // NOTIFY ERROR
+                    let $toastContent = $('<span style="color: #FFB4BA">' + errorMessage[error - 1] + '</span>');
+                    Materialize.toast($toastContent, 2000);
+
+                    // IF NOT LOGGED IN, REFRESH THE PAGE AFTER 2 SECONDS
+                    if (error === 3) {
+                        setTimeout(() => {location.reload(false)}, 2000);
                     }
                 }
             }
@@ -102,7 +145,11 @@ class Home extends React.Component {
                 { this.props.isLoggedIn ? (
                   <div>
                     <Write onPost={this.handlePost}/>
-                    <EventList data={this.props.eventData} currentUser={this.props.currentUser}/>
+                    <EventList
+                        data={this.props.eventData}
+                        currentUser={this.props.currentUser}
+                        onEdit={this.handleEdit}
+                    />
                   </div>
                 ) : (
                   <div className="intro">
@@ -120,7 +167,8 @@ const mapStateToProps = (state) => {
         postStatus: state.event.post,
         currentUser: state.authentication.status.currentUser,
         eventData: state.event.list.data,
-        listStatus: state.event.list.status
+        listStatus: state.event.list.status,
+        editStatus: state.event.edit
     };
 };
 
@@ -131,8 +179,11 @@ const mapDispatchToProps = (dispatch) => {
         },
         eventListRequest: (isInitial, listType, id, username) => {
             return dispatch(eventListRequest(isInitial, listType, id, username));
+        },
+        eventEditRequest: (id, index, contents) => {
+            return dispatch(eventEditRequest(id, index, contents));
         }
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Home));

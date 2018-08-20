@@ -10,6 +10,10 @@ const initialState = {
         status: 'INIT',
         data: [],
         isLast: false
+    },
+    edit: {
+        status: 'INIT',
+        error: -1
     }
 };
 
@@ -81,7 +85,33 @@ export default function event(state, action) {
                 list: {
                     status: { $set: 'FAILURE' }
                 }
-            })
+            });
+        case types.EVENT_EDIT:
+            return update(state, {
+                edit: {
+                    status: { $set: 'WAITING' },
+                    error: { $set: -1 },
+                    event: { $set: undefined }
+                }
+            });
+        case types.EVENT_EDIT_SUCCESS:
+            return update(state, {
+                edit: {
+                    status: { $set: 'SUCCESS' },
+                },
+                list: {
+                    data: {
+                        [action.index]: { $set: action.event }
+                    }
+                }
+            });
+        case types.EVENT_EDIT_FAILURE:
+            return update(state, {
+                edit: {
+                    status: { $set: 'FAILURE' },
+                    error: { $set: action.error }
+                }
+            });
         default:
             return state;
     }

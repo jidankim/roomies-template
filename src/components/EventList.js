@@ -10,6 +10,8 @@ class EventList extends React.Component {
                             data={event}
                             ownership={ (event.writer === this.props.currentUser || event.writer === "admin") }
                             key={event._id}
+                            index={i}
+                            onEdit={this.props.onEdit}
                         />);
             });
         };
@@ -24,12 +26,16 @@ class EventList extends React.Component {
 
 EventList.propTypes = {
   data: PropTypes.array,
-  currentUser: PropTypes.string
+  currentUser: PropTypes.string,
+  onEdit: PropTypes.func
 };
 
 EventList.defaultProps = {
   data: [],
-  currentUser: ''
+  currentUser: '',
+  onEdit: (id, index, contents) => {
+      console.error('edit function not defined');
+  }
 };
 
 export default EventList;
