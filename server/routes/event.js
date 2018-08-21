@@ -179,7 +179,7 @@ router.delete('/:id', (req, res) => {
     READ EVENT: GET /api/event
 */
 router.get('/', (req, res) => {
-    Event.find()
+    Event.find({ $or: [{writer: 'admin'}, {writer: req.session.loginInfo.username}] })
     .sort({"contents.endDate": 1})
     .limit(6)
     .exec((err, events) => {
@@ -215,7 +215,7 @@ router.get('/:listType/:id', (req, res) => {
 
     if (listType === 'new') {
         // GET NEWER EVENT
-        Event.find({ _id: { $gt: objId }})
+        Event.find({ $and: [{ _id: { $gt: objId }}, { $or: [{writer: 'admin'}, {writer: req.session.loginInfo.username}] }] })
         .sort({ "contents.endDate": 1 })
         .limit(6)
         .exec((err, events) => {
@@ -224,7 +224,7 @@ router.get('/:listType/:id', (req, res) => {
         });
     } else {
         // GET OLDER EVENT
-        Event.find({ _id: { $lt: objId }})
+        Event.find({ $and: [{ _id: { $lt: objId }}, { $or: [{writer: 'admin'}, {writer: req.session.loginInfo.username}] }] })
         .sort({ "contents.endDate" : 1 })
         .limit(6)
         .exec((err, memos) => {
