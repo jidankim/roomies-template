@@ -5,16 +5,29 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
+  disappear: {
+    display: 'none'
+  },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 200
-  }
+  },
+  // hidden placed under textField b/c it is more specific
+  hidden: {
+    marginLeft: theme.spacing.unit / 2,
+    marginRight: theme.spacing.unit / 2,
+    width: 100,
+    visibility: 'hidden'
+  },
 });
 
 class Event extends React.Component {
@@ -27,6 +40,7 @@ class Event extends React.Component {
     };
     this.handleCancel = this.handleCancel.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
@@ -49,6 +63,17 @@ class Event extends React.Component {
       contents: {
         ...this.state.contents,
         [e.target.name]: e.target.value
+      }
+    });
+  }
+
+  // handling check on Single Day? switch
+  handleCheck(e) {
+    this.setState({
+      ...this.state,
+      contents: {
+        ...this.state.contents,
+        [e.target.name]: e.target.checked
       }
     });
   }
@@ -82,6 +107,11 @@ class Event extends React.Component {
       let index = this.props.index;
       let contents = this.state.contents;
 
+      // If single date, change startDate to match endDate, before editing
+      if (contents.singleDate) {
+        contents.startDate = contents.endDate;
+      }
+
       this.props.onEdit(id, index, contents).then(() => {
         this.setState({
           ...this.state,
@@ -101,6 +131,15 @@ class Event extends React.Component {
     const { classes, data, ownership } = this.props;
     const eDate = data.contents.endDate.split('-');
     const sDate = data.contents.startDate.split('-');
+    const hiddenTextField = this.state.contents.singleDate
+      ? classes.hidden
+      : '';
+    const dummyTextField = this.state.contents.singleDate
+      ? classes.hidden
+      : classes.disappear;
+    const labelEndDate = this.state.contents.singleDate
+      ? 'Due Date'
+      : 'End Date';
 
     const eventView = ownership ? (
       <div className="card">
@@ -147,29 +186,56 @@ class Event extends React.Component {
               margin="normal"
               name="eventName"
               onChange={this.handleChange}
+              value={this.state.contents.eventName}
             />
-            <TextField
-              className={classes.textField}
-              label="Start Date"
-              margin="normal"
-              name="startDate"
-              onChange={this.handleChange}
-              type="date"
-              InputLabelProps={{
-                shrink: true
-              }}
-            />
-            <TextField
-              className={classes.textField}
-              label="End Date"
-              margin="normal"
-              name="endDate"
-              onChange={this.handleChange}
-              type="date"
-              InputLabelProps={{
-                shrink: true
-              }}
-            />
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={this.state.contents.singleDate}
+                    name="singleDate"
+                    onChange={this.handleCheck}
+                    value="singleDate"
+                  />
+                }
+                label="Single Day?"
+              />
+            </FormGroup>
+            <div>
+              <TextField
+                className={`${hiddenTextField} ${classes.textField}`}
+                label="Start Date"
+                margin="normal"
+                name="startDate"
+                onChange={this.handleChange}
+                type="date"
+                value={this.state.contents.startDate}
+                InputLabelProps={{
+                  shrink: true
+                }}
+              />
+              <TextField
+                className={classes.textField}
+                label={`${labelEndDate}`}
+                margin="normal"
+                name="endDate"
+                onChange={this.handleChange}
+                type="date"
+                value={this.state.contents.endDate}
+                InputLabelProps={{
+                  shrink: true
+                }}
+              />
+              <TextField
+                className={dummyTextField}
+                margin="normal"
+                name="dummy"
+                type="date"
+                InputLabelProps={{
+                  shrink: true
+                }}
+              />
+            </div>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleCancel}>Cancel</Button>
