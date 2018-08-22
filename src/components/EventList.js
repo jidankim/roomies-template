@@ -3,6 +3,20 @@ import PropTypes from 'prop-types';
 import { Event } from 'components';
 
 class EventList extends React.Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    let current = {
+      props: this.props,
+      state: this.state
+    };
+
+    let next = {
+      props: nextProps,
+      state: nextState
+    };
+    let update = JSON.stringify(current) !== JSON.stringify(next);
+    return update;
+  }
+
   render() {
     const mapToComponents = data => {
       return data.map((event, i) => {

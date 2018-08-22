@@ -179,7 +179,7 @@ router.delete('/:id', (req, res) => {
     READ EVENT: GET /api/event
 */
 router.get('/', (req, res) => {
-    Event.find({ $or: [{writer: 'admin'}, {writer: req.session.loginInfo.username}] })
+    Event.find({ writer: { $in: ['admin', req.session.loginInfo.username] } })
     .sort({"contents.endDate": 1})
     .limit(6)
     .exec((err, events) => {
@@ -211,25 +211,32 @@ router.get('/:listType/:id', (req, res) => {
         });
     }
 
-    let objId = new mongoose.Types.ObjectId(req.params.id);
+//    let objId = new mongoose.Types.ObjectId(req.params.id);
+    let reqEndDate = '';
+    Event.findById(id, (err, event) => {
+        if (err) throw err;
+        reqEndDate = event.contents.endDate;
+        console.log(reqEndDate);
+    });
 
     if (listType === 'new') {
         // GET NEWER EVENT
-        Event.find({ $and: [{ _id: { $gt: objId }}, { $or: [{writer: 'admin'}, {writer: req.session.loginInfo.username}] }] })
+        Event.find({ "contents.endDate": { $gt: reqEndDate }}) 
         .sort({ "contents.endDate": 1 })
         .limit(6)
         .exec((err, events) => {
             if (err) throw err;
+            console.log(events);
             return res.json(events);
         });
     } else {
         // GET OLDER EVENT
-        Event.find({ $and: [{ _id: { $lt: objId }}, { $or: [{writer: 'admin'}, {writer: req.session.loginInfo.username}] }] })
+        Event.find({ "contents.endDate": { $gt: reqEndDate }})
         .sort({ "contents.endDate" : 1 })
         .limit(6)
-        .exec((err, memos) => {
+        .exec((err, events) => {
             if (err) throw err;
-            return res.json(memos);
+            return res.json(events);
         });
     }
 });

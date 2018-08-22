@@ -15,65 +15,57 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.handlePost = this.handlePost.bind(this);
-    // this.loadNewEvent = this.loadNewEvent.bind(this);
+    this.loadNewEvent = this.loadNewEvent.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
   }
 
   componentDidMount() {
+    // LOAD NEW EVENT EVERY 5 SECONDS
+    const loadEventLoop = () => {
+      this.loadNewEvent().then(() => {
+        this.eventLoaderTimeoutId = setTimeout(loadEventLoop, 5000);
+      });
+    };
+
     this.props.eventListRequest(true).then(() => {
-      console.log(this.props.eventData);
+      // BEGIN NEW EVENT LOADING LOOP
+      loadEventLoop();
     });
   }
 
-  // componentDidMount() {
-  //     // LOAD NEW EVENT EVERY 5 SECONDS
-  //     const loadEventLoop = () => {
-  //         this.loadNewEvent().then(
-  //             () => {
-  //                 this.eventLoaderTimeoutId = setTimeout(loadEventLoop, 5000);
-  //             }
-  //         );
-  //     };
-  //
-  //     this.props.eventListRequest(true).then(
-  //         () => {
-  //             // BEGIN NEW EVENT LOADING LOOP
-  //             loadEventLoop();
-  //         }
-  //     );
-  // }
-  //
-  // componentWillUnmount() {
-  //     // STOPS THE loadEventLoop
-  //     clearTimeout(this.eventLoaderTimeoutId);
-  // }
-  //
-  // loadNewEvent() {
-  //     // CANCEL IF THERE IS A PENDING REQUEST
-  //     if (this.props.listStatus === 'WAITING')
-  //         return new Promise((resolve, reject) => {
-  //             resolve();
-  //         });
-  //
-  //     console.log(this.props.eventData);
-  //     // IF PAGE IS EMPTY, DO THE INITIAL LOADING
-  //     if (this.props.eventData.length === 0)
-  //         return this.props.eventListRequest(true);
-  //
-  //     return this.props.eventListRequest(false, 'new', this.props.eventData[0]._id);
-  // }
+  componentWillUnmount() {
+    // STOPS THE loadEventLoop
+    clearTimeout(this.eventLoaderTimeoutId);
+  }
+
+  loadNewEvent() {
+    // CANCEL IF THERE IS A PENDING REQUEST
+    if (this.props.listStatus === 'WAITING')
+      return new Promise((resolve, reject) => {
+        resolve();
+      });
+
+    console.log(this.props.eventData);
+    // IF PAGE IS EMPTY, DO THE INITIAL LOADING
+    //if (this.props.eventData.length === 0)
+      return this.props.eventListRequest(true);
+
+    // return this.props.eventListRequest(
+    //   false,
+    //   'new',
+    //   this.props.eventData[0]._id
+    // );
+  }
 
   /* POST EVENT */
   handlePost(contents) {
     return this.props.eventPostRequest(contents).then(() => {
       if (this.props.postStatus.status === 'SUCCESS') {
         // TRIGGER LOAD NEW EVENT
-        // this.loadNewEvent().then(
-        //     () => {
-        Materialize.toast('Success!', 2000);
-        //     }
-        // );
+        this.loadNewEvent().then(() => {
+          Materialize.toast('Success!', 2000);
+        });
       } else {
         /*
                         ERROR CODES
@@ -152,11 +144,11 @@ class Home extends React.Component {
     this.props.eventRemoveRequest(id, index).then(() => {
       if (this.props.removeStatus.status === 'SUCCESS') {
         // LOAD MORE EVENT IF THERE IS NO SCROLLBAR 1 SECOND LATER
-        // setTimeout(() => {
-        //   if ($("body").height() < $(window).height()) {
-        //     this.loadOldEvent();
-        //   }
-        // }, 1000);
+        setTimeout(() => {
+          if ($("body").height() < $(window).height()) {
+            this.loadOldEvent();
+          }
+        }, 1000);
       } else {
         // ERROR
         /*

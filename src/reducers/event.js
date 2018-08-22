@@ -68,7 +68,7 @@ export default function event(state, action) {
           return update(state, {
             list: {
               status: { $set: 'SUCCESS' },
-              data: { $unshift: action.data }
+              data: { $set: action.data }
             }
           });
         } else {
