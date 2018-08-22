@@ -11,8 +11,17 @@ import {
   eventEditRequest,
   eventRemoveRequest
 } from 'actions/event';
+import { closeNotif, openNotif } from 'actions/notification';
 
-const styles = theme => {};
+const styles = theme => ({
+  close: {
+    width: theme.spacing.unit * 4,
+    height: theme.spacing.unit * 4
+  },
+  icon: {
+    fontSize: 20
+  }
+});
 
 class Home extends React.Component {
   constructor(props) {
@@ -67,32 +76,7 @@ class Home extends React.Component {
       if (this.props.postStatus.status === 'SUCCESS') {
         // TRIGGER LOAD NEW EVENT
         this.loadNewEvent().then(() => {
-          this.props.openNotif();
-          // Materialize.toast('Success!', 2000);
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}
-            open={this.props.open}
-            autoHideDuration={5000}
-            onClose={this.props.closeNotif}
-            ContentProps={{
-              'aria-describedby': 'message-id'
-            }}
-            message={<span id="message-id">Success!</span>}
-            action={[
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                className={classes.close}
-                onClick={this.props.closeNotif}
-              >
-                <CloseIcon />
-              </IconButton>
-            ]}
-          />;
+          this.props.openNotif('Success!');
         });
       } else {
         /*
@@ -213,6 +197,8 @@ class Home extends React.Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div className="wrapper">
         {this.props.isLoggedIn ? (
@@ -224,6 +210,30 @@ class Home extends React.Component {
               onEdit={this.handleEdit}
               onRemove={this.handleRemove}
             />
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              open={this.props.open}
+              autoHideDuration={6000}
+              onClose={this.props.closeNotif}
+              ContentProps={{
+                'aria-describedby': 'message-id'
+              }}
+              message={<span id="message-id">{this.props.message}</span>}
+              action={[
+                <IconButton
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  className={classes.close}
+                  onClick={this.props.closeNotif}
+                >
+                  <CloseIcon className={classes.icon} />
+                </IconButton>
+              ]}
+            />;
           </div>
         ) : (
           <div className="intro">Welcome. Please log in.</div>
@@ -240,6 +250,7 @@ const mapStateToProps = state => {
     eventData: state.event.list.data,
     isLoggedIn: state.authentication.status.isLoggedIn,
     listStatus: state.event.list.status,
+    message: state.notification.message,
     open: state.notification.open,
     postStatus: state.event.post,
     removeStatus: state.event.remove
@@ -261,7 +272,7 @@ const mapDispatchToProps = dispatch => {
     eventRemoveRequest: (id, index) => {
       return dispatch(eventRemoveRequest(id, index));
     },
-    openNotif: () => dispatch(openNotif())
+    openNotif: message => dispatch(openNotif(message))
   };
 };
 
