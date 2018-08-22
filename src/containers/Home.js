@@ -1,6 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '@material-ui/core/Snackbar';
 import { EventList, Write } from 'components';
 import {
   eventPostRequest,
@@ -49,7 +52,7 @@ class Home extends React.Component {
     console.log(this.props.eventData);
     // IF PAGE IS EMPTY, DO THE INITIAL LOADING
     //if (this.props.eventData.length === 0)
-      return this.props.eventListRequest(true);
+    return this.props.eventListRequest(true);
 
     // return this.props.eventListRequest(
     //   false,
@@ -64,7 +67,32 @@ class Home extends React.Component {
       if (this.props.postStatus.status === 'SUCCESS') {
         // TRIGGER LOAD NEW EVENT
         this.loadNewEvent().then(() => {
-          Materialize.toast('Success!', 2000);
+          this.props.openNotif();
+          // Materialize.toast('Success!', 2000);
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            open={this.props.open}
+            autoHideDuration={5000}
+            onClose={this.props.closeNotif}
+            ContentProps={{
+              'aria-describedby': 'message-id'
+            }}
+            message={<span id="message-id">Success!</span>}
+            action={[
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                className={classes.close}
+                onClick={this.props.closeNotif}
+              >
+                <CloseIcon />
+              </IconButton>
+            ]}
+          />;
         });
       } else {
         /*
@@ -145,7 +173,7 @@ class Home extends React.Component {
       if (this.props.removeStatus.status === 'SUCCESS') {
         // LOAD MORE EVENT IF THERE IS NO SCROLLBAR 1 SECOND LATER
         setTimeout(() => {
-          if ($("body").height() < $(window).height()) {
+          if ($('body').height() < $(window).height()) {
             this.loadOldEvent();
           }
         }, 1000);
@@ -207,18 +235,20 @@ class Home extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    isLoggedIn: state.authentication.status.isLoggedIn,
-    postStatus: state.event.post,
     currentUser: state.authentication.status.currentUser,
-    eventData: state.event.list.data,
-    listStatus: state.event.list.status,
     editStatus: state.event.edit,
+    eventData: state.event.list.data,
+    isLoggedIn: state.authentication.status.isLoggedIn,
+    listStatus: state.event.list.status,
+    open: state.notification.open,
+    postStatus: state.event.post,
     removeStatus: state.event.remove
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    closeNotif: () => dispatch(closeNotif()),
     eventPostRequest: contents => {
       return dispatch(eventPostRequest(contents));
     },
@@ -230,7 +260,8 @@ const mapDispatchToProps = dispatch => {
     },
     eventRemoveRequest: (id, index) => {
       return dispatch(eventRemoveRequest(id, index));
-    }
+    },
+    openNotif: () => dispatch(openNotif())
   };
 };
 
