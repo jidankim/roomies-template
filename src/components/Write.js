@@ -11,7 +11,7 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 200,
+    width: 200
   }
 });
 
@@ -25,7 +25,7 @@ class Write extends React.Component {
       contents: {
         eventName: '',
         endDate: '',
-        startDate: '',
+        startDate: ''
       },
       toggleDialog: false
     };
@@ -33,28 +33,27 @@ class Write extends React.Component {
 
   handleChange(e) {
     this.setState({
-        ...this.state, contents: {
-            ...this.state.contents,
-            [e.target.name]: e.target.value
-        }
+      ...this.state,
+      contents: {
+        ...this.state.contents,
+        [e.target.name]: e.target.value
+      }
     });
   }
 
   handlePost() {
     let contents = this.state.contents;
 
-    this.props.onPost(contents).then(
-        () => {
-            this.setState({
-                contents: {
-                    eventName: '',
-                    endDate: '',
-                    startDate: '',
-                },
-                toggleDialog: !this.state.toggleDialog
-            });
-        }
-    );
+    this.props.onPost(contents).then(() => {
+      this.setState({
+        contents: {
+          eventName: '',
+          endDate: '',
+          startDate: ''
+        },
+        toggleDialog: !this.state.toggleDialog
+      });
+    });
   }
 
   handleToggleDialog() {
@@ -90,7 +89,7 @@ class Write extends React.Component {
               onChange={this.handleChange}
               type="date"
               InputLabelProps={{
-                shrink: true,
+                shrink: true
               }}
             />
             <TextField
@@ -101,7 +100,7 @@ class Write extends React.Component {
               onChange={this.handleChange}
               type="date"
               InputLabelProps={{
-                shrink: true,
+                shrink: true
               }}
             />
           </DialogContent>
@@ -121,7 +120,9 @@ Write.propTypes = {
 };
 
 Write.defaultProps = {
-    onPost: (contents) => { console.error('post function not defined'); }
+  onPost: contents => {
+    console.error('post function not defined');
+  }
 };
 
 export default withStyles(styles)(Write);

@@ -1,29 +1,21 @@
 import React from 'react';
 
 class Calendar extends React.Component {
-    render() {
-      let weekRows = [];
+  render() {
+    let weekRows = [];
 
-        return (
-          <div className="container cal">
-
-          </div>
-        );
-    }
+    return <div className="container cal" />;
+  }
 }
 
-const Week = (props) => {
-  return props.days.map((d) => {
-    <Day num={d} />
+const Week = props => {
+  return props.days.map(d => {
+    <Day num={d} />;
   });
-}
+};
 
-const Day = (props) => {
-  return (
-    <div>
-      `Day #${props.num}`
-    </div>
-  )
-}
+const Day = props => {
+  return <div>`Day #${props.num}`</div>;
+};
 
 export default Calendar;

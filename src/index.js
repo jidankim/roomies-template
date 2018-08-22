@@ -14,7 +14,8 @@ const store = createStore(reducers, applyMiddleware(thunk));
 
 const rootElement = document.getElementById('root');
 ReactDOM.render(
-    <Provider store={store}>
-      <Router/>
-    </Provider>, rootElement
+  <Provider store={store}>
+    <Router />
+  </Provider>,
+  rootElement
 );
