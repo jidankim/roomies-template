@@ -1,10 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
-import { EventList, Write } from 'components';
+import { EventList, NotificationContentWrapper, Write } from 'components';
 import {
   eventPostRequest,
   eventListRequest,
@@ -12,16 +9,6 @@ import {
   eventRemoveRequest
 } from 'actions/event';
 import { closeNotif, openNotif } from 'actions/notification';
-
-const styles = theme => ({
-  close: {
-    width: theme.spacing.unit * 4,
-    height: theme.spacing.unit * 4
-  },
-  icon: {
-    fontSize: 20
-  }
-});
 
 class Home extends React.Component {
   constructor(props) {
@@ -76,7 +63,7 @@ class Home extends React.Component {
       if (this.props.postStatus.status === 'SUCCESS') {
         // TRIGGER LOAD NEW EVENT
         this.loadNewEvent().then(() => {
-          this.props.openNotif('Success!');
+          this.props.openNotif('Success!', 'success');
         });
       } else {
         /*
@@ -197,8 +184,6 @@ class Home extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     return (
       <div className="wrapper">
         {this.props.isLoggedIn ? (
@@ -218,22 +203,13 @@ class Home extends React.Component {
               open={this.props.open}
               autoHideDuration={6000}
               onClose={this.props.closeNotif}
-              ContentProps={{
-                'aria-describedby': 'message-id'
-              }}
-              message={<span id="message-id">{this.props.message}</span>}
-              action={[
-                <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  className={classes.close}
-                  onClick={this.props.closeNotif}
-                >
-                  <CloseIcon className={classes.icon} />
-                </IconButton>
-              ]}
-            />;
+            >
+              <NotificationContentWrapper
+                onClose={this.props.closeNotif}
+                variant={this.props.variant}
+                message={this.props.message}
+              />
+            </Snackbar>
           </div>
         ) : (
           <div className="intro">Welcome. Please log in.</div>
@@ -253,7 +229,8 @@ const mapStateToProps = state => {
     message: state.notification.message,
     open: state.notification.open,
     postStatus: state.event.post,
-    removeStatus: state.event.remove
+    removeStatus: state.event.remove,
+    variant: state.notification.variant
   };
 };
 
@@ -272,11 +249,11 @@ const mapDispatchToProps = dispatch => {
     eventRemoveRequest: (id, index) => {
       return dispatch(eventRemoveRequest(id, index));
     },
-    openNotif: message => dispatch(openNotif(message))
+    openNotif: (message, variant) => dispatch(openNotif(message, variant))
   };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Home));
+)(Home);

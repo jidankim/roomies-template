@@ -1,9 +1,10 @@
 import { CLOSE_NOTIF, OPEN_NOTIF } from './ActionTypes';
 
-export function openNotif(message) {
+export function openNotif(message, variant) {
   return {
     type: OPEN_NOTIF,
-    message
+    message,
+    variant
   };
 }
 
