@@ -1,14 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Snackbar from '@material-ui/core/Snackbar';
-import { EventList, NotificationContentWrapper, Write } from 'components';
+import { EventList, Notification, Write } from 'components';
 import {
   eventPostRequest,
   eventListRequest,
   eventEditRequest,
   eventRemoveRequest
 } from 'actions/event';
-import { closeNotif, openNotif } from 'actions/notification';
+import { openNotif } from 'actions/notification';
 
 class Home extends React.Component {
   constructor(props) {
@@ -71,29 +70,19 @@ class Home extends React.Component {
                             1: NOT LOGGED IN
                             2: EMPTY CONTENTS
                     */
-        let $toastContent;
         switch (this.props.postStatus.error) {
           case 1:
             // IF NOT LOGGED IN, NOTIFY AND REFRESH AFTER
-            $toastContent = $(
-              '<span style="color: #FFB4BA">You are not logged in</span>'
-            );
-            Materialize.toast($toastContent, 2000);
+            this.props.openNotif('You are not logged in', 'error');
             setTimeout(() => {
               location.reload(false);
             }, 2000);
             break;
           case 2:
-            $toastContent = $(
-              '<span style="color: #FFB4BA">Please write something</span>'
-            );
-            Materialize.toast($toastContent, 2000);
+            this.props.openNotif('Please write something', 'error');
             break;
           default:
-            $toastContent = $(
-              '<span style="color: #FFB4BA">Something Broke</span>'
-            );
-            Materialize.toast($toastContent, 2000);
+            this.props.openNotif('Something broke', 'error');
             break;
         }
       }
@@ -103,7 +92,7 @@ class Home extends React.Component {
   handleEdit(id, index, contents) {
     return this.props.eventEditRequest(id, index, contents).then(() => {
       if (this.props.editStatus.status === 'SUCCESS') {
-        Materialize.toast('Success!', 2000);
+        this.props.openNotif('Success!', 'success');
       } else {
         /*
                         ERROR CODES
@@ -124,10 +113,7 @@ class Home extends React.Component {
         let error = this.props.editStatus.error;
 
         // NOTIFY ERROR
-        let $toastContent = $(
-          '<span style="color: #FFB4BA">' + errorMessage[error - 1] + '</span>'
-        );
-        Materialize.toast($toastContent, 2000);
+        this.props.openNotif(errorMessage[error - 1], 'error');
 
         // IF NOT LOGGED IN, REFRESH THE PAGE AFTER 2 SECONDS
         if (error === 3) {
@@ -166,12 +152,10 @@ class Home extends React.Component {
         ];
 
         // NOTIFY ERROR
-        let $toastContent = $(
-          '<span style="color: #FFB4BA">' +
-            errorMessage[this.props.removeStatus.error - 1] +
-            '</span>'
+        this.props.openNotif(
+          errorMessage[this.props.removeStatus.error - 1],
+          'error'
         );
-        Materialize.toast($toastContent, 2000);
 
         // IF NOT LOGGED IN, REFRESH THE PAGE
         if (this.props.removeStatus.error === 2) {
@@ -195,21 +179,11 @@ class Home extends React.Component {
               onEdit={this.handleEdit}
               onRemove={this.handleRemove}
             />
-            <Snackbar
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right'
-              }}
+            <Notification
+              message={this.props.message}
               open={this.props.open}
-              autoHideDuration={6000}
-              onClose={this.props.closeNotif}
-            >
-              <NotificationContentWrapper
-                onClose={this.props.closeNotif}
-                variant={this.props.variant}
-                message={this.props.message}
-              />
-            </Snackbar>
+              variant={this.props.variant}
+            />
           </div>
         ) : (
           <div className="intro">Welcome. Please log in.</div>
@@ -236,7 +210,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    closeNotif: () => dispatch(closeNotif()),
     eventPostRequest: contents => {
       return dispatch(eventPostRequest(contents));
     },

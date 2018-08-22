@@ -1,67 +1,75 @@
 import React from 'react';
-import { Authentication } from 'components';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { registerRequest } from 'actions/authentication';
-import { withRouter } from 'react-router-dom';
+import { openNotif } from 'actions/notification';
+import { Authentication, Notification } from 'components';
 
 class Register extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleRegister = this.handleRegister.bind(this);
+  }
 
-    constructor(props) {
-        super(props);
-        this.handleRegister = this.handleRegister.bind(this);
-    }
-
-    handleRegister(id, pw) {
-        return this.props.registerRequest(id, pw).then(
-            () => {
-                if (this.props.status === "SUCCESS") {
-                    Materialize.toast('Success! Please log in', 2000);
-                    this.props.history.push('/login');
-                    return true;
-                } else {
-                    /*
+  handleRegister(id, pw) {
+    return this.props.registerRequest(id, pw).then(() => {
+      if (this.props.status === 'SUCCESS') {
+        this.props.openNotif('Success! Please log in', 'success');
+        this.props.history.push('/login');
+        return true;
+      } else {
+        /*
                         ERROR CODES:
                             1: BAD USERNAME
                             2: BAD PASSWORD
                             3: USERNAME EXISTS
                     */
-                    let errorMessage = [
-                        'Invalid Username',
-                        'Password is too short',
-                        'Username already exists'
-                    ];
+        let errorMessage = [
+          'Invalid Username',
+          'Password is too short',
+          'Username already exists'
+        ];
 
-                    let $toastContent = $('<span style="color: $FFB4BA">' + errorMessage[this.props.errorCode - 1] + '</span>');
-                    Materialize.toast($toastContent, 2000);
-                    return false;
-                }
-            }
-        );
-    }
+        this.props.openNotif(errorMessage[this.props.errorCode - 1], 'error');
+        return false;
+      }
+    });
+  }
 
-    render() {
-        return (
-            <div>
-                <Authentication mode={false}
-                    onRegister={this.handleRegister}/>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <Authentication mode={false} onRegister={this.handleRegister} />
+        <Notification
+          message={this.props.message}
+          open={this.props.open}
+          variant={this.props.variant}
+        />
+      </div>
+    );
+  }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        status: state.authentication.register.status,
-        errorCode: state.authentication.register.error
-    };
+const mapStateToProps = state => {
+  return {
+    errorCode: state.authentication.register.error,
+    message: state.notification.message,
+    open: state.notification.open,
+    status: state.authentication.register.status,
+    variant: state.notification.variant
+  };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        registerRequest: (id, pw) => {
-            return dispatch(registerRequest(id, pw));
-        }
-    };
+const mapDispatchToProps = dispatch => {
+  return {
+    openNotif: (message, variant) => dispatch(openNotif(message, variant)),
+    registerRequest: (id, pw) => dispatch(registerRequest(id, pw))
+  };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Register));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Register)
+);

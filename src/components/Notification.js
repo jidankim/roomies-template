@@ -1,15 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { closeNotif } from 'actions/notification';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CloseIcon from '@material-ui/icons/Close';
 import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
 import green from '@material-ui/core/colors/green';
 
 const variantIcon = {
   error: ErrorIcon,
+  info: InfoIcon,
   success: CheckCircleIcon
 };
 
@@ -19,7 +24,6 @@ const styles = theme => ({
     height: theme.spacing.unit * 4
   },
   error: {
-    // backgroundColor: red[700]
     backgroundColor: theme.palette.error.dark
   },
   icon: {
@@ -28,6 +32,9 @@ const styles = theme => ({
   iconVariant: {
     marginRight: theme.spacing.unit,
     opacity: 0.9
+  },
+  info: {
+    backgroundColor: theme.palette.primary.dark
   },
   message: {
     alignItems: 'center',
@@ -38,7 +45,7 @@ const styles = theme => ({
   }
 });
 
-const NotificationContentWrapper = props => {
+const NotificationContent = props => {
   const { classes, className, message, onClose, variant, ...other } = props;
   const Icon = variantIcon[variant];
 
@@ -68,12 +75,41 @@ const NotificationContentWrapper = props => {
   );
 };
 
-NotificationContentWrapper.propTypes = {
+NotificationContent.propTypes = {
   classes: PropTypes.object.isRequired,
   className: PropTypes.string,
   message: PropTypes.node,
   onClose: PropTypes.func,
-  variant: PropTypes.oneOf(['error', 'success']).isRequired
+  variant: PropTypes.oneOf(['error', 'info', 'success']).isRequired
 };
 
-export default withStyles(styles)(NotificationContentWrapper);
+const NotificationContentWrapper = withStyles(styles)(NotificationContent);
+
+const Notification = props => {
+  const { closeNotif, message, open, variant } = props;
+  return (
+    <Snackbar
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right'
+      }}
+      open={open}
+      autoHideDuration={6000}
+      onClose={closeNotif}
+    >
+      <NotificationContentWrapper
+        onClose={closeNotif}
+        variant={variant}
+        message={message}
+      />
+    </Snackbar>
+  );
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    closeNotif: () => dispatch(closeNotif())
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Notification);
