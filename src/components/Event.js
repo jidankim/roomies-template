@@ -176,72 +176,75 @@ class Event extends React.Component {
     );
 
     const editView = (
-      <div className="modalContainer write">
-        <Dialog open={this.state.editMode} onClose={this.handleCancel}>
-          <DialogContent>
-            <TextField
-              autoFocus
-              fullWidth
-              label="Event Name"
-              margin="normal"
-              name="eventName"
-              onChange={this.handleChange}
-              value={this.state.contents.eventName}
-            />
-            <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={this.state.contents.singleDate}
-                    name="singleDate"
-                    onChange={this.handleCheck}
-                    value="singleDate"
-                  />
-                }
-                label="Single Day?"
-              />
-            </FormGroup>
-            <div>
+      <div>
+        {eventView}
+        <div className="modalContainer write">
+          <Dialog open={this.state.editMode} onClose={this.handleCancel}>
+            <DialogContent>
               <TextField
-                className={`${hiddenTextField} ${classes.textField}`}
-                label="Start Date"
+                autoFocus
+                fullWidth
+                label="Event Name"
                 margin="normal"
-                name="startDate"
+                name="eventName"
                 onChange={this.handleChange}
-                type="date"
-                value={this.state.contents.startDate}
-                InputLabelProps={{
-                  shrink: true
-                }}
+                value={this.state.contents.eventName}
               />
-              <TextField
-                className={classes.textField}
-                label={`${labelEndDate}`}
-                margin="normal"
-                name="endDate"
-                onChange={this.handleChange}
-                type="date"
-                value={this.state.contents.endDate}
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-              <TextField
-                className={dummyTextField}
-                margin="normal"
-                name="dummy"
-                type="date"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleCancel}>Cancel</Button>
-            <Button onClick={this.toggleEdit}>Update</Button>
-          </DialogActions>
-        </Dialog>
+              <FormGroup row>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={this.state.contents.singleDate}
+                      name="singleDate"
+                      onChange={this.handleCheck}
+                      value="singleDate"
+                    />
+                  }
+                  label="Single Day?"
+                />
+              </FormGroup>
+              <div>
+                <TextField
+                  className={`${hiddenTextField} ${classes.textField}`}
+                  label="Start Date"
+                  margin="normal"
+                  name="startDate"
+                  onChange={this.handleChange}
+                  type="date"
+                  value={this.state.contents.startDate}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                />
+                <TextField
+                  className={classes.textField}
+                  label={`${labelEndDate}`}
+                  margin="normal"
+                  name="endDate"
+                  onChange={this.handleChange}
+                  type="date"
+                  value={this.state.contents.endDate}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                />
+                <TextField
+                  className={dummyTextField}
+                  margin="normal"
+                  name="dummy"
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                />
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleCancel}>Cancel</Button>
+              <Button onClick={this.toggleEdit}>Update</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
       </div>
     );
 
