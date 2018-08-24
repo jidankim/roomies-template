@@ -21,7 +21,7 @@ export function eventPostRequest(contents) {
     dispatch(eventPost());
 
     return axios
-      .post('/api/event/', { contents })
+      .post('/api/event/', contents)
       .then(respose => {
         dispatch(eventPostSuccess());
       })
@@ -54,29 +54,27 @@ export function eventPostFailure(error) {
 
 /*
     Parameter:
-        - isInitial: whether it is for initial loading
-        - listType: OPTIONAL; loading 'old' event of 'new' event
-        - id: OPTIONAL; event id (one at the bottom or one at the top)
-        - username: OPTIONAL; find events of following user
+        - month: month that is displayed
+        - category OPTIONAL WILL BE IMPLEMENTED
 */
-export function eventListRequest(isInitial, listType, id, username) {
+export function eventListRequest(month, category) {
   return dispatch => {
     // inform event list API is starting
     dispatch(eventList());
 
-    let url = '/api/event';
+    let url = `/api/event/${month}`;
 
-    if (typeof username === 'undefined') {
-      // username not given, load public events
-      url = isInitial ? url : `${url}/${listType}/${id}`;
-    } else {
-      // load events of specific user
-    }
+    // if (typeof username === 'undefined') {
+    //   // username not given, load public events
+    //   url = isInitial ? url : `${url}/${listType}/${id}`;
+    // } else {
+    //   // load events of specific user
+    // }
 
     return axios
       .get(url)
       .then(response => {
-        dispatch(eventListSuccess(response.data, isInitial, listType));
+        dispatch(eventListSuccess(response.data));
       })
       .catch(error => {
         dispatch(eventListFailure());
@@ -90,12 +88,10 @@ export function eventList() {
   };
 }
 
-export function eventListSuccess(data, isInitial, listType) {
+export function eventListSuccess(data) {
   return {
     type: EVENT_LIST_SUCCESS,
-    data,
-    isInitial,
-    listType
+    data
   };
 }
 
@@ -111,7 +107,7 @@ export function eventEditRequest(id, index, contents) {
     dispatch(eventEdit());
 
     return axios
-      .put('/api/event/' + id, { contents })
+      .put('/api/event/' + id, contents)
       .then(response => {
         dispatch(eventEditSuccess(index, response.data.event));
       })

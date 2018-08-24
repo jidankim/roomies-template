@@ -1,5 +1,5 @@
 import * as types from 'actions/ActionTypes';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 
 const initialState = {
   login: {

@@ -26,7 +26,7 @@ class Home extends React.Component {
       });
     };
 
-    this.props.eventListRequest(true).then(() => {
+    this.props.eventListRequest(8).then(() => {
       // BEGIN NEW EVENT LOADING LOOP
       loadEventLoop();
     });
@@ -47,7 +47,7 @@ class Home extends React.Component {
     console.log(this.props.eventData);
     // IF PAGE IS EMPTY, DO THE INITIAL LOADING
     //if (this.props.eventData.length === 0)
-    return this.props.eventListRequest(true);
+    return this.props.eventListRequest(8);
 
     // return this.props.eventListRequest(
     //   false,
@@ -214,8 +214,8 @@ const mapDispatchToProps = dispatch => {
     eventPostRequest: contents => {
       return dispatch(eventPostRequest(contents));
     },
-    eventListRequest: (isInitial, listType, id, username) => {
-      return dispatch(eventListRequest(isInitial, listType, id, username));
+    eventListRequest: (month, category) => {
+      return dispatch(eventListRequest(month, category));
     },
     eventEditRequest: (id, index, contents) => {
       return dispatch(eventEditRequest(id, index, contents));

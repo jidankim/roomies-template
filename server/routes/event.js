@@ -6,10 +6,10 @@ const router = express.Router();
 
 /*
     WRITE EVENT: POST /api/event
-    BODY SAMPLE: { contents: { 
+    BODY SAMPLE: {
                     eventName: "event",
-                    endDate: "2018-08-20",
-                    startDate: "2018-08-27" }
+                    endDate: 2018-08-27T00:00:00.000Z,
+                    startDate: 2018-08-20T00:00:00.000Z
                  }
     ERROR CODES
         1: NOT LOGGED IN
@@ -25,14 +25,14 @@ router.post('/', (req, res) => {
     }
 
     // CHECK CONTENTS VALID
-    if (typeof req.body.contents.eventName !== 'string') {
+    if (typeof req.body.eventName !== 'string') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
         });
     }
 
-    if (req.body.contents.eventName === "") {
+    if (req.body.eventName === "") {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
@@ -42,9 +42,9 @@ router.post('/', (req, res) => {
     // CREATE NEW EVENT 
     let event = new Event({
         writer: req.session.loginInfo.username,
-        eventName: req.body.contents.eventName,
-        endDate: req.body.contents.endDate,
-        startDate: req.body.contents.startDate
+        eventName: req.body.eventName,
+        endDate: new Date(req.body.endDate),
+        startDate: new Date(req.body.startDate)
     });
 
     // SAVE IN DATABASE
@@ -56,10 +56,10 @@ router.post('/', (req, res) => {
 
 /*
     MODIFY EVENT: PUT /api/event/:id
-    BODY SAMPLE: { contents: { 
+    BODY SAMPLE: { 
                     eventName: "event",
-                    endDate: "2018-08-20",
-                    startDate: "2018-08-27" }
+                    endDate: 2018-08-27T00:00:000.Z,
+                    startDate: 2018-08-20T00:00:000Z
                  }
     ERROR CODES
         1: INVALID ID,
@@ -78,14 +78,14 @@ router.put('/:id', (req, res) => {
     }
 
     // CHECK CONTENTS VALID
-    if (typeof req.body.contents.eventName !== 'string') {
+    if (typeof req.body.eventName !== 'string') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
         });
     }
 
-    if (req.body.contents.eventName === "") {
+    if (req.body.eventName === "") {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
@@ -121,9 +121,9 @@ router.put('/:id', (req, res) => {
         }
 
         // MODIFY AND SAVE IN DATABASE
-        event.eventName = req.body.contents.eventName;
-        event.endDate = req.body.contents.endDate;
-        event.startDate = req.body.contents.startDate;
+        event.eventName = req.body.eventName;
+        event.endDate = new Date(req.body.endDate);
+        event.startDate = new Date(req.body.startDate);
 
         event.save((err, event) => {
             if (err) throw err;
@@ -187,69 +187,21 @@ router.delete('/:id', (req, res) => {
 });
 
 /*
-    READ EVENT: GET /api/event
+    READ EVENT: GET /api/event/:month
 */
-router.get('/', (req, res) => {
-    Event.find({ writer: { $in: ['admin', req.session.loginInfo.username] } })
+router.get('/:month', (req, res) => {
+    let month = parseInt(req.params.month);
+    let loginInfo = req.session.loginInfo;
+    let writerShow = ['admin'];
+    if (loginInfo !== undefined && loginInfo.username !== 'admin')
+        writerShow.push(req.session.loginInfo.username);
+
+    Event.find({ writer: { $in: writerShow }, "$expr": { "$eq": [{ "$month" : "$endDate" }, month] } }) 
     .sort({endDate: 1})
-    .limit(6)
     .exec((err, events) => {
-        if (err) throw err;
+        if (err) throw err; 
         res.json(events);
     });
-});
-
-/*
-    READ ADDITIONAL (OLD/NEW) EVENT: GET /api/event/:listType/:id
-*/
-router.get('/:listType/:id', (req, res) => {
-    let listType = req.params.listType;
-    let id = req.params.id;
-
-    // CHECK LIST TYPE VALIDITY
-    if (listType !== 'old' && listType !== 'new') {
-        return res.status(400).json({
-            error: "INVALID LISTTYPE",
-            code: 1
-        });
-    }
-
-    // CHECK EVENT ID VALIDITY
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({
-            error: "INVALID ID",
-            code: 2
-        });
-    }
-
-//    let objId = new mongoose.Types.ObjectId(req.params.id);
-    let reqEndDate = '';
-    Event.findById(id, (err, event) => {
-        if (err) throw err;
-        reqEndDate = event.endDate;
-        console.log(reqEndDate);
-    });
-
-    if (listType === 'new') {
-        // GET NEWER EVENT
-        Event.find({ endDate: { $gt: reqEndDate }}) 
-        .sort({ endDate: 1 })
-        .limit(6)
-        .exec((err, events) => {
-            if (err) throw err;
-            console.log(events);
-            return res.json(events);
-        });
-    } else {
-        // GET OLDER EVENT
-        Event.find({ endDate: { $gt: reqEndDate }})
-        .sort({ endDate : 1 })
-        .limit(6)
-        .exec((err, events) => {
-            if (err) throw err;
-            return res.json(events);
-        });
-    }
 });
 
 export default router;

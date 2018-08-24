@@ -1,5 +1,5 @@
 import * as types from 'actions/ActionTypes';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 
 const initialState = {
   post: {
@@ -8,8 +8,7 @@ const initialState = {
   },
   list: {
     status: 'INIT',
-    data: [],
-    isLast: false
+    data: []
   },
   edit: {
     status: 'INIT',
@@ -55,32 +54,12 @@ export default function event(state, action) {
         }
       });
     case types.EVENT_LIST_SUCCESS:
-      if (action.isInitial) {
-        return update(state, {
-          list: {
-            status: { $set: 'SUCCESS' },
-            data: { $set: action.data },
-            isLast: { $set: action.data.length < 6 }
-          }
-        });
-      } else {
-        if (action.listType === 'new') {
-          return update(state, {
-            list: {
-              status: { $set: 'SUCCESS' },
-              data: { $set: action.data }
-            }
-          });
-        } else {
-          return update(state, {
-            list: {
-              status: { $set: 'SUCCESS' },
-              data: { $push: action.data },
-              isLast: { $set: action.data.length < 6 }
-            }
-          });
+      return update(state, {
+        list: {
+          status: { $set: 'SUCCESS' },
+          data: { $set: action.data }
         }
-      }
+      });
 
       // loading older or newer event to be implemented..
       return state;
