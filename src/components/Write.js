@@ -26,7 +26,7 @@ const styles = theme => ({
     marginRight: theme.spacing.unit / 2,
     width: 100,
     visibility: 'hidden'
-  },
+  }
 });
 
 class Write extends React.Component {
@@ -41,36 +41,36 @@ class Write extends React.Component {
       contents: {
         eventName: '',
         endDate: today,
-        singleDate: false,
         startDate: today
       },
+      singleDate: false,
       toggleDialog: false
     };
   }
 
   // componentDidUpdate(prevProps, prevState) {
-    //   if (this.state.contents.startDate !== prevState.contents.startDate) {
-    //     this.setState({
-    //       ...this.state,
-    //       contents: {
-    //         ...this.state.contents,
-    //         endDate: this.state.contents.startDate
-    //       }
-    //     });
-    //   }
-    // If single date, change startDate to match endDate, if already not done so
-    // if (
-    //   this.state.contents.singleDate &&
-    //   prevState.contents.startDate !== prevState.contents.endDate
-    // ) {
-    //   this.setState({
-    //     ...this.state,
-    //     contents: {
-    //       ...this.state.contents,
-    //       startDate: this.state.contents.endDate
-    //     }
-    //   });
-    // }
+  //   if (this.state.contents.startDate !== prevState.contents.startDate) {
+  //     this.setState({
+  //       ...this.state,
+  //       contents: {
+  //         ...this.state.contents,
+  //         endDate: this.state.contents.startDate
+  //       }
+  //     });
+  //   }
+  // If single date, change startDate to match endDate, if already not done so
+  // if (
+  //   this.state.singleDate &&
+  //   prevState.contents.startDate !== prevState.contents.endDate
+  // ) {
+  //   this.setState({
+  //     ...this.state,
+  //     contents: {
+  //       ...this.state.contents,
+  //       startDate: this.state.contents.endDate
+  //     }
+  //   });
+  // }
   // }
 
   handleChange(e) {
@@ -86,10 +86,7 @@ class Write extends React.Component {
   handleCheck(e) {
     this.setState({
       ...this.state,
-      contents: {
-        ...this.state.contents,
-        [e.target.name]: e.target.checked
-      }
+      singleDate: e.target.checked
     });
   }
 
@@ -98,7 +95,7 @@ class Write extends React.Component {
     const today = new Date().toISOString().slice(0, 10);
 
     // If single date, change startDate to match endDate, before posting
-    if (contents.singleDate) {
+    if (this.state.singleDate) {
       contents.startDate = contents.endDate;
     }
 
@@ -107,9 +104,9 @@ class Write extends React.Component {
         contents: {
           eventName: '',
           endDate: today,
-          singleDate: false,
           startDate: today
         },
+        singleDate: false,
         toggleDialog: !this.state.toggleDialog
       });
     });
@@ -124,15 +121,11 @@ class Write extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const hiddenTextField = this.state.contents.singleDate
-      ? classes.hidden
-      : '';
-    const dummyTextField = this.state.contents.singleDate
+    const hiddenTextField = this.state.singleDate ? classes.hidden : '';
+    const dummyTextField = this.state.singleDate
       ? classes.hidden
       : classes.disappear;
-    const labelEndDate = this.state.contents.singleDate
-      ? 'Due Date'
-      : 'End Date';
+    const labelEndDate = this.state.singleDate ? 'Due Date' : 'End Date';
 
     return (
       <div className="modalContainer write">
@@ -155,7 +148,7 @@ class Write extends React.Component {
               <FormControlLabel
                 control={
                   <Switch
-                    checked={this.state.contents.singleDate}
+                    checked={this.state.singleDate}
                     name="singleDate"
                     onChange={this.handleCheck}
                     value="singleDate"

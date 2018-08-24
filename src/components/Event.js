@@ -27,7 +27,7 @@ const styles = theme => ({
     marginRight: theme.spacing.unit / 2,
     width: 100,
     visibility: 'hidden'
-  },
+  }
 });
 
 class Event extends React.Component {
@@ -35,7 +35,12 @@ class Event extends React.Component {
     super(props);
     this.state = {
       anchorEl: null,
-      contents: props.data.contents,
+      contents: {
+        eventName: props.data.eventName,
+        endDate: props.data.endDate,
+        startDate: props.data.startDate
+      },
+      singleDate: props.data.endDate === props.data.startDate,
       editMode: false
     };
     this.handleCancel = this.handleCancel.bind(this);
@@ -71,10 +76,7 @@ class Event extends React.Component {
   handleCheck(e) {
     this.setState({
       ...this.state,
-      contents: {
-        ...this.state.contents,
-        [e.target.name]: e.target.checked
-      }
+      singleDate: e.target.checked
     });
   }
 
@@ -108,7 +110,7 @@ class Event extends React.Component {
       let contents = this.state.contents;
 
       // If single date, change startDate to match endDate, before editing
-      if (contents.singleDate) {
+      if (this.state.singleDate) {
         contents.startDate = contents.endDate;
       }
 
@@ -129,17 +131,13 @@ class Event extends React.Component {
 
   render() {
     const { classes, data, ownership } = this.props;
-    const eDate = data.contents.endDate.split('-');
-    const sDate = data.contents.startDate.split('-');
-    const hiddenTextField = this.state.contents.singleDate
-      ? classes.hidden
-      : '';
-    const dummyTextField = this.state.contents.singleDate
+    const eDate = data.endDate.split('-');
+    const sDate = data.startDate.split('-');
+    const hiddenTextField = this.state.singleDate ? classes.hidden : '';
+    const dummyTextField = this.state.singleDate
       ? classes.hidden
       : classes.disappear;
-    const labelEndDate = this.state.contents.singleDate
-      ? 'Due Date'
-      : 'End Date';
+    const labelEndDate = this.state.singleDate ? 'Due Date' : 'End Date';
 
     const eventView = ownership ? (
       <div className="card">
@@ -167,9 +165,7 @@ class Event extends React.Component {
             </Menu>
           </div>
         </div>
-        <div className="card-content">
-          {`Event name: ${data.contents.eventName}`}
-        </div>
+        <div className="card-content">{`Event name: ${data.eventName}`}</div>
       </div>
     ) : (
       undefined
@@ -194,7 +190,7 @@ class Event extends React.Component {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={this.state.contents.singleDate}
+                      checked={this.state.singleDate}
                       name="singleDate"
                       onChange={this.handleCheck}
                       value="singleDate"

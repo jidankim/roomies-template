@@ -6,7 +6,11 @@ const router = express.Router();
 
 /*
     WRITE EVENT: POST /api/event
-    BODY SAMPLE: { contents: "sample" }
+    BODY SAMPLE: { contents: { 
+                    eventName: "event",
+                    endDate: "2018-08-20",
+                    startDate: "2018-08-27" }
+                 }
     ERROR CODES
         1: NOT LOGGED IN
         2: EMPTY CONTENTS
@@ -21,7 +25,7 @@ router.post('/', (req, res) => {
     }
 
     // CHECK CONTENTS VALID
-    if (typeof req.body.contents !== 'object') {
+    if (typeof req.body.contents.eventName !== 'string') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
@@ -38,7 +42,9 @@ router.post('/', (req, res) => {
     // CREATE NEW EVENT 
     let event = new Event({
         writer: req.session.loginInfo.username,
-        contents: req.body.contents
+        eventName: req.body.contents.eventName,
+        endDate: req.body.contents.endDate,
+        startDate: req.body.contents.startDate
     });
 
     // SAVE IN DATABASE
@@ -50,7 +56,11 @@ router.post('/', (req, res) => {
 
 /*
     MODIFY EVENT: PUT /api/event/:id
-    BODY SAMPLE: { contents: "sample" }
+    BODY SAMPLE: { contents: { 
+                    eventName: "event",
+                    endDate: "2018-08-20",
+                    startDate: "2018-08-27" }
+                 }
     ERROR CODES
         1: INVALID ID,
         2: EMPTY CONTENTS
@@ -68,7 +78,7 @@ router.put('/:id', (req, res) => {
     }
 
     // CHECK CONTENTS VALID
-    if (typeof req.body.contents !== 'object') {
+    if (typeof req.body.contents.eventName !== 'string') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
@@ -111,8 +121,9 @@ router.put('/:id', (req, res) => {
         }
 
         // MODIFY AND SAVE IN DATABASE
-        event.contents = req.body.contents;
-        event.is_edited = true;
+        event.eventName = req.body.contents.eventName;
+        event.endDate = req.body.contents.endDate;
+        event.startDate = req.body.contents.startDate;
 
         event.save((err, event) => {
             if (err) throw err;
@@ -180,7 +191,7 @@ router.delete('/:id', (req, res) => {
 */
 router.get('/', (req, res) => {
     Event.find({ writer: { $in: ['admin', req.session.loginInfo.username] } })
-    .sort({"contents.endDate": 1})
+    .sort({endDate: 1})
     .limit(6)
     .exec((err, events) => {
         if (err) throw err;
@@ -215,14 +226,14 @@ router.get('/:listType/:id', (req, res) => {
     let reqEndDate = '';
     Event.findById(id, (err, event) => {
         if (err) throw err;
-        reqEndDate = event.contents.endDate;
+        reqEndDate = event.endDate;
         console.log(reqEndDate);
     });
 
     if (listType === 'new') {
         // GET NEWER EVENT
-        Event.find({ "contents.endDate": { $gt: reqEndDate }}) 
-        .sort({ "contents.endDate": 1 })
+        Event.find({ endDate: { $gt: reqEndDate }}) 
+        .sort({ endDate: 1 })
         .limit(6)
         .exec((err, events) => {
             if (err) throw err;
@@ -231,8 +242,8 @@ router.get('/:listType/:id', (req, res) => {
         });
     } else {
         // GET OLDER EVENT
-        Event.find({ "contents.endDate": { $gt: reqEndDate }})
-        .sort({ "contents.endDate" : 1 })
+        Event.find({ endDate: { $gt: reqEndDate }})
+        .sort({ endDate : 1 })
         .limit(6)
         .exec((err, events) => {
             if (err) throw err;

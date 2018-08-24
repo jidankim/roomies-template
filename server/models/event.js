@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 
 const Event = new Schema({
     writer: String,
-    contents: Object,
-    is_edited: { type: Boolean, default: false }
+    eventName: String,
+    endDate: String,
+    startDate: String
 });
 
 export default mongoose.model('event', Event);
