@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { EventList, Notification, Write } from 'components';
+import { Calendar, EventList, Notification, Write } from 'components';
 import {
   eventPostRequest,
   eventListRequest,
@@ -173,6 +173,7 @@ class Home extends React.Component {
         {this.props.isLoggedIn ? (
           <div>
             <Write onPost={this.handlePost} />
+            <Calendar />
             <EventList
               data={this.props.eventData}
               currentUser={this.props.currentUser}
