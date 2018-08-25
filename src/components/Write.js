@@ -39,7 +39,7 @@ class Write extends React.Component {
     this.handleCheck = this.handleCheck.bind(this);
     this.handlePost = this.handlePost.bind(this);
     this.handleToggleDialog = this.handleToggleDialog.bind(this);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = moment();
     this.state = {
       contents: {
         eventName: '',
