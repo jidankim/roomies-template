@@ -8,6 +8,7 @@ import {
   eventRemoveRequest
 } from 'actions/event';
 import { openNotif } from 'actions/notification';
+import { updateMonth } from 'actions/calendar';
 
 class Home extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class Home extends React.Component {
       });
     };
 
-    this.props.eventListRequest(8).then(() => {
+    this.props.eventListRequest(this.props.displayedMonthIndex).then(() => {
       // BEGIN NEW EVENT LOADING LOOP
       loadEventLoop();
     });
@@ -47,7 +48,7 @@ class Home extends React.Component {
     console.log(this.props.eventData);
     // IF PAGE IS EMPTY, DO THE INITIAL LOADING
     //if (this.props.eventData.length === 0)
-    return this.props.eventListRequest(8);
+    return this.props.eventListRequest(this.props.displayedMonthIndex);
 
     // return this.props.eventListRequest(
     //   false,
@@ -173,7 +174,12 @@ class Home extends React.Component {
         {this.props.isLoggedIn ? (
           <div>
             <Write onPost={this.handlePost} />
-            <Calendar />
+            <Calendar
+              month={this.props.displayedMonth}
+              monthIndex={this.props.displayedMonthIndex}
+              updateMonth={this.props.updateMonth}
+              year={this.props.displayedYear}
+            />
             <EventList
               data={this.props.eventData}
               currentUser={this.props.currentUser}
@@ -197,6 +203,9 @@ class Home extends React.Component {
 const mapStateToProps = state => {
   return {
     currentUser: state.authentication.status.currentUser,
+    displayedMonth: state.calendar.displayed.month,
+    displayedMonthIndex: state.calendar.displayed.monthIndex,
+    displayedYear: state.calendar.displayed.year,
     editStatus: state.event.edit,
     eventData: state.event.list.data,
     isLoggedIn: state.authentication.status.isLoggedIn,
@@ -223,7 +232,8 @@ const mapDispatchToProps = dispatch => {
     eventRemoveRequest: (id, index) => {
       return dispatch(eventRemoveRequest(id, index));
     },
-    openNotif: (message, variant) => dispatch(openNotif(message, variant))
+    openNotif: (message, variant) => dispatch(openNotif(message, variant)),
+    updateMonth: month => dispatch(updateMonth(month))
   };
 };
 

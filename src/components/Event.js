@@ -131,7 +131,6 @@ class Event extends React.Component {
 
   render() {
     const { classes, data, ownership } = this.props;
-    console.log(data.endDate);
     const eDate = data.endDate.split('T')[0].split('-');
     const sDate = data.startDate.split('T')[0].split('-');
     const hiddenTextField = this.state.singleDate ? classes.hidden : '';

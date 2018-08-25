@@ -34,3 +34,6 @@ export const EVENT_REMOVE_FAILURE = 'EVENT_REMOVE_FAILURE';
 /* NOTIFICATION */
 export const CLOSE_NOTIF = 'CLOSE_NOTIF';
 export const OPEN_NOTIF = 'OPEN_NOTIF';
+
+/* CALENDAR */
+export const UPDATE_MONTH = 'UPDATE_MONTH';
