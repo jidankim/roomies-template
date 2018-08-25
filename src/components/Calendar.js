@@ -4,7 +4,6 @@ import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
-  Card,
   Checkbox,
   Divider,
   FormControl,
@@ -16,32 +15,12 @@ import {
 } from '@material-ui/core';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { Event, Write } from 'components';
+import { Day, Write } from 'components';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     margin: 32
-  },
-  card: {
-    border: 'gray 1px solid',
-    borderRadius: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    padding: theme.spacing.unit * 2,
-    // minHeight: 155
-    minHeight: 250
-  },
-  chips: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center'
-  },
-  dateHeader: {
-    color: theme.palette.text.primary,
-    display: 'flex',
-    justifyContent: 'flex-end'
   },
   dayOfWeek: {
     fontSize: '1.5rem',
@@ -60,19 +39,6 @@ const styles = theme => ({
   },
   icon: {
     fontSize: 20
-  },
-  pastDates: {
-    color: theme.palette.text.secondary
-  },
-  spacing: {
-    marginTop: theme.spacing.unit,
-    marginRight: theme.spacing.unit
-  },
-  today: {
-    height: 36,
-    padding: 0,
-    marginTop: 0,
-    width: 36
   }
 });
 
@@ -83,8 +49,7 @@ class Calendar extends React.Component {
       common: true,
       personal: true
     };
-    this.handleDecrement = this.handleDecrement.bind(this);
-    this.handleIncrement = this.handleIncrement.bind(this);
+    this.handleUpdateMonth = this.handleUpdateMonth.bind(this);
     this.handleToday = this.handleToday.bind(this);
   }
 
@@ -127,12 +92,11 @@ class Calendar extends React.Component {
     });
   };
 
-  handleDecrement = event => {
-    this.props.updateMonth(this.props.monthIndex - 1);
-  };
-
-  handleIncrement = event => {
-    this.props.updateMonth(this.props.monthIndex + 1);
+  handleUpdateMonth = name => event => {
+    if (name === 'left')
+      this.props.updateMonth(this.props.monthIndex - 1);
+    else
+      this.props.updateMonth(this.props.monthIndex + 1);
   };
 
   handleToday = event => {
@@ -201,14 +165,14 @@ class Calendar extends React.Component {
           <div>
             <IconButton
               disabled={monthIndex === 1}
-              onClick={this.handleDecrement}
+              onClick={this.handleUpdateMonth('left')}
             >
               <KeyboardArrowLeftIcon className={classes.icon} />
             </IconButton>
             {` ${month} ${year} `}
             <IconButton
               disabled={monthIndex === 12}
-              onClick={this.handleIncrement}
+              onClick={this.handleUpdateMonth('right')}
             >
               <KeyboardArrowRightIcon className={classes.icon} />
             </IconButton>
@@ -265,7 +229,6 @@ const Week = props => {
       {[...Array(7).keys()].map(i => {
         return (
           <Day
-            classes={classes}
             currMonth={currMonth}
             data={data}
             date={i + start}
@@ -279,91 +242,6 @@ const Week = props => {
           />
         );
       })}
-    </Grid>
-  );
-};
-
-const Day = props => {
-  const {
-    classes,
-    currMonth,
-    data,
-    date,
-    endOfPrevMonth,
-    month,
-    numDays,
-    onEdit,
-    onRemove,
-    year
-  } = props;
-
-  const pastDates = date < 1 || date > numDays ? classes.pastDates : '';
-  const monthPrefix = date === 1 ? currMonth.format('MMM') + ' ' : '';
-  const nextMonthPrefix =
-    date - numDays === 1
-      ? currMonth
-          .clone()
-          .add(1, 'month')
-          .format('MMM') + ' '
-      : '';
-
-  let displayDate;
-  if (date < 1) displayDate = date + endOfPrevMonth;
-  else if (date > numDays) displayDate = date - numDays;
-  else displayDate = date;
-
-  const dateHeader = (
-    <div className={`${pastDates} ${classes.dateHeader}`}>
-      <div className={classes.spacing}>
-        {`${monthPrefix}${nextMonthPrefix}`}
-      </div>
-      {date === moment().date() && month === moment().month() + 1 ? (
-        <Button
-          variant="fab"
-          color="secondary"
-          className={classes.today}
-          disabled
-          style={{
-            backgroundColor: '#f50057',
-            color: 'white'
-          }}
-        >
-          {`${displayDate}`}
-        </Button>
-      ) : (
-        <div className={classes.spacing}>{`${displayDate}`}</div>
-      )}
-    </div>
-  );
-
-  const chips = (
-    <div className={classes.chips}>
-      {data.map((event, i) => {
-        return event.endDate.split('T')[0] ===
-          moment()
-            .year(year)
-            .month(month - 1)
-            .date(date)
-            .format('YYYY-MM-DD') ? (
-          <Event
-            data={event}
-            key={event._id}
-            index={i}
-            onEdit={onEdit}
-            onRemove={onRemove}
-          />
-        ) : (
-          undefined
-        );
-      })}
-    </div>
-  );
-  return (
-    <Grid item xs>
-      <Card className={classes.card}>
-        {dateHeader}
-        {chips}
-      </Card>
     </Grid>
   );
 };

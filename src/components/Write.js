@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
@@ -94,7 +95,7 @@ class Write extends React.Component {
 
   handlePost = () => {
     let contents = this.state.contents;
-    const today = new Date().toISOString().slice(0, 10);
+    const today = moment().format('YYYY-MM-DD');
 
     // If single date, change startDate to match endDate, before posting
     if (this.state.singleDate) {
