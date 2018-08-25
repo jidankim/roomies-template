@@ -12,10 +12,18 @@ const styles = theme => ({
     margin: 20
   },
   card: {
+    border: 'gray 1px solid',
+    borderRadius: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     padding: theme.spacing.unit * 2,
-    textAlign: 'right',
-    color: theme.palette.text.secondary,
-    minHeight: 100
+    minHeight: 155
+  },
+  dateHeader: {
+    color: theme.palette.text.primary,
+    display: 'flex',
+    justifyContent: 'flex-end'
   },
   header: {
     display: 'flex',
@@ -23,6 +31,19 @@ const styles = theme => ({
   },
   icon: {
     fontSize: 20
+  },
+  pastDates: {
+    color: theme.palette.text.secondary
+  },
+  spacing: {
+    marginTop: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  },
+  today: {
+    height: 36,
+    padding: 0,
+    marginTop: 0,
+    width: 36
   }
 });
 
@@ -31,6 +52,7 @@ class Calendar extends React.Component {
     super(props);
     this.handleDecrement = this.handleDecrement.bind(this);
     this.handleIncrement = this.handleIncrement.bind(this);
+    this.handleToday = this.handleToday.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -55,6 +77,10 @@ class Calendar extends React.Component {
     this.props.updateMonth(this.props.monthIndex + 1);
   };
 
+  handleToday = event => {
+    this.props.updateMonth(moment().month() + 1);
+  };
+
   render() {
     const { classes, month, monthIndex, year } = this.props;
     // current month using month
@@ -64,11 +90,7 @@ class Calendar extends React.Component {
     // 0 for Sunday, month is 0 based index
     const startOfMonth = currMonth.startOf('month').day();
     const startOfWeek1 = 1 - startOfMonth;
-    const startOfWeeks = [...Array(6).keys()].map(i => {
-      console.log(i);
-      console.log(7 * i + startOfWeek1);
-      return 7 * i + startOfWeek1;
-    });
+    const startOfWeeks = [...Array(6).keys()].map(i => 7 * i + startOfWeek1);
     const numDays = currMonth.endOf('month').date();
     const endOfPrevMonth = currMonth
       .clone()
@@ -87,7 +109,7 @@ class Calendar extends React.Component {
             >
               <KeyboardArrowLeftIcon className={classes.icon} />
             </IconButton>
-            <Button>Today</Button>
+            <Button onClick={this.handleToday}>Today</Button>
             <IconButton
               disabled={monthIndex === 12}
               onClick={this.handleIncrement}
@@ -103,6 +125,7 @@ class Calendar extends React.Component {
               currMonth={currMonth}
               endOfPrevMonth={endOfPrevMonth}
               key={i}
+              month={monthIndex}
               numDays={numDays}
               start={i}
             />
@@ -114,10 +137,9 @@ class Calendar extends React.Component {
 }
 
 const Week = props => {
-  const { classes, currMonth, endOfPrevMonth, numDays, start } = props;
+  const { classes, currMonth, endOfPrevMonth, month, numDays, start } = props;
 
   return (
-    // <div>
     <Grid container spacing={0}>
       {[...Array(7).keys()].map(i => {
         return (
@@ -127,19 +149,19 @@ const Week = props => {
             date={i + start}
             endOfPrevMonth={endOfPrevMonth}
             key={i}
+            month={month}
             numDays={numDays}
           />
         );
       })}
     </Grid>
-    //  <Divider />
-    //</div>
   );
 };
 
 const Day = props => {
-  const { classes, currMonth, date, endOfPrevMonth, numDays } = props;
+  const { classes, currMonth, date, endOfPrevMonth, month, numDays } = props;
 
+  const pastDates = date < 1 || date > numDays ? classes.pastDates : '';
   const monthPrefix = date === 1 ? currMonth.format('MMM') + ' ' : '';
   const nextMonthPrefix =
     date - numDays === 1
@@ -153,11 +175,33 @@ const Day = props => {
   if (date < 1) displayDate = date + endOfPrevMonth;
   else if (date > numDays) displayDate = date - numDays;
   else displayDate = date;
+
+  const dateHeader = (
+    <div className={`${pastDates} ${classes.dateHeader}`}>
+      <div className={classes.spacing}>
+        {`${monthPrefix}${nextMonthPrefix}`}
+      </div>
+      {date === moment().date() && month === moment().month() + 1 ? (
+        <Button
+          variant="fab"
+          color="secondary"
+          className={classes.today}
+          disabled
+          style={{
+            backgroundColor: '#f50057',
+            color: 'white'
+          }}
+        >
+          {`${displayDate}`}
+        </Button>
+      ) : (
+        <div className={classes.spacing}>{`${displayDate}`}</div>
+      )}
+    </div>
+  );
   return (
     <Grid item xs>
-      <Card
-        className={classes.card}
-      >{`${monthPrefix}${nextMonthPrefix}${displayDate}`}</Card>
+      <Card className={classes.card}>{dateHeader}</Card>
     </Grid>
   );
 };
