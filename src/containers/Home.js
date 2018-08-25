@@ -23,7 +23,7 @@ class Home extends React.Component {
     // LOAD NEW EVENT EVERY 5 SECONDS
     const loadEventLoop = () => {
       this.loadNewEvent().then(() => {
-        this.eventLoaderTimeoutId = setTimeout(loadEventLoop, 5000);
+        this.eventLoaderTimeoutId = setTimeout(loadEventLoop, 1000);
       });
     };
 

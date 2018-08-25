@@ -45,6 +45,7 @@ class Event extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      category: props.data.category,
       contents: {
         eventName: props.data.eventName,
         endDate: props.data.endDate,
@@ -113,7 +114,7 @@ class Event extends React.Component {
 
   render() {
     const { classes, data, ownership } = this.props;
-    const { contents, editMode, singleDate } = this.state;
+    const { category, contents, editMode, singleDate } = this.state;
 
     const eDate = data.endDate.split('T')[0].split('-');
     const sDate = data.startDate.split('T')[0].split('-');
@@ -129,6 +130,7 @@ class Event extends React.Component {
       <div className={classes.root}>
         <Chip
           className={classes.chip}
+          color={category === 'c' ? 'primary' : 'secondary'}
           label={shortenedName}
           onClick={this.handleEdit}
         />
