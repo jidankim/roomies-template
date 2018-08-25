@@ -97,7 +97,7 @@ class Write extends React.Component {
     const today = new Date().toISOString().slice(0, 10);
 
     // If single date, change startDate to match endDate, before posting
-    if (singleDate) {
+    if (this.state.singleDate) {
       contents.startDate = contents.endDate;
     }
 

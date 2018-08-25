@@ -3,18 +3,27 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   FormControlLabel,
   FormGroup,
-  Menu,
-  MenuItem,
   Switch,
   TextField
 } from '@material-ui/core';
 
 const styles = theme => ({
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap'
+  },
+  chip: {
+    marginTop: theme.spacing.unit / 4,
+    maxWidth: 110,
+    minWidth: 110
+  },
   disappear: {
     display: 'none'
   },
@@ -36,7 +45,6 @@ class Event extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      anchorEl: null,
       contents: {
         eventName: props.data.eventName,
         endDate: props.data.endDate,
@@ -45,23 +53,11 @@ class Event extends React.Component {
       singleDate: props.data.endDate === props.data.startDate,
       editMode: false
     };
-    this.handleCancel = this.handleCancel.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleClose = this.handleClose.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
   }
-
-  // canceling dialog and dropdown menu
-  handleCancel = () => {
-    this.setState({
-      ...this.state,
-      anchorEl: null,
-      editMode: !this.state.editMode
-    });
-  };
 
   // handling change in edit dialog
   handleChange = e => {
@@ -82,30 +78,14 @@ class Event extends React.Component {
     });
   };
 
-  // clicking on the options of the dropdown menu
-  handleClick = e => {
-    this.setState({
-      ...this.state,
-      anchorEl: e.currentTarget
-    });
-  };
-
-  // closing the dropdown menu
-  handleClose = () => {
-    this.setState({
-      ...this.state,
-      anchorEl: null
-    });
-  };
-
   handleRemove = () => {
     let id = this.props.data._id;
     let index = this.props.index;
+    this.toggleEdit();
     this.props.onRemove(id, index);
   };
 
-  // toggling edit dialog
-  toggleEdit = () => {
+  handleEdit = () => {
     if (this.state.editMode) {
       let id = this.props.data._id;
       let index = this.props.index;
@@ -116,61 +96,43 @@ class Event extends React.Component {
         contents.startDate = contents.endDate;
       }
 
-      this.props.onEdit(id, index, contents).then(() => {
-        this.setState({
-          ...this.state,
-          editMode: !this.state.editMode
-        });
-      });
+      this.toggleEdit();
+      this.props.onEdit(id, index, contents);
     } else {
-      this.setState({
-        ...this.state,
-        anchorEl: null,
-        editMode: !this.state.editMode
-      });
+      this.toggleEdit();
     }
+  };
+
+  // toggling edit dialog
+  toggleEdit = () => {
+    this.setState({
+      ...this.state,
+      editMode: !this.state.editMode
+    });
   };
 
   render() {
     const { classes, data, ownership } = this.props;
-    const { anchorEl, contents, editMode, singleDate } = this.state;
+    const { contents, editMode, singleDate } = this.state;
 
     const eDate = data.endDate.split('T')[0].split('-');
     const sDate = data.startDate.split('T')[0].split('-');
     const hiddenTextField = singleDate ? classes.hidden : '';
     const dummyTextField = singleDate ? classes.hidden : classes.disappear;
     const labelEndDate = singleDate ? 'Due Date' : 'End Date';
+    const shortenedName =
+      data.eventName.length > 11
+        ? data.eventName.substring(0, 11) + '...'
+        : data.eventName;
 
-    const eventView = ownership ? (
-      <div className="card">
-        <div className="info">
-          <span className="date">{`${sDate[1]}/${sDate[2]} ~ ${eDate[1]}/${
-            eDate[2]
-          }`}</span>
-          <div className="option-button">
-            <i
-              aria-owns={anchorEl ? 'simple-menu' : null}
-              aria-haspopup="true"
-              className="material-icons icon-button"
-              onClick={this.handleClick}
-            >
-              more_vert
-            </i>
-            <Menu
-              id="simple-menu"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={this.handleClose}
-            >
-              <MenuItem onClick={this.toggleEdit}>Edit</MenuItem>
-              <MenuItem onClick={this.handleRemove}>Remove</MenuItem>
-            </Menu>
-          </div>
-        </div>
-        <div className="card-content">{`Event name: ${data.eventName}`}</div>
+    const eventView = (
+      <div className={classes.root}>
+        <Chip
+          className={classes.chip}
+          label={shortenedName}
+          onClick={this.handleEdit}
+        />
       </div>
-    ) : (
-      undefined
     );
 
     const editView = (
@@ -209,7 +171,7 @@ class Event extends React.Component {
                   name="startDate"
                   onChange={this.handleChange}
                   type="date"
-                  value={contents.startDate}
+                  value={contents.startDate.split('T')[0]}
                   InputLabelProps={{
                     shrink: true
                   }}
@@ -221,7 +183,7 @@ class Event extends React.Component {
                   name="endDate"
                   onChange={this.handleChange}
                   type="date"
-                  value={contents.endDate}
+                  value={contents.endDate.split('T')[0]}
                   InputLabelProps={{
                     shrink: true
                   }}
@@ -238,8 +200,9 @@ class Event extends React.Component {
               </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.handleCancel}>Cancel</Button>
-              <Button onClick={this.toggleEdit}>Update</Button>
+              <Button onClick={this.toggleEdit}>Cancel</Button>
+              <Button onClick={this.handleRemove}>Remove</Button>
+              <Button onClick={this.handleEdit}>Update</Button>
             </DialogActions>
           </Dialog>
         </div>
@@ -257,8 +220,7 @@ Event.propTypes = {
   data: PropTypes.object,
   index: PropTypes.number,
   onEdit: PropTypes.func,
-  onRemove: PropTypes.func,
-  ownership: PropTypes.bool
+  onRemove: PropTypes.func
 };
 
 Event.defaultProps = {

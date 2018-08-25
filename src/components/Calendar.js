@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Button, Card, Divider, Grid, IconButton } from '@material-ui/core';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import { Event } from 'components';
 
 const styles = theme => ({
   root: {
@@ -18,7 +19,13 @@ const styles = theme => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: theme.spacing.unit * 2,
-    minHeight: 155
+    // minHeight: 155
+    minHeight: 250
+  },
+  chips: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
   },
   dateHeader: {
     color: theme.palette.text.primary,
@@ -82,7 +89,16 @@ class Calendar extends React.Component {
   };
 
   render() {
-    const { classes, month, monthIndex, year } = this.props;
+    const {
+      classes,
+      currentUser,
+      data,
+      month,
+      monthIndex,
+      onEdit,
+      onRemove,
+      year
+    } = this.props;
     // current month using month
     const currMonth = moment()
       .year(year)
@@ -123,11 +139,15 @@ class Calendar extends React.Component {
             <Week
               classes={classes}
               currMonth={currMonth}
+              data={data}
               endOfPrevMonth={endOfPrevMonth}
               key={i}
               month={monthIndex}
               numDays={numDays}
+              onEdit={onEdit}
+              onRemove={onRemove}
               start={i}
+              year={year}
             />
           );
         })}
@@ -137,7 +157,18 @@ class Calendar extends React.Component {
 }
 
 const Week = props => {
-  const { classes, currMonth, endOfPrevMonth, month, numDays, start } = props;
+  const {
+    classes,
+    currMonth,
+    data,
+    endOfPrevMonth,
+    month,
+    numDays,
+    onEdit,
+    onRemove,
+    start,
+    year
+  } = props;
 
   return (
     <Grid container spacing={0}>
@@ -146,11 +177,15 @@ const Week = props => {
           <Day
             classes={classes}
             currMonth={currMonth}
+            data={data}
             date={i + start}
             endOfPrevMonth={endOfPrevMonth}
             key={i}
             month={month}
             numDays={numDays}
+            onEdit={onEdit}
+            onRemove={onRemove}
+            year={year}
           />
         );
       })}
@@ -159,7 +194,18 @@ const Week = props => {
 };
 
 const Day = props => {
-  const { classes, currMonth, date, endOfPrevMonth, month, numDays } = props;
+  const {
+    classes,
+    currMonth,
+    data,
+    date,
+    endOfPrevMonth,
+    month,
+    numDays,
+    onEdit,
+    onRemove,
+    year
+  } = props;
 
   const pastDates = date < 1 || date > numDays ? classes.pastDates : '';
   const monthPrefix = date === 1 ? currMonth.format('MMM') + ' ' : '';
@@ -199,19 +245,60 @@ const Day = props => {
       )}
     </div>
   );
+
+  const chips = (
+    <div className={classes.chips}>
+      {data.map((event, i) => {
+        return event.endDate.split('T')[0] ===
+          moment()
+            .year(year)
+            .month(month - 1)
+            .date(date)
+            .format('YYYY-MM-DD') ? (
+          <Event
+            data={event}
+            key={event._id}
+            index={i}
+            onEdit={onEdit}
+            onRemove={onRemove}
+          />
+        ) : (
+          undefined
+        );
+      })}
+    </div>
+  )
   return (
     <Grid item xs>
-      <Card className={classes.card}>{dateHeader}</Card>
+      <Card className={classes.card}>
+        {dateHeader}
+        {chips}
+      </Card>
     </Grid>
   );
 };
 
 Calendar.propTypes = {
   classes: PropTypes.object.isRequired,
+  currentUser: PropTypes.string,
+  data: PropTypes.array,
   month: PropTypes.string,
   monthIndex: PropTypes.number,
+  onEdit: PropTypes.func,
+  onRemove: PropTypes.func,
   updateMonth: PropTypes.func,
   year: PropTypes.number
+};
+
+Calendar.defaultProps = {
+  currentUser: '',
+  data: [],
+  onEdit: (id, index, contents) => {
+    console.error('edit function not defined');
+  },
+  onRemove: (id, index) => {
+    console.error('remove function not defined');
+  }
 };
 
 export default withStyles(styles)(Calendar);

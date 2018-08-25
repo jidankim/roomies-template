@@ -167,16 +167,14 @@ class Home extends React.Component {
           <div>
             <Write onPost={this.handlePost} />
             <Calendar
+              currentUser={this.props.currentUser}
+              data={this.props.eventData}
               month={this.props.displayedMonth}
               monthIndex={this.props.displayedMonthIndex}
-              updateMonth={this.props.updateMonth}
-              year={this.props.displayedYear}
-            />
-            <EventList
-              data={this.props.eventData}
-              currentUser={this.props.currentUser}
               onEdit={this.handleEdit}
               onRemove={this.handleRemove}
+              updateMonth={this.props.updateMonth}
+              year={this.props.displayedYear}
             />
             <Notification
               message={this.props.message}
