@@ -5,12 +5,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { Button, Card, Divider, Grid, IconButton } from '@material-ui/core';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { Event } from 'components';
+import { Event, Write } from 'components';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    margin: 20
+    margin: 32
   },
   card: {
     border: 'gray 1px solid',
@@ -31,6 +31,12 @@ const styles = theme => ({
     color: theme.palette.text.primary,
     display: 'flex',
     justifyContent: 'flex-end'
+  },
+  dayOfWeek: {
+    fontSize: '1.5rem',
+    color: theme.palette.text.primary,
+    marginRight: theme.spacing.unit * 2,
+    textAlign: 'right'
   },
   header: {
     display: 'flex',
@@ -93,6 +99,7 @@ class Calendar extends React.Component {
       classes,
       currentUser,
       data,
+      handlePost,
       month,
       monthIndex,
       onEdit,
@@ -117,7 +124,7 @@ class Calendar extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.header}>
-          <div>{`${month} ${year}`}</div>
+          <Write onPost={handlePost} />
           <div>
             <IconButton
               disabled={monthIndex === 1}
@@ -125,7 +132,7 @@ class Calendar extends React.Component {
             >
               <KeyboardArrowLeftIcon className={classes.icon} />
             </IconButton>
-            <Button onClick={this.handleToday}>Today</Button>
+            {` ${month} ${year} `}
             <IconButton
               disabled={monthIndex === 12}
               onClick={this.handleIncrement}
@@ -133,7 +140,15 @@ class Calendar extends React.Component {
               <KeyboardArrowRightIcon className={classes.icon} />
             </IconButton>
           </div>
+          <Button onClick={this.handleToday}>Today</Button>
         </div>
+        <Grid container spacing={0}>
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => {
+            return (
+              <Grid className={classes.dayOfWeek} key={d} item xs>{d}</Grid>
+            );
+          })}
+        </Grid>
         {startOfWeeks.map(i => {
           return (
             <Week
