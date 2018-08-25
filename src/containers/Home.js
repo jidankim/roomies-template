@@ -62,6 +62,7 @@ class Home extends React.Component {
                         ERROR CODES
                             1: NOT LOGGED IN
                             2: EMPTY CONTENTS
+                            3: INVALID DATES
                     */
         switch (this.props.postStatus.error) {
           case 1:
@@ -73,6 +74,9 @@ class Home extends React.Component {
             break;
           case 2:
             this.props.openNotif('Please write something', 'error');
+            break;
+          case 3:
+            this.props.openNotif('Make sure end date is after start date', 'error');
             break;
           default:
             this.props.openNotif('Something broke', 'error');
@@ -91,13 +95,15 @@ class Home extends React.Component {
                         ERROR CODES
                             1: INVALID ID,
                             2: EMPTY CONTENTS,
-                            3: NOT LOGGED IN,
-                            4: NO RESOURCE,
-                            5: PERMISSION FAILURE
+                            3: INVALID DATES,
+                            4: NOT LOGGED IN,
+                            5: NO RESOURCE,
+                            6: PERMISSION FAILURE
                     */
         let errorMessage = [
           'Something broke',
           'Please write something',
+          'Make sure end date is after start date',
           'You are not logged in',
           'That event does not exist anymore',
           'You do not have permission'
@@ -109,7 +115,7 @@ class Home extends React.Component {
         this.props.openNotif(errorMessage[error - 1], 'error');
 
         // IF NOT LOGGED IN, REFRESH THE PAGE AFTER 2 SECONDS
-        if (error === 3) {
+        if (error === 4) {
           setTimeout(() => {
             location.reload(false);
           }, 2000);

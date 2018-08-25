@@ -8,12 +8,13 @@ const router = express.Router();
     WRITE EVENT: POST /api/event
     BODY SAMPLE: {
                     eventName: "event",
-                    endDate: 2018-08-27T00:00:00.000Z,
-                    startDate: 2018-08-20T00:00:00.000Z
+                    endDate: "2018-08-27",
+                    startDate: "2018-08-20"
                  }
     ERROR CODES
         1: NOT LOGGED IN
         2: EMPTY CONTENTS
+        3: INVALID DATES
 */
 router.post('/', (req, res) => {
     // CHECK LOGIN STATUS
@@ -39,6 +40,14 @@ router.post('/', (req, res) => {
         });
     }
 
+    // CHECK DATES VALID
+    if (req.body.startDate > req.body.endDate) {
+        return res.status(400).json({
+            error: "INVALID DATES",
+            code: 3
+        });
+    }
+
     // CREATE NEW EVENT 
     let event = new Event({
         writer: req.session.loginInfo.username,
@@ -58,15 +67,16 @@ router.post('/', (req, res) => {
     MODIFY EVENT: PUT /api/event/:id
     BODY SAMPLE: { 
                     eventName: "event",
-                    endDate: 2018-08-27T00:00:000.Z,
-                    startDate: 2018-08-20T00:00:000Z
+                    endDate: "2018-08-27",
+                    startDate: "2018-08-20"
                  }
     ERROR CODES
         1: INVALID ID,
         2: EMPTY CONTENTS
-        3: NOT LOGGED IN
-        4: NO RESOURCE
-        5: PERMISSION FAILURE
+        3: INVALID DATES
+        4: NOT LOGGED IN
+        5: NO RESOURCE
+        6: PERMISSION FAILURE
 */
 router.put('/:id', (req, res) => {
     // CHECK EVENT ID VALIDITY
@@ -92,11 +102,19 @@ router.put('/:id', (req, res) => {
         });
     }
 
+    // CHECK DATES VALID
+    if (req.body.startDate > req.body.endDate) {
+        return res.status(400).json({
+            error: "INVALID DATES",
+            code: 3
+        });
+    }
+
     // CHECK LOGIN STATUS
     if (typeof req.session.loginInfo === 'undefined') {
         return res.status(403).json({
             error: "NOT LOGGED IN",
-            code: 3
+            code: 4
         });
     }
 
@@ -108,7 +126,7 @@ router.put('/:id', (req, res) => {
         if (!event) {
             return res.status(404).json({
                 error: "NO RESOURCE",
-                code: 4
+                code: 5
             });
         }
 
@@ -116,7 +134,7 @@ router.put('/:id', (req, res) => {
         if (event.writer != req.session.loginInfo.username) {
             return res.status(403).json({
                 error: "PERMISSION FAILURE",
-                code: 5
+                code: 6
             });
         }
 
