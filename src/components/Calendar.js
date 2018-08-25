@@ -2,7 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Card, Divider, Grid, IconButton } from '@material-ui/core';
+import {
+  Button,
+  Card,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Grid,
+  IconButton
+} from '@material-ui/core';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Event, Write } from 'components';
@@ -38,6 +49,11 @@ const styles = theme => ({
     marginRight: theme.spacing.unit * 2,
     textAlign: 'right'
   },
+  filterHeader: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
   header: {
     display: 'flex',
     justifyContent: 'space-between'
@@ -63,6 +79,10 @@ const styles = theme => ({
 class Calendar extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      common: true,
+      personal: true
+    };
     this.handleDecrement = this.handleDecrement.bind(this);
     this.handleIncrement = this.handleIncrement.bind(this);
     this.handleToday = this.handleToday.bind(this);
@@ -81,6 +101,31 @@ class Calendar extends React.Component {
     let update = JSON.stringify(current) !== JSON.stringify(next);
     return update;
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    let prev = {
+      props: prevProps,
+      state: prevState
+    };
+
+    let current = {
+      props: this.props,
+      state: this.state
+    };
+
+    if (JSON.stringify(prev) !== JSON.stringify(current)) {
+      let filter = this.state.common ? 'c' : '';
+      filter = this.state.personal ? filter + 'p' : filter;
+      this.props.updateFilter(filter);
+    }
+  }
+
+  handleChange = name => event => {
+    this.setState({
+      ...this.state,
+      [name]: event.target.checked
+    });
+  };
 
   handleDecrement = event => {
     this.props.updateMonth(this.props.monthIndex - 1);
@@ -123,6 +168,34 @@ class Calendar extends React.Component {
 
     return (
       <div className={classes.root}>
+        <div className={classes.filterHeader}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Filter: </FormLabel>
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.common}
+                    onChange={this.handleChange('common')}
+                    value="common"
+                    color="primary"
+                  />
+                }
+                label="Common"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.personal}
+                    onChange={this.handleChange('personal')}
+                    value="personal"
+                  />
+                }
+                label="Personal"
+              />
+            </FormGroup>
+          </FormControl>
+        </div>
         <div className={classes.header}>
           <Write onPost={handlePost} />
           <div>
@@ -145,7 +218,9 @@ class Calendar extends React.Component {
         <Grid container spacing={0}>
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => {
             return (
-              <Grid className={classes.dayOfWeek} key={d} item xs>{d}</Grid>
+              <Grid className={classes.dayOfWeek} key={d} item xs>
+                {d}
+              </Grid>
             );
           })}
         </Grid>
@@ -282,7 +357,7 @@ const Day = props => {
         );
       })}
     </div>
-  )
+  );
   return (
     <Grid item xs>
       <Card className={classes.card}>
@@ -297,10 +372,12 @@ Calendar.propTypes = {
   classes: PropTypes.object.isRequired,
   currentUser: PropTypes.string,
   data: PropTypes.array,
+  handlePost: PropTypes.func,
   month: PropTypes.string,
   monthIndex: PropTypes.number,
   onEdit: PropTypes.func,
   onRemove: PropTypes.func,
+  updateFilter: PropTypes.func,
   updateMonth: PropTypes.func,
   year: PropTypes.number
 };

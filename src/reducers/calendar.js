@@ -11,12 +11,17 @@ const initialState = {
     // index is 0-based
     monthIndex: moment().month() + 1,
     dayIndex: moment().date()
-  }
+  },
+  filter: 'cp'
 };
 
 export default function calendar(state = initialState, action) {
   console.log(action);
   switch (action.type) {
+    case types.UPDATE_FILTER:
+      return update(state, {
+        filter: { $set: action.filter }
+      });
     case types.UPDATE_MONTH:
       return update(state, {
         displayed: {

@@ -36,4 +36,5 @@ export const CLOSE_NOTIF = 'CLOSE_NOTIF';
 export const OPEN_NOTIF = 'OPEN_NOTIF';
 
 /* CALENDAR */
+export const UPDATE_FILTER = 'UPDATE_FILTER';
 export const UPDATE_MONTH = 'UPDATE_MONTH';

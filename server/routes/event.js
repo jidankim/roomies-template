@@ -49,8 +49,10 @@ router.post('/', (req, res) => {
     }
 
     // CREATE NEW EVENT 
+    let cat = req.session.loginInfo.username === 'admin' ? 'c' : 'p';
     let event = new Event({
         writer: req.session.loginInfo.username,
+        category: cat,
         eventName: req.body.eventName,
         endDate: new Date(req.body.endDate),
         startDate: new Date(req.body.startDate)
@@ -205,16 +207,18 @@ router.delete('/:id', (req, res) => {
 });
 
 /*
-    READ EVENT: GET /api/event/:month
+    READ EVENT: GET /api/event/:month/:filter
 */
-router.get('/:month', (req, res) => {
+router.get('/:month/:filter', (req, res) => {
     let month = parseInt(req.params.month);
+    let filter = req.params.filter;
     let loginInfo = req.session.loginInfo;
     let writerShow = ['admin'];
+    let filterArray = filter === '' ? [] : filter.split('');
     if (loginInfo !== undefined && loginInfo.username !== 'admin')
         writerShow.push(req.session.loginInfo.username);
 
-    Event.find({ writer: { $in: writerShow }, "$expr": { "$eq": [{ "$month" : "$endDate" }, month] } }) 
+    Event.find({ writer: { $in: writerShow }, "$expr": { "$eq": [{ "$month" : "$endDate" }, month] }, category: { $in: filterArray } })
     .sort({endDate: 1})
     .exec((err, events) => {
         if (err) throw err; 

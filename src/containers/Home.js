@@ -8,7 +8,7 @@ import {
   eventRemoveRequest
 } from 'actions/event';
 import { openNotif } from 'actions/notification';
-import { updateMonth } from 'actions/calendar';
+import { updateMonth, updateFilter } from 'actions/calendar';
 
 class Home extends React.Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class Home extends React.Component {
       });
     };
 
-    this.props.eventListRequest(this.props.displayedMonthIndex).then(() => {
+    this.props.eventListRequest(this.props.displayedMonthIndex, this.props.filter).then(() => {
       // BEGIN NEW EVENT LOADING LOOP
       loadEventLoop();
     });
@@ -46,7 +46,7 @@ class Home extends React.Component {
       });
 
     console.log(this.props.eventData);
-    return this.props.eventListRequest(this.props.displayedMonthIndex);
+    return this.props.eventListRequest(this.props.displayedMonthIndex, this.props.filter);
   }
 
   /* POST EVENT */
@@ -179,6 +179,7 @@ class Home extends React.Component {
               monthIndex={this.props.displayedMonthIndex}
               onEdit={this.handleEdit}
               onRemove={this.handleRemove}
+              updateFilter={this.props.updateFilter}
               updateMonth={this.props.updateMonth}
               year={this.props.displayedYear}
             />
@@ -204,6 +205,7 @@ const mapStateToProps = state => {
     displayedYear: state.calendar.displayed.year,
     editStatus: state.event.edit,
     eventData: state.event.list.data,
+    filter: state.calendar.filter,
     isLoggedIn: state.authentication.status.isLoggedIn,
     listStatus: state.event.list.status,
     message: state.notification.message,
@@ -219,8 +221,8 @@ const mapDispatchToProps = dispatch => {
     eventPostRequest: contents => {
       return dispatch(eventPostRequest(contents));
     },
-    eventListRequest: (month, category) => {
-      return dispatch(eventListRequest(month, category));
+    eventListRequest: (month, filter) => {
+      return dispatch(eventListRequest(month, filter));
     },
     eventEditRequest: (id, index, contents) => {
       return dispatch(eventEditRequest(id, index, contents));
@@ -229,6 +231,7 @@ const mapDispatchToProps = dispatch => {
       return dispatch(eventRemoveRequest(id, index));
     },
     openNotif: (message, variant) => dispatch(openNotif(message, variant)),
+    updateFilter: filter => dispatch(updateFilter(filter)),
     updateMonth: month => dispatch(updateMonth(month))
   };
 };

@@ -55,21 +55,14 @@ export function eventPostFailure(error) {
 /*
     Parameter:
         - month: month that is displayed
-        - category OPTIONAL WILL BE IMPLEMENTED
+        - filter: categories to show, 'c' for common or 'p' for personal or 'cp'
 */
-export function eventListRequest(month, category) {
+export function eventListRequest(month, filter) {
   return dispatch => {
     // inform event list API is starting
     dispatch(eventList());
 
-    let url = `/api/event/${month}`;
-
-    // if (typeof username === 'undefined') {
-    //   // username not given, load public events
-    //   url = isInitial ? url : `${url}/${listType}/${id}`;
-    // } else {
-    //   // load events of specific user
-    // }
+    let url = `/api/event/${month}/${filter}`;
 
     return axios
       .get(url)
