@@ -58,7 +58,7 @@ class App extends React.Component {
     });
   }
 
-  handleLogout() {
+  handleLogout = () => {
     this.props.logoutRequest().then(() => {
       this.props.openNotif('Good bye!', 'success');
 

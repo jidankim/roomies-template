@@ -15,13 +15,13 @@ class Authentication extends React.Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
-  handleChange(e) {
+  handleChange = e => {
     let nextState = {};
     nextState[e.target.name] = e.target.value;
     this.setState(nextState);
   }
 
-  handleLogin() {
+  handleLogin = () => {
     let id = this.state.username;
     let pw = this.state.password;
 
@@ -34,7 +34,7 @@ class Authentication extends React.Component {
     });
   }
 
-  handleRegister() {
+  handleRegister = () => {
     let id = this.state.username;
     let pw = this.state.password;
 
@@ -48,7 +48,7 @@ class Authentication extends React.Component {
     });
   }
 
-  handleKeyPress(e) {
+  handleKeyPress = e => {
     if (e.charCode == 13) {
       if (this.props.mode) {
         this.handleLogin();

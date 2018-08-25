@@ -11,7 +11,7 @@ class Login extends React.Component {
     this.handleLogin = this.handleLogin.bind(this);
   }
 
-  handleLogin(id, pw) {
+  handleLogin = (id, pw) => {
     return this.props.loginRequest(id, pw).then(() => {
       if (this.props.status === 'SUCCESS') {
         // create session data

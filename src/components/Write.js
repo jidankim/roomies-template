@@ -2,14 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import Switch from '@material-ui/core/Switch';
-import TextField from '@material-ui/core/TextField';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  TextField
+} from '@material-ui/core';
 
 const styles = theme => ({
   disappear: {
@@ -73,7 +75,7 @@ class Write extends React.Component {
   // }
   // }
 
-  handleChange(e) {
+  handleChange = e => {
     this.setState({
       ...this.state,
       contents: {
@@ -83,19 +85,19 @@ class Write extends React.Component {
     });
   }
 
-  handleCheck(e) {
+  handleCheck = e => {
     this.setState({
       ...this.state,
       singleDate: e.target.checked
     });
   }
 
-  handlePost() {
+  handlePost = () => {
     let contents = this.state.contents;
     const today = new Date().toISOString().slice(0, 10);
 
     // If single date, change startDate to match endDate, before posting
-    if (this.state.singleDate) {
+    if (singleDate) {
       contents.startDate = contents.endDate;
     }
 
@@ -112,7 +114,7 @@ class Write extends React.Component {
     });
   }
 
-  handleToggleDialog() {
+  handleToggleDialog = () => {
     this.setState({
       ...this.state,
       toggleDialog: !this.state.toggleDialog
@@ -121,17 +123,18 @@ class Write extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const hiddenTextField = this.state.singleDate ? classes.hidden : '';
-    const dummyTextField = this.state.singleDate
+    const { contents, singleDate, toggleDialog } = this.state
+    const hiddenTextField = singleDate ? classes.hidden : '';
+    const dummyTextField = singleDate
       ? classes.hidden
       : classes.disappear;
-    const labelEndDate = this.state.singleDate ? 'Due Date' : 'End Date';
+    const labelEndDate = singleDate ? 'Due Date' : 'End Date';
 
     return (
       <div className="modalContainer write">
         <Button onClick={this.handleToggleDialog}>Add Event</Button>
         <Dialog
-          open={this.state.toggleDialog}
+          open={toggleDialog}
           onClose={this.handleToggleDialog}
         >
           <DialogContent>
@@ -142,13 +145,13 @@ class Write extends React.Component {
               margin="normal"
               name="eventName"
               onChange={this.handleChange}
-              value={this.state.contents.eventName}
+              value={contents.eventName}
             />
             <FormGroup row>
               <FormControlLabel
                 control={
                   <Switch
-                    checked={this.state.singleDate}
+                    checked={singleDate}
                     name="singleDate"
                     onChange={this.handleCheck}
                     value="singleDate"
@@ -165,7 +168,7 @@ class Write extends React.Component {
                 name="startDate"
                 onChange={this.handleChange}
                 type="date"
-                value={this.state.contents.startDate}
+                value={contents.startDate}
                 InputLabelProps={{
                   shrink: true
                 }}
@@ -177,7 +180,7 @@ class Write extends React.Component {
                 name="endDate"
                 onChange={this.handleChange}
                 type="date"
-                value={this.state.contents.endDate}
+                value={contents.endDate}
                 InputLabelProps={{
                   shrink: true
                 }}

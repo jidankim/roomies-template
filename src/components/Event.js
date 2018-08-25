@@ -1,16 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Switch from '@material-ui/core/Switch';
-import TextField from '@material-ui/core/TextField';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  FormControlLabel,
+  FormGroup,
+  Menu,
+  MenuItem,
+  Switch,
+  TextField
+} from '@material-ui/core';
 
 const styles = theme => ({
   disappear: {
@@ -53,16 +55,16 @@ class Event extends React.Component {
   }
 
   // canceling dialog and dropdown menu
-  handleCancel() {
+  handleCancel = () => {
     this.setState({
       ...this.state,
       anchorEl: null,
       editMode: !this.state.editMode
     });
-  }
+  };
 
   // handling change in edit dialog
-  handleChange(e) {
+  handleChange = e => {
     this.setState({
       ...this.state,
       contents: {
@@ -70,40 +72,40 @@ class Event extends React.Component {
         [e.target.name]: e.target.value
       }
     });
-  }
+  };
 
   // handling check on Single Day? switch
-  handleCheck(e) {
+  handleCheck = e => {
     this.setState({
       ...this.state,
       singleDate: e.target.checked
     });
-  }
+  };
 
   // clicking on the options of the dropdown menu
-  handleClick(e) {
+  handleClick = e => {
     this.setState({
       ...this.state,
       anchorEl: e.currentTarget
     });
-  }
+  };
 
   // closing the dropdown menu
-  handleClose() {
+  handleClose = () => {
     this.setState({
       ...this.state,
       anchorEl: null
     });
-  }
+  };
 
-  handleRemove() {
+  handleRemove = () => {
     let id = this.props.data._id;
     let index = this.props.index;
     this.props.onRemove(id, index);
-  }
+  };
 
   // toggling edit dialog
-  toggleEdit() {
+  toggleEdit = () => {
     if (this.state.editMode) {
       let id = this.props.data._id;
       let index = this.props.index;
@@ -127,17 +129,17 @@ class Event extends React.Component {
         editMode: !this.state.editMode
       });
     }
-  }
+  };
 
   render() {
     const { classes, data, ownership } = this.props;
+    const { anchorEl, contents, editMode, singleDate } = this.state;
+
     const eDate = data.endDate.split('T')[0].split('-');
     const sDate = data.startDate.split('T')[0].split('-');
-    const hiddenTextField = this.state.singleDate ? classes.hidden : '';
-    const dummyTextField = this.state.singleDate
-      ? classes.hidden
-      : classes.disappear;
-    const labelEndDate = this.state.singleDate ? 'Due Date' : 'End Date';
+    const hiddenTextField = singleDate ? classes.hidden : '';
+    const dummyTextField = singleDate ? classes.hidden : classes.disappear;
+    const labelEndDate = singleDate ? 'Due Date' : 'End Date';
 
     const eventView = ownership ? (
       <div className="card">
@@ -147,7 +149,7 @@ class Event extends React.Component {
           }`}</span>
           <div className="option-button">
             <i
-              aria-owns={this.state.anchorEl ? 'simple-menu' : null}
+              aria-owns={anchorEl ? 'simple-menu' : null}
               aria-haspopup="true"
               className="material-icons icon-button"
               onClick={this.handleClick}
@@ -156,8 +158,8 @@ class Event extends React.Component {
             </i>
             <Menu
               id="simple-menu"
-              anchorEl={this.state.anchorEl}
-              open={Boolean(this.state.anchorEl)}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
               onClose={this.handleClose}
             >
               <MenuItem onClick={this.toggleEdit}>Edit</MenuItem>
@@ -175,7 +177,7 @@ class Event extends React.Component {
       <div>
         {eventView}
         <div className="modalContainer write">
-          <Dialog open={this.state.editMode} onClose={this.handleCancel}>
+          <Dialog open={editMode} onClose={this.handleCancel}>
             <DialogContent>
               <TextField
                 autoFocus
@@ -184,13 +186,13 @@ class Event extends React.Component {
                 margin="normal"
                 name="eventName"
                 onChange={this.handleChange}
-                value={this.state.contents.eventName}
+                value={contents.eventName}
               />
               <FormGroup row>
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={this.state.singleDate}
+                      checked={singleDate}
                       name="singleDate"
                       onChange={this.handleCheck}
                       value="singleDate"
@@ -207,7 +209,7 @@ class Event extends React.Component {
                   name="startDate"
                   onChange={this.handleChange}
                   type="date"
-                  value={this.state.contents.startDate}
+                  value={contents.startDate}
                   InputLabelProps={{
                     shrink: true
                   }}
@@ -219,7 +221,7 @@ class Event extends React.Component {
                   name="endDate"
                   onChange={this.handleChange}
                   type="date"
-                  value={this.state.contents.endDate}
+                  value={contents.endDate}
                   InputLabelProps={{
                     shrink: true
                   }}
@@ -245,9 +247,7 @@ class Event extends React.Component {
     );
 
     return (
-      <div className="container event">
-        {this.state.editMode ? editView : eventView}
-      </div>
+      <div className="container event">{editMode ? editView : eventView}</div>
     );
   }
 }

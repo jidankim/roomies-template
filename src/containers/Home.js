@@ -38,7 +38,7 @@ class Home extends React.Component {
     clearTimeout(this.eventLoaderTimeoutId);
   }
 
-  loadNewEvent() {
+  loadNewEvent = () => {
     // CANCEL IF THERE IS A PENDING REQUEST
     if (this.props.listStatus === 'WAITING')
       return new Promise((resolve, reject) => {
@@ -46,19 +46,11 @@ class Home extends React.Component {
       });
 
     console.log(this.props.eventData);
-    // IF PAGE IS EMPTY, DO THE INITIAL LOADING
-    //if (this.props.eventData.length === 0)
     return this.props.eventListRequest(this.props.displayedMonthIndex);
-
-    // return this.props.eventListRequest(
-    //   false,
-    //   'new',
-    //   this.props.eventData[0]._id
-    // );
   }
 
   /* POST EVENT */
-  handlePost(contents) {
+  handlePost = contents => {
     return this.props.eventPostRequest(contents).then(() => {
       if (this.props.postStatus.status === 'SUCCESS') {
         // TRIGGER LOAD NEW EVENT
@@ -90,7 +82,7 @@ class Home extends React.Component {
     });
   }
 
-  handleEdit(id, index, contents) {
+  handleEdit = (id, index, contents) => {
     return this.props.eventEditRequest(id, index, contents).then(() => {
       if (this.props.editStatus.status === 'SUCCESS') {
         this.props.openNotif('Success!', 'success');
@@ -126,7 +118,7 @@ class Home extends React.Component {
     });
   }
 
-  handleRemove(id, index) {
+  handleRemove = (id, index) => {
     this.props.eventRemoveRequest(id, index).then(() => {
       if (this.props.removeStatus.status === 'SUCCESS') {
         // LOAD MORE EVENT IF THERE IS NO SCROLLBAR 1 SECOND LATER
