@@ -27,10 +27,12 @@ class Home extends React.Component {
       });
     };
 
-    this.props.eventListRequest(this.props.displayedMonthIndex, this.props.filter).then(() => {
-      // BEGIN NEW EVENT LOADING LOOP
-      loadEventLoop();
-    });
+    this.props
+      .eventListRequest(this.props.displayedMonthIndex, this.props.filter)
+      .then(() => {
+        // BEGIN NEW EVENT LOADING LOOP
+        loadEventLoop();
+      });
   }
 
   componentWillUnmount() {
@@ -46,8 +48,11 @@ class Home extends React.Component {
       });
 
     console.log(this.props.eventData);
-    return this.props.eventListRequest(this.props.displayedMonthIndex, this.props.filter);
-  }
+    return this.props.eventListRequest(
+      this.props.displayedMonthIndex,
+      this.props.filter
+    );
+  };
 
   /* POST EVENT */
   handlePost = contents => {
@@ -76,7 +81,10 @@ class Home extends React.Component {
             this.props.openNotif('Please write something', 'error');
             break;
           case 3:
-            this.props.openNotif('Make sure end date is after start date', 'error');
+            this.props.openNotif(
+              'Make sure end date is after start date',
+              'error'
+            );
             break;
           default:
             this.props.openNotif('Something broke', 'error');
@@ -84,7 +92,7 @@ class Home extends React.Component {
         }
       }
     });
-  }
+  };
 
   handleEdit = (id, index, contents) => {
     return this.props.eventEditRequest(id, index, contents).then(() => {
@@ -122,7 +130,7 @@ class Home extends React.Component {
         }
       }
     });
-  }
+  };
 
   handleRemove = (id, index) => {
     this.props.eventRemoveRequest(id, index).then(() => {
@@ -164,11 +172,15 @@ class Home extends React.Component {
         }
       }
     });
-  }
+  };
 
   render() {
     return (
-      <div className="wrapper">
+      <div
+        style={{
+          marginTop: 20
+        }}
+      >
         {this.props.isLoggedIn ? (
           <div>
             <Calendar
@@ -190,7 +202,13 @@ class Home extends React.Component {
             />
           </div>
         ) : (
-          <div className="intro">Welcome. Please log in.</div>
+          <div
+            style={{
+              marginLeft: 50
+            }}
+          >
+            Welcome. Please log in.
+          </div>
         )}
       </div>
     );

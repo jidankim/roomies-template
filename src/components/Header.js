@@ -1,52 +1,80 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core';
+import LogoutIcon from '@material-ui/icons/lockOpen';
+import LoginIcon from '@material-ui/icons/vpnKey';
+
+const styles = {
+  root: {
+    flexGrow: 1
+  },
+  icon: {
+    color: '#000',
+    fontSize: 20
+  },
+  header: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    padding: 0,
+    margin: 0
+  },
+  hidden: {
+    marginRight: 'auto',
+    visibility: 'hidden'
+  },
+  right: {
+    marginLeft: 'auto'
+  }
+};
 
 class Header extends React.Component {
   render() {
-    const loginButton = (
-      <li>
-        <Link to="/login">
-          <i className="material-icons">vpn_key</i>
-        </Link>
-      </li>
-    );
-
-    const logoutButton = (
-      <li>
-        <a onClick={this.props.onLogout}>
-          <i className="material-icons">lock_open</i>
-        </a>
-      </li>
-    );
+    const { classes } = this.props;
 
     return (
-      <div>
-        <nav>
-          <div className="nav-wrapper blue darken-1">
-            <Link to="/" className="brand-logo center">
-              Scheduler
+      <div className={classes.root}>
+        <AppBar color="primary" position="static">
+          <Toolbar className={classes.header}>
+            <IconButton className={classes.hidden}>
+              <LogoutIcon className={classes.icon} />
+            </IconButton>
+
+            <Link to="/">
+              <Typography variant="display1">Due Dates</Typography>
             </Link>
 
-            <ul>
-              <li>
-                <a>
-                  <i className="material-icons">search</i>
-                </a>
-              </li>
-            </ul>
-
-            <div className="right">
-              <ul>{this.props.isLoggedIn ? logoutButton : loginButton}</ul>
-            </div>
-          </div>
-        </nav>
+            {this.props.isLoggedIn ? (
+              <IconButton
+                className={classes.right}
+                color="inherit"
+                aria-label="logout"
+                onClick={this.props.onLogout}
+              >
+                <LogoutIcon className={classes.icon} />
+              </IconButton>
+            ) : (
+              <IconButton
+                className={classes.right}
+                color="inherit"
+                aria-label="login"
+              >
+                <Link to="/login">
+                  <LoginIcon className={classes.icon} />
+                </Link>
+              </IconButton>
+            )}
+          </Toolbar>
+        </AppBar>
       </div>
     );
   }
 }
 
 Header.propTypes = {
+  classes: PropTypes.object.isRequired,
   isLoggedIn: PropTypes.bool,
   onLogout: PropTypes.func
 };
@@ -58,4 +86,4 @@ Header.defaultProps = {
   }
 };
 
-export default Header;
+export default withStyles(styles)(Header);

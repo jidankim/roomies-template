@@ -39,7 +39,7 @@ class Write extends React.Component {
     this.handleCheck = this.handleCheck.bind(this);
     this.handlePost = this.handlePost.bind(this);
     this.handleToggleDialog = this.handleToggleDialog.bind(this);
-    const today = moment();
+    const today = moment().format('YYYY-MM-DD');
     this.state = {
       contents: {
         eventName: '',
@@ -84,14 +84,14 @@ class Write extends React.Component {
         [e.target.name]: e.target.value
       }
     });
-  }
+  };
 
   handleCheck = e => {
     this.setState({
       ...this.state,
       singleDate: e.target.checked
     });
-  }
+  };
 
   handlePost = () => {
     let contents = this.state.contents;
@@ -113,31 +113,26 @@ class Write extends React.Component {
         toggleDialog: !this.state.toggleDialog
       });
     });
-  }
+  };
 
   handleToggleDialog = () => {
     this.setState({
       ...this.state,
       toggleDialog: !this.state.toggleDialog
     });
-  }
+  };
 
   render() {
     const { classes } = this.props;
-    const { contents, singleDate, toggleDialog } = this.state
+    const { contents, singleDate, toggleDialog } = this.state;
     const hiddenTextField = singleDate ? classes.hidden : '';
-    const dummyTextField = singleDate
-      ? classes.hidden
-      : classes.disappear;
+    const dummyTextField = singleDate ? classes.hidden : classes.disappear;
     const labelEndDate = singleDate ? 'Due Date' : 'End Date';
 
     return (
-      <div className="modalContainer write">
+      <div>
         <Button onClick={this.handleToggleDialog}>Add Event</Button>
-        <Dialog
-          open={toggleDialog}
-          onClose={this.handleToggleDialog}
-        >
+        <Dialog open={toggleDialog} onClose={this.handleToggleDialog}>
           <DialogContent>
             <TextField
               autoFocus

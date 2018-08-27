@@ -214,7 +214,7 @@ router.get('/:month/:filter', (req, res) => {
     let filter = req.params.filter;
     let loginInfo = req.session.loginInfo;
     let writerShow = ['admin'];
-    let filterArray = filter === '' ? [] : filter.split('');
+    let filterArray = filter === '' ? ['noSuchCategory'] : filter.split('');
     if (loginInfo !== undefined && loginInfo.username !== 'admin')
         writerShow.push(req.session.loginInfo.username);
 

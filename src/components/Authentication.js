@@ -1,6 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  TextField,
+  Typography
+} from '@material-ui/core';
+
+const styles = theme => ({
+  root: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    margin: 50
+  },
+  card: {
+    width: 400
+  },
+  header: {
+    backgroundColor: theme.palette.primary.main,
+    marginTop: theme.spacing.unit,
+    textAlign: 'center',
+    width: 400
+  },
+  right: {
+    marginLeft: 'auto'
+  }
+});
 
 class Authentication extends React.Component {
   constructor(props) {
@@ -19,7 +50,7 @@ class Authentication extends React.Component {
     let nextState = {};
     nextState[e.target.name] = e.target.value;
     this.setState(nextState);
-  }
+  };
 
   handleLogin = () => {
     let id = this.state.username;
@@ -32,7 +63,7 @@ class Authentication extends React.Component {
         });
       }
     });
-  }
+  };
 
   handleRegister = () => {
     let id = this.state.username;
@@ -46,7 +77,7 @@ class Authentication extends React.Component {
         });
       }
     });
-  }
+  };
 
   handleKeyPress = e => {
     if (e.charCode == 13) {
@@ -56,86 +87,69 @@ class Authentication extends React.Component {
         this.handleRegister();
       }
     }
-  }
+  };
 
   render() {
+    const { classes } = this.props;
+
     const inputBoxes = (
       <div>
-        <div className="input-field col s12 username">
-          <label>Username</label>
-          <input
-            name="username"
-            type="text"
-            className="validate"
-            onChange={this.handleChange}
-            value={this.state.username}
-          />
-        </div>
-        <div className="input-field col s12">
-          <label>Password</label>
-          <input
-            name="password"
-            type="password"
-            className="validate"
-            onChange={this.handleChange}
-            value={this.state.password}
-            onKeyPress={this.handleKeyPress}
-          />
-        </div>
+        <TextField
+          autoFocus
+          fullWidth
+          label="Username"
+          margin="normal"
+          name="username"
+          onChange={this.handleChange}
+          value={this.state.username}
+        />
+        <TextField
+          autoFocus
+          fullWidth
+          label="Password"
+          margin="normal"
+          name="password"
+          onChange={this.handleChange}
+          value={this.state.password}
+          onKeyPress={this.handleKeyPress}
+        />
       </div>
     );
 
     const loginView = (
       <div>
-        <div className="card-content">
-          <div className="row">
-            {inputBoxes}
-            <a
-              className="waves-effect waves-light btn"
-              onClick={this.handleLogin}
-            >
-              Submit
-            </a>
+        <CardContent>{inputBoxes}</CardContent>
+        <CardActions>
+          <Button onClick={this.handleLogin}>Submit</Button>
+          <div className={classes.right}>
+            New Here? <Link to="/register">Create an account</Link>
           </div>
-        </div>
-
-        <div className="footer">
-          <div className="card-content">
-            <div className="right">
-              New Here? <Link to="/register">Create an account</Link>
-            </div>
-          </div>
-        </div>
+        </CardActions>
       </div>
     );
 
     const registerView = (
-      <div className="card-content">
-        <div className="row">
-          {inputBoxes}
-          <a
-            className="waves-effect waves-light btn"
-            onClick={this.handleRegister}
-          >
-            Create
-          </a>
-        </div>
+      <div>
+        <CardContent>{inputBoxes}</CardContent>
+        <CardActions className={classes.centering}>
+          <Button onClick={this.handleRegister}>Create</Button>
+        </CardActions>
       </div>
     );
 
     return (
-      <div className="container auth">
-        <Link className="logo" to="/">
-          Scheduler
+      <div className={classes.root}>
+        <Link to="/">
+          <Typography variant="display2">Due dates</Typography>
         </Link>
-        <div className="card">
-          <div className="header blue white-text center">
-            <div className="card-content">
-              {this.props.mode ? 'LOGIN' : 'REGISTER'}
-            </div>
-          </div>
-          {this.props.mode ? loginView : registerView}
+        <div className={classes.header}>
+          <Typography variant="headline">
+            {this.props.mode ? 'LOGIN' : 'REGISTER'}
+          </Typography>
         </div>
+        <Card className={classes.card}>
+          {this.props.mode ? loginView : registerView}
+        </Card>
       </div>
     );
   }
@@ -157,4 +171,4 @@ Authentication.defaultProps = {
   }
 };
 
-export default Authentication;
+export default withStyles(styles)(Authentication);

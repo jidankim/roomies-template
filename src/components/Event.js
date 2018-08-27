@@ -211,9 +211,7 @@ class Event extends React.Component {
       </div>
     );
 
-    return (
-      <div className="container event">{editMode ? editView : eventView}</div>
-    );
+    return <div>{editMode ? editView : eventView}</div>;
   }
 }
 
