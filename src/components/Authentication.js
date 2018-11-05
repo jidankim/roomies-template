@@ -110,6 +110,7 @@ class Authentication extends React.Component {
           margin="normal"
           name="password"
           onChange={this.handleChange}
+          type="password"
           value={this.state.password}
           onKeyPress={this.handleKeyPress}
         />

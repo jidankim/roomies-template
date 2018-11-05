@@ -14,8 +14,10 @@ var Schema = _mongoose2.default.Schema;
 
 var Event = new Schema({
     writer: String,
-    contents: Object,
-    is_edited: { type: Boolean, default: false }
+    category: String,
+    eventName: String,
+    endDate: Date,
+    startDate: Date
 });
 
 exports.default = _mongoose2.default.model('event', Event);

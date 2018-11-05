@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
@@ -24,10 +22,15 @@ var router = _express2.default.Router();
 
 /*
     WRITE EVENT: POST /api/event
-    BODY SAMPLE: { contents: "sample" }
+    BODY SAMPLE: {
+                    eventName: "event",
+                    endDate: "2018-08-27",
+                    startDate: "2018-08-20"
+                 }
     ERROR CODES
         1: NOT LOGGED IN
         2: EMPTY CONTENTS
+        3: INVALID DATES
 */
 router.post('/', function (req, res) {
     // CHECK LOGIN STATUS
@@ -39,24 +42,36 @@ router.post('/', function (req, res) {
     }
 
     // CHECK CONTENTS VALID
-    if (_typeof(req.body.contents) !== 'object') {
+    if (typeof req.body.eventName !== 'string') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
         });
     }
 
-    if (req.body.contents.eventName === "") {
+    if (req.body.eventName === "") {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
+        });
+    }
+
+    // CHECK DATES VALID
+    if (req.body.startDate > req.body.endDate) {
+        return res.status(400).json({
+            error: "INVALID DATES",
+            code: 3
         });
     }
 
     // CREATE NEW EVENT 
+    var cat = req.session.loginInfo.username === 'admin' ? 'c' : 'p';
     var event = new _event2.default({
         writer: req.session.loginInfo.username,
-        contents: req.body.contents
+        category: cat,
+        eventName: req.body.eventName,
+        endDate: new Date(req.body.endDate),
+        startDate: new Date(req.body.startDate)
     });
 
     // SAVE IN DATABASE
@@ -68,13 +83,18 @@ router.post('/', function (req, res) {
 
 /*
     MODIFY EVENT: PUT /api/event/:id
-    BODY SAMPLE: { contents: "sample" }
+    BODY SAMPLE: { 
+                    eventName: "event",
+                    endDate: "2018-08-27",
+                    startDate: "2018-08-20"
+                 }
     ERROR CODES
         1: INVALID ID,
         2: EMPTY CONTENTS
-        3: NOT LOGGED IN
-        4: NO RESOURCE
-        5: PERMISSION FAILURE
+        3: INVALID DATES
+        4: NOT LOGGED IN
+        5: NO RESOURCE
+        6: PERMISSION FAILURE
 */
 router.put('/:id', function (req, res) {
     // CHECK EVENT ID VALIDITY
@@ -86,17 +106,25 @@ router.put('/:id', function (req, res) {
     }
 
     // CHECK CONTENTS VALID
-    if (_typeof(req.body.contents) !== 'object') {
+    if (typeof req.body.eventName !== 'string') {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
         });
     }
 
-    if (req.body.contents.eventName === "") {
+    if (req.body.eventName === "") {
         return res.status(400).json({
             error: "EMPTY CONTENTS",
             code: 2
+        });
+    }
+
+    // CHECK DATES VALID
+    if (req.body.startDate > req.body.endDate) {
+        return res.status(400).json({
+            error: "INVALID DATES",
+            code: 3
         });
     }
 
@@ -104,7 +132,7 @@ router.put('/:id', function (req, res) {
     if (typeof req.session.loginInfo === 'undefined') {
         return res.status(403).json({
             error: "NOT LOGGED IN",
-            code: 3
+            code: 4
         });
     }
 
@@ -116,7 +144,7 @@ router.put('/:id', function (req, res) {
         if (!event) {
             return res.status(404).json({
                 error: "NO RESOURCE",
-                code: 4
+                code: 5
             });
         }
 
@@ -124,13 +152,14 @@ router.put('/:id', function (req, res) {
         if (event.writer != req.session.loginInfo.username) {
             return res.status(403).json({
                 error: "PERMISSION FAILURE",
-                code: 5
+                code: 6
             });
         }
 
         // MODIFY AND SAVE IN DATABASE
-        event.contents = req.body.contents;
-        event.is_edited = true;
+        event.eventName = req.body.eventName;
+        event.endDate = new Date(req.body.endDate);
+        event.startDate = new Date(req.body.startDate);
 
         event.save(function (err, event) {
             if (err) throw err;
@@ -194,53 +223,20 @@ router.delete('/:id', function (req, res) {
 });
 
 /*
-    READ EVENT: GET /api/event
+    READ EVENT: GET /api/event/:month/:filter
 */
-router.get('/', function (req, res) {
-    _event2.default.find().sort({ "contents.endDate": 1 }).limit(6).exec(function (err, events) {
+router.get('/:month/:filter', function (req, res) {
+    var month = parseInt(req.params.month);
+    var filter = req.params.filter;
+    var loginInfo = req.session.loginInfo;
+    var writerShow = ['admin'];
+    var filterArray = filter === '' ? ['noSuchCategory'] : filter.split('');
+    if (loginInfo !== undefined && loginInfo.username !== 'admin') writerShow.push(req.session.loginInfo.username);
+
+    _event2.default.find({ writer: { $in: writerShow }, "$expr": { "$eq": [{ "$month": "$endDate" }, month] }, category: { $in: filterArray } }).sort({ endDate: 1 }).exec(function (err, events) {
         if (err) throw err;
         res.json(events);
     });
-});
-
-/*
-    READ ADDITIONAL (OLD/NEW) EVENT: GET /api/event/:listType/:id
-*/
-router.get('/:listType/:id', function (req, res) {
-    var listType = req.params.listType;
-    var id = req.params.id;
-
-    // CHECK LIST TYPE VALIDITY
-    if (listType !== 'old' && listType !== 'new') {
-        return res.status(400).json({
-            error: "INVALID LISTTYPE",
-            code: 1
-        });
-    }
-
-    // CHECK EVENT ID VALIDITY
-    if (!_mongoose2.default.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({
-            error: "INVALID ID",
-            code: 2
-        });
-    }
-
-    var objId = new _mongoose2.default.Types.ObjectId(req.params.id);
-
-    if (listType === 'new') {
-        // GET NEWER EVENT
-        _event2.default.find({ _id: { $gt: objId } }).sort({ "contents.endDate": 1 }).limit(6).exec(function (err, events) {
-            if (err) throw err;
-            return res.json(events);
-        });
-    } else {
-        // GET OLDER EVENT
-        _event2.default.find({ _id: { $lt: objId } }).sort({ "contents.endDate": 1 }).limit(6).exec(function (err, memos) {
-            if (err) throw err;
-            return res.json(memos);
-        });
-    }
 });
 
 exports.default = router;
