@@ -3,12 +3,11 @@ import path from 'path';
 import morgan from 'morgan'; // HTTP REQUEST LOGGER
 import bodyParser from 'body-parser'; // PARSE HTML BODY
 import session from 'express-session';
-import mysql from 'mysql';
 import WebpackDevServer from 'webpack-dev-server';
 import webpack from 'webpack';
+import pool from './config.js';
 
 const app = express();
-const port = 3306;
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -18,15 +17,6 @@ app.use(bodyParser.json());
 // db.once('open', () => { console.log('Connected to mongodb server'); });
 // mongoose.connect('mongodb://username:password@host:port/database=');
 // mongoose.connect('mongodb://localhost/codelab');
-
-const connection = mysql.createConnection({
-    host: 'localhost',
-    port: port,
-    user: 'tester',
-    password: '1234',
-    database: 'cs360_tutorial'
-});
-connection.connect();
 
 /* use session */
 app.use(session({
