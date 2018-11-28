@@ -1,13 +1,13 @@
-#create database ROOMIE;
+create database if not exists ROOMIE;
 use ROOMIE;
 
-#drop table COMMENTS;
-#drop table STUDENT;
-#drop table ROOM;
-#drop table PREFERENCE;
-#drop table DORMITORY;
+-- drop table COMMENTS;
+-- drop table STUDENT;
+-- drop table ROOM;
+-- drop table PREFERENCE;
+-- drop table DORMITORY;
 
-create table PREFERENCE (
+create table if not exists PREFERENCE (
 	Student_ID int,
     Smokes bool default false,
     Sleep_Start_Time time,
@@ -18,7 +18,7 @@ create table PREFERENCE (
     primary key (Student_ID)
 );
 
-create table DORMITORY (
+create table if not exists DORMITORY (
 	Dorm_ID varchar(255),
     Dorm_Name varchar(255),
     Location varchar(255),
@@ -28,7 +28,7 @@ create table DORMITORY (
     primary key (Dorm_ID)
 );
 
-create table ROOM (
+create table if not exists ROOM (
 	Room_ID varchar(255),
     Dorm_ID varchar(255),
     Floor int,
@@ -38,7 +38,7 @@ create table ROOM (
     foreign key (Dorm_ID) references DORMITORY(Dorm_ID)
 );
 
-create table STUDENT (
+create table if not exists STUDENT (
 	Student_ID int,
     First_Name varchar(255) not null,
     Last_Name varchar(255) not null,
@@ -52,7 +52,7 @@ create table STUDENT (
     foreign key (Room_ID) references ROOM(Room_ID)
 );
 
-create table COMMENTS (
+create table if not exists COMMENTS (
 	Comment_ID int not null auto_increment,
     Student_ID int,
     Room_ID varchar(255),
