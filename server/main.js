@@ -2,10 +2,10 @@ import express from 'express';
 import path from 'path';
 import morgan from 'morgan'; // HTTP REQUEST LOGGER
 import bodyParser from 'body-parser'; // PARSE HTML BODY
-import mongoose from 'mongoose';
 import session from 'express-session';
 import WebpackDevServer from 'webpack-dev-server';
 import webpack from 'webpack';
+import pool from './config.js';
 
 const app = express();
 const port = 3000;
@@ -14,11 +14,11 @@ const devPort = 4000;
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
-const db = mongoose.connection;
-db.on('error', console.error);
-db.once('open', () => { console.log('Connected to mongodb server'); });
+// const db = mongoose.connection;
+// db.on('error', console.error);
+// db.once('open', () => { console.log('Connected to mongodb server'); });
 // mongoose.connect('mongodb://username:password@host:port/database=');
-mongoose.connect('mongodb://localhost/codelab');
+// mongoose.connect('mongodb://localhost/codelab');
 
 /* use session */
 app.use(session({

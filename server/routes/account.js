@@ -1,11 +1,13 @@
+import bcrpyt from 'bcryptjs';
 import express from 'express';
-import Account from '../models/account';
+import pool from '../config.js';
+// import Account from '../models/account';
 
 const router = express.Router();
 
 /*
     ACCOUNT SIGNUP: POST /api/account/signup
-    BODY SAMPLE: { "username": "test", "password": "test" }
+    BODY SAMPLE: { "studentID": "test", "password": "test" }
     ERROR CODES:
         1: BAD USERNAME
         2: BAD PASSWORD
@@ -13,9 +15,9 @@ const router = express.Router();
 */
 router.post('/signup', (req, res) => {
     // CHECK USERNAME FORMAT
-    let usernameRegex = /^[a-z0-9]+$/;
+    let idRegex = /^\d{9}$/;
 
-    if (!usernameRegex.test(req.body.username)) {
+    if (!idRegex.test(req.body.studentID)) {
         return res.status(400).json({
             error: "BAD USERNAME",
             code: 1
@@ -31,29 +33,74 @@ router.post('/signup', (req, res) => {
     }
 
     // CHECK USER EXISTANCE
-    Account.findOne({ username: req.body.username }, (err, exists) => {
+
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+
+      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
+      // use the connection
+      connection.query(queryString, req.body.studentID, (err, results, fields) => {
+        // when done with the connection, release interval
+        connection.release();
+
+        // handle error after the release
         if (err) throw err;
-        if (exists) {
-            return res.status(409).json({
-                error: "USERNAME EXISTS",
-                code: 3
-            });
+
+        if (results.length() != 0) {
+          return res.status(409).json({
+            error: "USERNAME EXISTS",
+            code: 3
+          });
         }
+      });
 
-        // CREATE ACCOUNT
-        let account = new Account({
-            username: req.body.username,
-            password: req.body.password
-        });
+      // SAVE IN THE DATABASE
+      const password = bcrypt.hashSync(req.body.password, 8);
 
-        account.password = account.generateHash(account.password);
+      queryString =
+      `INSERT INTO user_tbl (Student_ID, First_Name, Last_Name, Age, Major, Club, Phone_Number, Room_ID, Password) VALUES ("`
+					+ req.body.studentID + '","'
+          + req.body.firstName + '","'
+          + req.body.lastName + '","'
+          + (req.body.age == null ? 'NULL' : req.body.age) + '","'
+          + (req.body.major == null ? 'NULL' : req.body.age) + '","'
+          + req.body.club + '","'
+          + req.body.roomID + '","'
+					+ password + '");';
 
-        // SAVE IN THE DATABASE
-        account.save( err => {
-            if (err) throw err;
-            return res.json({ success: true });
-        });
+      connection.query(queryString, (err, results, fields) => {
+        connection.release();
+
+        if (err) throw err;
+
+        return res.json({ success: true });
+      });
+
+
     });
+    // Account.findOne({ username: req.body.username }, (err, exists) => {
+    //     if (err) throw err;
+    //     if (exists) {
+    //         return res.status(409).json({
+    //             error: "USERNAME EXISTS",
+    //             code: 3
+    //         });
+    //     }
+    //
+    //     // CREATE ACCOUNT
+    //     let account = new Account({
+    //         username: req.body.username,
+    //         password: req.body.password
+    //     });
+    //
+    //     account.password = account.generateHash(account.password);
+    //
+    //     // SAVE IN THE DATABASE
+    //     account.save( err => {
+    //         if (err) throw err;
+    //         return res.json({ success: true });
+    //     });
+    // });
 });
 
 /*
@@ -71,15 +118,25 @@ router.post('/signin', (req, res) => {
     }
 
     // FIND THE USER BY USERNAME
-    Account.findOne({ username: req.body.username }, (err, account) => {
+
+    pool.getConnection((err, connection) => {
+      if (err) throw err;
+
+      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
+      // use the connection
+      connection.query(queryString, req.body.studentID, (err, results, fields) => {
+        // when done with the connection, release interval
+        connection.release();
+
+        // handle error after the release
         if (err) throw err;
 
         // CHECK ACCOUNT EXISTANCY
-        if (!account) {
-            return res.status(401).json({
-                error: "LOGIN FAILED",
-                code: 1
-            });
+        if (results.length() == 0) {
+          return res.status(401).json({
+            error: "LOGIN FAILED",
+            code: 1
+          });
         }
 
         // CHECK WHETHER THE PASSWORD IS VALID
@@ -93,15 +150,48 @@ router.post('/signin', (req, res) => {
         // ALTER SESSION
         let session = req.session;
         session.loginInfo = {
-            _id: account._id,
-            username: account.username
+            _id: req.body.studentID,
         };
 
         // RETURN SUCCESS
         return res.json({
             success: true
         });
+
+      });
+
     });
+    // Account.findOne({ username: req.body.username }, (err, account) => {
+    //     if (err) throw err;
+    //
+    //     // CHECK ACCOUNT EXISTANCY
+    //     if (!account) {
+    //         return res.status(401).json({
+    //             error: "LOGIN FAILED",
+    //             code: 1
+    //         });
+    //     }
+    //
+    //     // CHECK WHETHER THE PASSWORD IS VALID
+    //     if (!account.validateHash(req.body.password)) {
+    //         return res.status(401).json({
+    //             error: "LOGIN FAILED",
+    //             code: 1
+    //         });
+    //     }
+    //
+    //     // ALTER SESSION
+    //     let session = req.session;
+    //     session.loginInfo = {
+    //         _id: account._id,
+    //         username: account.username
+    //     };
+    //
+    //     // RETURN SUCCESS
+    //     return res.json({
+    //         success: true
+    //     });
+    // });
 });
 
 /*
