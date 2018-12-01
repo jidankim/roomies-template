@@ -43,7 +43,7 @@ class Header extends React.Component {
             </IconButton>
 
             <Link to="/">
-              <Typography variant="display1">Due Dates</Typography>
+              <Typography variant="display1">Roomies</Typography>
             </Link>
 
             {this.props.isLoggedIn ? (

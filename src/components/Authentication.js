@@ -141,7 +141,7 @@ class Authentication extends React.Component {
     return (
       <div className={classes.root}>
         <Link to="/">
-          <Typography variant="display2">Due dates</Typography>
+          <Typography variant="display2">Roomies</Typography>
         </Link>
         <div className={classes.header}>
           <Typography variant="headline">
