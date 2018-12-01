@@ -2,31 +2,23 @@ import express from 'express';
 import path from 'path';
 import morgan from 'morgan'; // HTTP REQUEST LOGGER
 import bodyParser from 'body-parser'; // PARSE HTML BODY
+import mongoose from 'mongoose';
 import session from 'express-session';
-import mysql from 'mysql';
 import WebpackDevServer from 'webpack-dev-server';
 import webpack from 'webpack';
 
 const app = express();
-const port = 3306;
+const port = 3000;
+const devPort = 4000;
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
-// const db = mongoose.connection;
-// db.on('error', console.error);
-// db.once('open', () => { console.log('Connected to mongodb server'); });
+const db = mongoose.connection;
+db.on('error', console.error);
+db.once('open', () => { console.log('Connected to mongodb server'); });
 // mongoose.connect('mongodb://username:password@host:port/database=');
-// mongoose.connect('mongodb://localhost/codelab');
-
-const connection = mysql.createConnection({
-    host: 'localhost',
-    port: port,
-    user: 'tester',
-    password: '1234',
-    database: 'cs360_tutorial'
-});
-connection.connect();
+mongoose.connect('mongodb://localhost/codelab');
 
 /* use session */
 app.use(session({
@@ -61,8 +53,8 @@ if (process.env.NODE_ENV == 'development') {
     const compiler = webpack(config);
     const devServer = new WebpackDevServer(compiler, config.devServer);
     devServer.listen(
-        port, () => {
-            console.log('webpack-dev-server is listening on port', port);
+        devPort, () => {
+            console.log('webpack-dev-server is listening on port', devPort);
         }
     );
 };
