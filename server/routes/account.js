@@ -1,12 +1,11 @@
 import express from 'express';
-import pool from './config.js';
-// import Account from '../models/account';
+import Account from '../models/account';
 
 const router = express.Router();
 
 /*
     ACCOUNT SIGNUP: POST /api/account/signup
-    BODY SAMPLE: { "studentID": "test", "password": "test" }
+    BODY SAMPLE: { "username": "test", "password": "test" }
     ERROR CODES:
         1: BAD USERNAME
         2: BAD PASSWORD
@@ -14,9 +13,9 @@ const router = express.Router();
 */
 router.post('/signup', (req, res) => {
     // CHECK USERNAME FORMAT
-    let usernameRegex = /^\d{9}$/;
+    let usernameRegex = /^[a-z0-9]+$/;
 
-    if (!usernameRegex.test(req.body.studentID)) {
+    if (!usernameRegex.test(req.body.username)) {
         return res.status(400).json({
             error: "BAD USERNAME",
             code: 1
@@ -32,63 +31,29 @@ router.post('/signup', (req, res) => {
     }
 
     // CHECK USER EXISTANCE
-
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-
-      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
-      // use the connection
-      connection.query(queryString, req.body.studentID, (err, results, fields) => {
-        // when done with the connection, release interval
-        connection.release();
-
-        // handle error after the release
+    Account.findOne({ username: req.body.username }, (err, exists) => {
         if (err) throw err;
-
-        if (results.length() != 0) {
-          return res.status(409).json({
-            error: "USERNAME EXISTS",
-            code: 3
-          });
+        if (exists) {
+            return res.status(409).json({
+                error: "USERNAME EXISTS",
+                code: 3
+            });
         }
-      });
 
-      let queryString =
-      `INSERT INTO user_tbl (Student_ID, First_Name, Last_Name, Age, Major, Club, Phone_Number, Room_ID) VALUES ("`
-					+ req.body.studentID + '","'
-          + req.body.firstName + '","'
-          + req.body.lastName + '","'
-          + (req.body.age == null ? 'NULL' : req.body.age) + '","'
-          + (req.body.major == null ? 'NULL' : req.body.age) + '","'
-          + req.body.club + '","'
-          + req.body.roomID + '","'
-					+ req.body.password + '");';
+        // CREATE ACCOUNT
+        let account = new Account({
+            username: req.body.username,
+            password: req.body.password
+        });
 
+        account.password = account.generateHash(account.password);
 
-    })
-    // Account.findOne({ username: req.body.username }, (err, exists) => {
-    //     if (err) throw err;
-    //     if (exists) {
-    //         return res.status(409).json({
-    //             error: "USERNAME EXISTS",
-    //             code: 3
-    //         });
-    //     }
-    //
-    //     // CREATE ACCOUNT
-    //     let account = new Account({
-    //         username: req.body.username,
-    //         password: req.body.password
-    //     });
-    //
-    //     account.password = account.generateHash(account.password);
-    //
-    //     // SAVE IN THE DATABASE
-    //     account.save( err => {
-    //         if (err) throw err;
-    //         return res.json({ success: true });
-    //     });
-    // });
+        // SAVE IN THE DATABASE
+        account.save( err => {
+            if (err) throw err;
+            return res.json({ success: true });
+        });
+    });
 });
 
 /*

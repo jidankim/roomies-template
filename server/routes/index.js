@@ -4,6 +4,6 @@ import event from './event';
 
 const router = express.Router();
 router.use('/account', account);
-//router.use('/event', event);
+router.use('/event', event);
 
 export default router;

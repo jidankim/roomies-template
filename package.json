@@ -1,5 +1,5 @@
 {
-  "name": "roomies-template",
+  "name": "calendar-app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jidankim/roomies-template.git"
+    "url": "git+https://github.com/jidankim/calendar-app.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jidankim/roomies-template/issues"
+    "url": "https://github.com/jidankim/calendar-app/issues"
   },
-  "homepage": "https://github.com/jidankim/roomies-template#readme",
+  "homepage": "https://github.com/jidankim/calendar-app#readme",
   "dependencies": {
     "@material-ui/core": "^1.5.1",
     "@material-ui/icons": "^2.0.3",
