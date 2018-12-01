@@ -7,6 +7,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  MenuItem,
   TextField,
   Typography
 } from '@material-ui/core';
@@ -28,17 +29,31 @@ const styles = theme => ({
     textAlign: 'center',
     width: 400
   },
+  menu: {
+    width: 400
+  },
   right: {
     marginLeft: 'auto'
   }
 });
 
+const majors = [
+  'Biology', 'Chemistry', 'Computer Science', 'Physics'
+];
+
 class Authentication extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      password: ''
+      age: '',
+      club: '',
+      firstName: '',
+      lastName: '',
+      major: '',
+      phoneNumber: '',
+      studentID: '',
+      password: '',
+      passwordAgain: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
@@ -53,12 +68,13 @@ class Authentication extends React.Component {
   };
 
   handleLogin = () => {
-    let id = this.state.username;
+    let id = this.state.studentID;
     let pw = this.state.password;
 
     this.props.onLogin(id, pw).then(success => {
       if (!success) {
         this.setState({
+          ...this.state,
           password: ''
         });
       }
@@ -66,14 +82,24 @@ class Authentication extends React.Component {
   };
 
   handleRegister = () => {
-    let id = this.state.username;
+    let id = this.state.studentID;
     let pw = this.state.password;
+    let pwa = this.state.passwordAgain;
+    let fn = this.state.firstName;
+    let ln = this.state.lastName;
+    let age = this.state.age;
+    let maj = this.state.major;
+    let club = this.state.club;
+    let pn = this.state.phoneNumber;
 
-    this.props.onRegister(id, pw).then(result => {
+    this.props
+    .onRegister(id, pw, pwa, fn, ln, age, maj, club, pn)
+    .then(result => {
       if (!result) {
         this.setState({
-          username: '',
-          password: ''
+          studentID: '',
+          password: '',
+          passwordAgain: ''
         });
       }
     });
@@ -83,9 +109,10 @@ class Authentication extends React.Component {
     if (e.charCode == 13) {
       if (this.props.mode) {
         this.handleLogin();
-      } else {
-        this.handleRegister();
       }
+      // else {
+      //   this.handleRegister();
+      // }
     }
   };
 
@@ -97,19 +124,20 @@ class Authentication extends React.Component {
         <TextField
           autoFocus
           fullWidth
-          label="Username"
+          label="StudentID"
           margin="normal"
-          name="username"
+          name="studentID"
           onChange={this.handleChange}
-          value={this.state.username}
+          required
+          value={this.state.studentID}
         />
         <TextField
-          autoFocus
           fullWidth
           label="Password"
           margin="normal"
           name="password"
           onChange={this.handleChange}
+          required
           type="password"
           value={this.state.password}
           onKeyPress={this.handleKeyPress}
@@ -131,7 +159,82 @@ class Authentication extends React.Component {
 
     const registerView = (
       <div>
-        <CardContent>{inputBoxes}</CardContent>
+        <CardContent>
+          {inputBoxes}
+          <TextField
+            fullWidth
+            label="Confirm Password"
+            margin="normal"
+            name="passwordAgain"
+            onChange={this.handleChange}
+            required
+            type="password"
+            value={this.state.passwordAgain}
+          />
+          <TextField
+            fullWidth
+            label="First Name"
+            margin="normal"
+            name="firstName"
+            onChange={this.handleChange}
+            required
+            value={this.state.firstName}
+          />
+          <TextField
+            fullWidth
+            label="Last Name"
+            margin="normal"
+            name="lastName"
+            onChange={this.handleChange}
+            required
+            value={this.state.lastName}
+          />
+          <TextField
+            fullWidth
+            label="Age"
+            margin="normal"
+            name="age"
+            onChange={this.handleChange}
+            value={this.state.age}
+          />
+          <TextField
+            fullWidth
+            label="Major"
+            margin="normal"
+            name="major"
+            onChange={this.handleChange}
+            select
+            SelectProps={{
+              MenuProps: {
+                className: classes.menu,
+              },
+            }}
+            value={this.state.major}
+          >
+            {majors.map(major => (
+              <MenuItem key={major} value={major}>
+                {major}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            fullWidth
+            label="Club"
+            margin="normal"
+            name="club"
+            onChange={this.handleChange}
+            value={this.state.club}
+          />
+          <TextField
+            fullWidth
+            label="Phone Number"
+            margin="normal"
+            name="phoneNumber"
+            onChange={this.handleChange}
+            placeholder="XXX-XXXX-XXXX"
+            value={this.state.phoneNumber}
+          />
+        </CardContent>
         <CardActions className={classes.centering}>
           <Button onClick={this.handleRegister}>Create</Button>
         </CardActions>

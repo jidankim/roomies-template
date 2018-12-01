@@ -56,13 +56,13 @@ export function loginFailure() {
 }
 
 /* REGISTER */
-export function registerRequest(username, password) {
+export function registerRequest(studentID, password, firstName, lastName, age, major, club) {
   return dispatch => {
     // Inform Register API is starting
     dispatch(register());
 
     return axios
-      .post('/api/account/signup', { username, password })
+      .post('/api/account/signup', { studentID, password, firstName, lastName, age, major, club })
       .then(response => {
         dispatch(registerSuccess());
       })
