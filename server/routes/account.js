@@ -58,15 +58,14 @@ router.post('/signup', (req, res) => {
       const password = bcrypt.hashSync(req.body.password, 8);
 
       queryString =
-      `INSERT INTO user_tbl (Student_ID, First_Name, Last_Name, Age, Major, Club, Phone_Number, Room_ID, Password) VALUES ("`
+      `INSERT INTO user_tbl (Student_ID, Password, First_Name, Last_Name, Age, Major, Club, Phone_Number) VALUES ("`
 					+ req.body.studentID + '","'
+          + password + '","'
           + req.body.firstName + '","'
           + req.body.lastName + '","'
-          + (req.body.age == null ? 'NULL' : req.body.age) + '","'
-          + (req.body.major == null ? 'NULL' : req.body.age) + '","'
-          + req.body.club + '","'
-          + req.body.roomID + '","'
-					+ password + '");';
+          + (req.body.age === '' ? 'NULL' : req.body.age) + '","'
+          + (req.body.major === '' ? 'NULL' : req.body.age) + '","'
+          + req.body.club + '");'
 
       connection.query(queryString, (err, results, fields) => {
         connection.release();
