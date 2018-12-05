@@ -1,9 +1,10 @@
 
-DROP TABLE commentary;
-DROP TABLE preference;
-DROP TABLE student;
-DROP TABLE room;
-DROP TABLE dormitory;
+DROP TABLE IF EXISTS commentary;
+DROP TABLE IF EXISTS preference;
+DROP TABLE IF EXISTS student;
+DROP TABLE IF EXISTS room;
+DROP TABLE IF EXISTS dormitory;
+
 
 CREATE TABLE dormitory (
     dorm_id VARCHAR(10) PRIMARY KEY,
@@ -28,7 +29,7 @@ CREATE TABLE student (
     first_name VARCHAR(10) NOT NULL,
     last_name VARCHAR(10) NOT NULL,
     age INT,
-    major VARCHAR(20) DEFAULT 'undecided',
+    major VARCHAR(30) DEFAULT 'undecided',
     phonenumber VARCHAR(20),
     FOREIGN KEY(room_id) REFERENCES room(room_id) ON DELETE SET NULL
 );
@@ -49,6 +50,7 @@ CREATE TABLE commentary (
     comment_id INT AUTO_INCREMENT,
     student_id INT,
     room_id VARCHAR(10),
+    date DATE,
     comment_txt VARCHAR(300),
     PRIMARY KEY(comment_id),
     FOREIGN KEY(student_id) REFERENCES student(student_id) ON DELETE SET NULL,
@@ -309,3 +311,120 @@ INSERT INTO student VALUES(20180035, 'password', 'N20_508','EUNCHAN','SHIN', 20,
 INSERT INTO preference VALUES(20180035, 'Y', '24:00:00', '08:30:00', 'Pop', 'Videogame', NULL);
 INSERT INTO student VALUES(20180036, 'password', 'N20_510','HYOSEONG','KIM', 20, 'undecided', "010-1234-5678");
 INSERT INTO preference VALUES(20180036, 'N', '23:00:00', '07:30:00', 'Jazz', 'DANCING', 'ILLUSION');
+INSERT INTO student VALUES(20170001, 'password', 'W4_101','YOONTAE','KIM', 21, 'Biology', "010-1234-5678");
+INSERT INTO preference VALUES(20170001, 'Y', '23:00:00', '07:00:00', 'Pop', 'Movies', 'Muse');
+INSERT INTO student VALUES(20170002, 'password', 'W4_102','DONGWON','LEE', 21, 'Chemistry', "010-1234-5678");
+INSERT INTO preference VALUES(20170002, 'N', '24:00:00', '08:00:00', 'Jazz', 'Videogame', 'Haje');
+INSERT INTO student VALUES(20170003, 'password', 'W4_103','TAEEUN','LEE', 20, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170003, 'Y', '22:00:00', '06:00:00', 'EDM', 'Soccor', NULL);
+INSERT INTO student VALUES(20170004, 'password', 'W4_104','JUNIL','HUH', 21, 'Mechanical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170004, 'N', '23:00:00', '07:00:00', 'Country', 'Dancing', 'Lunatic');
+INSERT INTO student VALUES(20170005, 'password', 'W4_104','INTAE','PARK', 20, 'Industrial Design', "010-1234-5678");
+INSERT INTO preference VALUES(20170005, 'Y', '01:00:00', '09:00:00', 'Dubsteb', 'DJ', NULL);
+INSERT INTO student VALUES(20170006, 'password', 'W4_106','HANJUN','LEE', 20, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170006, 'Y', '23:00:00', '07:30:00', NULL, 'Boardgames', 'Puple');
+INSERT INTO student VALUES(20170007, 'password', 'W4_109','JIBIN','KIM', 21, 'Physics', "010-1234-5678");
+INSERT INTO preference VALUES(20170007, 'N', '22:00:00', '06:00:00', 'Jazz', 'Exercise', 'Line');
+INSERT INTO student VALUES(20170008, 'password', 'W4_201','CHANHO','JI', 21, 'Mathematics', "010-1234-5678");
+INSERT INTO preference VALUES(20170008, 'Y', '24:00:00', '08:30:00', 'Pop', 'Videogame', NULL);
+INSERT INTO student VALUES(20170009, 'password', 'W4_203','SEONWOO','PARK', 21, 'Industrial Design', "010-1234-5678");
+INSERT INTO preference VALUES(20170009, 'N', '22:00:00', '06:30:00', 'Jazz', 'Reading', 'Baobab');
+INSERT INTO student VALUES(20170010, 'password', 'W4_203','SEUNGWAN','KIM', 21, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170010, 'Y', '22:00:00', '06:00:00', 'Pop', 'Swimming', 'Gaori');
+INSERT INTO student VALUES(20170011, 'password', 'W4_206','SIYOON','LEE', 21, 'Biology', "010-1234-5678");
+INSERT INTO preference VALUES(20170011, 'N', '24:00:00', '07:00:00', 'Kpop', 'Singing', 'Sixlines');
+INSERT INTO student VALUES(20170012, 'password', 'W4_208','HEESEONG','LEE', 20, 'Chemistry', "010-1234-5678");
+INSERT INTO preference VALUES(20170012, 'Y', '24:00:00', '08:00:00', 'EDM', 'Basketball', NULL);
+INSERT INTO student VALUES(20170013, 'password', 'W4_209','WONJUN','CHAE', 21, 'Biochemical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170013, 'N', '23:00:00', '07:00:00', 'Country', 'Tennis', 'Stroke');
+INSERT INTO student VALUES(20170014, 'password', 'W4_301','HAN','LEE', 20, 'Mechanical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170014, 'Y', '01:00:00', '09:00:00', 'Dubsteb', 'DJ', NULL);
+INSERT INTO student VALUES(20170015, 'password', 'W4_301','CHAN','LEE', 20, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170015, 'Y', '23:00:00', '07:30:00', NULL, 'Running', 'Chorus');
+INSERT INTO student VALUES(20170016, 'password', 'W4_302','DAEYOUNG','SEONG', 21, 'Chemistry', "010-1234-5678");
+INSERT INTO preference VALUES(20170016, 'N', '22:00:00', '06:00:00', 'Jazz', 'Exercise', 'Line');
+INSERT INTO student VALUES(20170017, 'password', 'W4_303','EUNCHAN','SHIN', 21, 'Electronical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170017, 'Y', '24:00:00', '08:30:00', 'Pop', 'Videogame', NULL);
+INSERT INTO student VALUES(20170018, 'password', 'W4_306','JIWOONG','KIM', 21, 'Economics', "010-1234-5678");
+INSERT INTO preference VALUES(20170018, 'N', '23:00:00', '07:30:00', 'Jazz', 'DANCING', 'ILLUSION');
+INSERT INTO student VALUES(20170019, 'password', 'W4_307','JIHOON','KIM', 21, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170019, 'Y', '23:00:00', '07:00:00', 'Pop', 'Movies', 'Muse');
+INSERT INTO student VALUES(20170020, 'password', 'W4_307','ISU','SEO', 21, 'Electronical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170020, 'N', '24:00:00', '08:00:00', 'Jazz', 'Videogame', 'Haje');
+INSERT INTO student VALUES(20170021, 'password', 'W4_309','MINKI','SONG', 20, 'Industrial Design', "010-1234-5678");
+INSERT INTO preference VALUES(20170021, 'Y', '22:00:00', '06:00:00', 'EDM', 'Soccor', NULL);
+INSERT INTO student VALUES(20170022, 'password', 'W4_402','HOYOUNG','SON', 21, 'Mathematics', "010-1234-5678");
+INSERT INTO preference VALUES(20170022, 'N', '23:00:00', '07:00:00', 'Country', 'Dancing', 'Lunatic');
+INSERT INTO student VALUES(20170023, 'password', 'W4_403','YEONJAE','CHO', 20, 'Physics', "010-1234-5678");
+INSERT INTO preference VALUES(20170023, 'Y', '01:00:00', '09:00:00', 'Dubsteb', 'DJ', NULL);
+INSERT INTO student VALUES(20170024, 'password', 'W4_404','YOONSANG','JOO', 20, 'Mechanical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170024, 'Y', '23:00:00', '07:30:00', NULL, 'Boardgames', 'Puple');
+INSERT INTO student VALUES(20170025, 'password', 'W4_404','EUNKYO','KIM', 21, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170025, 'N', '22:00:00', '06:00:00', 'Jazz', 'Exercise', 'Line');
+INSERT INTO student VALUES(20170026, 'password', 'W4_405','JAEMIN','JI', 21, 'undecided', "010-1234-5678");
+INSERT INTO preference VALUES(20170026, 'Y', '24:00:00', '08:30:00', 'Pop', 'Videogame', NULL);
+INSERT INTO student VALUES(20170027, 'password', 'W4_406','YOONSEOP','PARK', 21, 'Economics', "010-1234-5678");
+INSERT INTO preference VALUES(20170027, 'N', '22:00:00', '06:30:00', 'Jazz', 'Reading', 'Baobab');
+INSERT INTO student VALUES(20170028, 'password', 'W4_408','DAHUN','WOO', 21, 'Electronical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170028, 'Y', '22:00:00', '06:00:00', 'Pop', 'Swimming', 'Gaori');
+INSERT INTO student VALUES(20170029, 'password', 'W4_501','DAEYOUNG','YOO', 21, 'Physics', "010-1234-5678");
+INSERT INTO preference VALUES(20170029, 'N', '24:00:00', '07:00:00', 'Kpop', 'Singing', 'Sixlines');
+INSERT INTO student VALUES(20170030, 'password', 'W4_501','DOYOON','KIM', 20, 'Mathematics', "010-1234-5678");
+INSERT INTO preference VALUES(20170030, 'Y', '24:00:00', '08:00:00', 'EDM', 'Basketball', NULL);
+INSERT INTO student VALUES(20170031, 'password', 'W4_503','JIWAN','CHAE', 21, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170031, 'N', '23:00:00', '07:00:00', 'Country', 'Tennis', 'Stroke');
+INSERT INTO student VALUES(20170032, 'password', 'W4_504','WONHOON','KIM', 20, 'Mechanical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170032, 'Y', '01:00:00', '09:00:00', 'Dubsteb', 'DJ', NULL);
+INSERT INTO student VALUES(20170033, 'password', 'W4_505','SONGBIN','LEE', 20, 'Biochemical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170033, 'Y', '23:00:00', '07:30:00', NULL, 'Running', 'Chorus');
+INSERT INTO student VALUES(20170034, 'password', 'W4_508','SEUNGHOO','SEONG', 21, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170034, 'N', '22:00:00', '06:00:00', 'Jazz', 'Exercise', 'Line');
+INSERT INTO student VALUES(20170035, 'password', 'W4_508','HYOCHAN','SHIN', 21, 'Chemistry', "010-1234-5678");
+INSERT INTO preference VALUES(20170035, 'Y', '24:00:00', '08:30:00', 'Pop', 'Videogame', NULL);
+INSERT INTO student VALUES(20170036, 'password', 'W4_510','DOHUN','KIM', 21, 'Biology', "010-1234-5678");
+INSERT INTO preference VALUES(20170036, 'N', '23:00:00', '07:30:00', 'Jazz', 'DANCING', 'ILLUSION');
+INSERT INTO student VALUES(20170037, 'password', 'W4_601','SUHAN','KIM', 21, 'Biology', "010-1234-5678");
+INSERT INTO preference VALUES(20170037, 'Y', '23:00:00', '07:00:00', 'Pop', 'Movies', 'Muse');
+INSERT INTO student VALUES(20170038, 'password', 'W4_602','JAEYOUNG','LEE', 21, 'Chemistry', "010-1234-5678");
+INSERT INTO preference VALUES(20170038, 'N', '24:00:00', '08:00:00', 'Jazz', 'Videogame', 'Haje');
+INSERT INTO student VALUES(20170039, 'password', 'W4_603','JUNHYUK','LEE', 20, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170039, 'Y', '22:00:00', '06:00:00', 'EDM', 'Soccor', NULL);
+INSERT INTO student VALUES(20170040, 'password', 'W4_604','CHANHO','HUH', 21, 'Mechanical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170040, 'N', '23:00:00', '07:00:00', 'Country', 'Dancing', 'Lunatic');
+INSERT INTO student VALUES(20170041, 'password', 'W4_604','YOONHOO','PARK', 20, 'Industrial Design', "010-1234-5678");
+INSERT INTO preference VALUES(20170041, 'Y', '01:00:00', '09:00:00', 'Dubsteb', 'DJ', NULL);
+INSERT INTO student VALUES(20170042, 'password', 'W4_606','WOOSEONG','LEE', 20, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170042, 'Y', '23:00:00', '07:30:00', NULL, 'Boardgames', 'Puple');
+INSERT INTO student VALUES(20170043, 'password', 'W4_609','HYUNHO','KIM', 21, 'Physics', "010-1234-5678");
+INSERT INTO preference VALUES(20170043, 'N', '22:00:00', '06:00:00', 'Jazz', 'Exercise', 'Line');
+INSERT INTO student VALUES(20170044, 'password', 'W4_701','ICHAN','JI', 21, 'Mathematics', "010-1234-5678");
+INSERT INTO preference VALUES(20170044, 'Y', '24:00:00', '08:30:00', 'Pop', 'Videogame', NULL);
+INSERT INTO student VALUES(20170045, 'password', 'W4_703','MINJUN','PARK', 21, 'Industrial Design', "010-1234-5678");
+INSERT INTO preference VALUES(20170045, 'N', '22:00:00', '06:30:00', 'Jazz', 'Reading', 'Baobab');
+INSERT INTO student VALUES(20170046, 'password', 'W4_703','YUNCHAE','KIM', 21, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170046, 'Y', '22:00:00', '06:00:00', 'Pop', 'Swimming', 'Gaori');
+INSERT INTO student VALUES(20170047, 'password', 'W4_706','SIWOO','LEE', 21, 'Biology', "010-1234-5678");
+INSERT INTO preference VALUES(20170047, 'N', '24:00:00', '07:00:00', 'Kpop', 'Singing', 'Sixlines');
+INSERT INTO student VALUES(20170048, 'password', 'W4_708','DONGYOUNG','LEE', 20, 'Chemistry', "010-1234-5678");
+INSERT INTO preference VALUES(20170048, 'Y', '24:00:00', '08:00:00', 'EDM', 'Basketball', NULL);
+INSERT INTO student VALUES(20170049, 'password', 'W4_709','DONGYEON','CHAE', 21, 'Biochemical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170049, 'N', '23:00:00', '07:00:00', 'Country', 'Tennis', 'Stroke');
+INSERT INTO student VALUES(20170050, 'password', 'W4_801','DONGHWAN','LEE', 20, 'Mechanical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170050, 'Y', '01:00:00', '09:00:00', 'Dubsteb', 'DJ', NULL);
+INSERT INTO student VALUES(20170051, 'password', 'W4_801','HOJUN','LEE', 20, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170051, 'Y', '23:00:00', '07:30:00', NULL, 'Running', 'Chorus');
+INSERT INTO student VALUES(20170052, 'password', 'W4_802','YOOJUN','SEONG', 21, 'Chemistry', "010-1234-5678");
+INSERT INTO preference VALUES(20170052, 'N', '22:00:00', '06:00:00', 'Jazz', 'Exercise', 'Line');
+INSERT INTO student VALUES(20170053, 'password', 'W4_803','TAEHWAN','SHIN', 21, 'Electronical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170053, 'Y', '24:00:00', '08:30:00', 'Pop', 'Videogame', NULL);
+INSERT INTO student VALUES(20170054, 'password', 'W4_806','YOUNGIN','KIM', 21, 'Economics', "010-1234-5678");
+INSERT INTO preference VALUES(20170054, 'N', '23:00:00', '07:30:00', 'Jazz', 'DANCING', 'ILLUSION');
+INSERT INTO student VALUES(20170055, 'password', 'W4_807','YOOSANG','KIM', 21, 'Computer Science', "010-1234-5678");
+INSERT INTO preference VALUES(20170055, 'Y', '23:00:00', '07:00:00', 'Pop', 'Movies', 'Muse');
+INSERT INTO student VALUES(20170056, 'password', 'W4_807','JAEHYUK','SEO', 21, 'Electronical Engineering', "010-1234-5678");
+INSERT INTO preference VALUES(20170056, 'N', '24:00:00', '08:00:00', 'Jazz', 'Videogame', 'Haje');
+INSERT INTO student VALUES(20170057, 'password', 'W4_809','SEUNGWON','SONG', 20, 'Industrial Design', "010-1234-5678");
+INSERT INTO preference VALUES(20170057, 'Y', '22:00:00', '06:00:00', 'EDM', 'Soccor', NULL);
+
+
+INSERT INTO commentary VALUES(NULL, 20180032, 'N20_504', '2018-11-14', "It's too hard to get to my room.");

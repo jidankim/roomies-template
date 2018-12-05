@@ -1,4 +1,4 @@
-import bcrpyt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import express from 'express';
 import pool from '../config.js';
 // import Account from '../models/account';
@@ -14,10 +14,19 @@ const router = express.Router();
         3: USERNAME EXISTS
 */
 router.post('/signup', (req, res) => {
-    // CHECK USERNAME FORMAT
-    let idRegex = /^\d{9}$/;
+    const id = parseInt(req.body.studentID);
+    const pw = req.body.password;
+    const fn = req.body.firstName;
+    const ln = req.body.lastName;
+    const age = req.body.age === '' ? null : parseInt(req.body.age);
+    const maj = req.body.major === '' ? null : req.body.major;
+    const club = req.body.club === '' ? null : req.body.club;
+    const pn = req.body.phoneNumber === '' ? null : req.body.phoneNumber;
 
-    if (!idRegex.test(req.body.studentID)) {
+    // CHECK USERNAME FORMAT
+    let idRegex = /^\d{8}$/;
+
+    if (!idRegex.test(id)) {
         return res.status(400).json({
             error: "BAD USERNAME",
             code: 1
@@ -25,7 +34,7 @@ router.post('/signup', (req, res) => {
     }
 
     // CHECK PASS LENGTH
-    if (req.body.password.length < 4 || typeof req.body.password !== "string") {
+    if (pw.length < 4 || typeof pw !== "string") {
         return res.status(400).json({
             error: "BAD PASSWORD",
             code: 2
@@ -37,16 +46,16 @@ router.post('/signup', (req, res) => {
     pool.getConnection((err, connection) => {
       if (err) throw err;
 
-      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
+      let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
       // use the connection
-      connection.query(queryString, req.body.studentID, (err, results, fields) => {
+      connection.query(queryString, [id], (err, results, fields) => {
         // when done with the connection, release interval
         connection.release();
 
         // handle error after the release
         if (err) throw err;
 
-        if (results.length() != 0) {
+        if (results.length != 0) {
           return res.status(409).json({
             error: "USERNAME EXISTS",
             code: 3
@@ -55,26 +64,20 @@ router.post('/signup', (req, res) => {
       });
 
       // SAVE IN THE DATABASE
-      const password = bcrypt.hashSync(req.body.password, 8);
+      // const password = bcrypt.hashSync(pw, 8);
 
       queryString =
-      `INSERT INTO user_tbl (Student_ID, First_Name, Last_Name, Age, Major, Club, Phone_Number, Room_ID, Password) VALUES ("`
-					+ req.body.studentID + '","'
-          + req.body.firstName + '","'
-          + req.body.lastName + '","'
-          + (req.body.age == null ? 'NULL' : req.body.age) + '","'
-          + (req.body.major == null ? 'NULL' : req.body.age) + '","'
-          + req.body.club + '","'
-          + req.body.roomID + '","'
-					+ password + '");';
+        `INSERT INTO STUDENT SET
+        student_id = ?, pw = ?, room_id = ?, first_name = ?, last_name = ?,
+        age = ?, major = ?, phonenumber = ?`;
 
-      connection.query(queryString, (err, results, fields) => {
+      connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
         connection.release();
 
         if (err) throw err;
 
-        return res.json({ success: true });
       });
+      return res.json({ success: true });
 
 
     });
@@ -105,7 +108,7 @@ router.post('/signup', (req, res) => {
 
 /*
     ACCOUNT SIGN IN: POST /api/account/signin
-    BODY SAMPLE: { "username": "test", "password": "test" }
+    BODY SAMPLE: { "studentID": "test", "password": "test" }
     ERROR CODES:
         1: LOGIN FAILED
 */
@@ -122,9 +125,9 @@ router.post('/signin', (req, res) => {
     pool.getConnection((err, connection) => {
       if (err) throw err;
 
-      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
+      let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
       // use the connection
-      connection.query(queryString, req.body.studentID, (err, results, fields) => {
+      connection.query(queryString, [req.body.studentID], (err, results, fields) => {
         // when done with the connection, release interval
         connection.release();
 
@@ -132,7 +135,7 @@ router.post('/signin', (req, res) => {
         if (err) throw err;
 
         // CHECK ACCOUNT EXISTANCY
-        if (results.length() == 0) {
+        if (results.length == 0) {
           return res.status(401).json({
             error: "LOGIN FAILED",
             code: 1
@@ -140,25 +143,25 @@ router.post('/signin', (req, res) => {
         }
 
         // CHECK WHETHER THE PASSWORD IS VALID
-        if (!account.validateHash(req.body.password)) {
+        // if (!bcrypt.compareSync(req.body.password, results[0].Password)) {
+        if (req.body.password !== results[0].pw) {
             return res.status(401).json({
                 error: "LOGIN FAILED",
                 code: 1
             });
         }
 
-        // ALTER SESSION
-        let session = req.session;
-        session.loginInfo = {
-            _id: req.body.studentID,
-        };
-
-        // RETURN SUCCESS
-        return res.json({
-            success: true
-        });
-
       });
+
+      // ALTER SESSION
+      let session = req.session;
+      session.loginInfo = {
+          _id: req.body.studentID,
+          username: req.body.studentID,
+      };
+
+      // RETURN SUCCESS
+      return res.json({ success: true });
 
     });
     // Account.findOne({ username: req.body.username }, (err, account) => {

@@ -11,8 +11,12 @@ class Register extends React.Component {
     this.handleRegister = this.handleRegister.bind(this);
   }
 
-  handleRegister = (id, pw) => {
-    return this.props.registerRequest(id, pw).then(() => {
+  handleRegister = (id, pw, pwa, fn, ln, age, maj, pn) => {
+    if (pw !== pwa) {
+      this.props.openNotif('Password does not match', 'error');
+      return new Promise.resolve(false);
+    }
+    return this.props.registerRequest(id, pw, fn, ln, age, maj, pn).then(() => {
       if (this.props.status === 'SUCCESS') {
         this.props.openNotif('Success! Please log in', 'success');
         this.props.history.push('/login');
@@ -63,7 +67,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     openNotif: (message, variant) => dispatch(openNotif(message, variant)),
-    registerRequest: (id, pw) => dispatch(registerRequest(id, pw))
+    registerRequest: (id, pw, fn, ln, age, maj, pn) => dispatch(registerRequest(id, pw, fn, ln, age, maj, pn))
   };
 };
 
