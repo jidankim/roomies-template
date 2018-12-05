@@ -1,9 +1,9 @@
 
-DROP TABLE commentary;
-DROP TABLE preference;
-DROP TABLE student;
-DROP TABLE room;
-DROP TABLE dormitory;
+DROP TABLE IF EXISTS commentary;
+DROP TABLE IF EXISTS preference;
+DROP TABLE IF EXISTS student;
+DROP TABLE IF EXISTS room;
+DROP TABLE IF EXISTS dormitory;
 
 CREATE TABLE dormitory (
     dorm_id VARCHAR(10) PRIMARY KEY,
