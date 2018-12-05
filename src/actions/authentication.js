@@ -17,17 +17,17 @@ import {
 =======================*/
 
 /* LOGIN */
-export function loginRequest(username, password) {
+export function loginRequest(studentID, password) {
   return dispatch => {
     // Inform Login API is starting
     dispatch(login());
 
     // API REQUEST
     return axios
-      .post('/api/account/signin', { username, password })
+      .post('/api/account/signin', { studentID, password })
       .then(response => {
         // SUCCEED
-        dispatch(loginSuccess(username));
+        dispatch(loginSuccess(studentID));
       })
       .catch(error => {
         // FAILED
@@ -42,10 +42,10 @@ export function login() {
   };
 }
 
-export function loginSuccess(username) {
+export function loginSuccess(studentID) {
   return {
     type: AUTH_LOGIN_SUCCESS,
-    username
+    studentID
   };
 }
 

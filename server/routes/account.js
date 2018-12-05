@@ -49,6 +49,10 @@ router.post('/signup', (req, res) => {
       let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
       // use the connection
       connection.query(queryString, [id], (err, results, fields) => {
+        // when done with the connection, release interval
+        connection.release();
+
+        // handle error after the release
         if (err) throw err;
 
         if (results.length != 0) {
@@ -57,26 +61,10 @@ router.post('/signup', (req, res) => {
             code: 3
           });
         }
-
-        // // when done with the connection, release interval
-        // connection.release();
-        //
-        // // handle error after the release
-        // if (err) throw err;
       });
 
       // SAVE IN THE DATABASE
-      const password = bcrypt.hashSync(pw, 8);
-
-      // queryString =
-      // `INSERT INTO STUDENT (Student_ID, Password, First_Name, Last_Name, Age, Major, Club, Phone_Number) VALUES ("`
-			// 		+ req.body.studentID + '","'
-      //     + password + '","'
-      //     + req.body.firstName + '","'
-      //     + req.body.lastName + '","'
-      //     + (req.body.age === '' ? 'NULL' : req.body.age) + '","'
-      //     + (req.body.major === '' ? 'NULL' : req.body.age) + '","'
-      //     + req.body.club + '");'
+      // const password = bcrypt.hashSync(pw, 8);
 
       queryString =
         `INSERT INTO STUDENT SET
@@ -120,7 +108,7 @@ router.post('/signup', (req, res) => {
 
 /*
     ACCOUNT SIGN IN: POST /api/account/signin
-    BODY SAMPLE: { "username": "test", "password": "test" }
+    BODY SAMPLE: { "studentID": "test", "password": "test" }
     ERROR CODES:
         1: LOGIN FAILED
 */
@@ -155,27 +143,25 @@ router.post('/signin', (req, res) => {
         }
 
         // CHECK WHETHER THE PASSWORD IS VALID
-        console.log("results");
-        console.log(results);
-        if (!bcrpyt.compareSync(req.body.password, results[0].Password)) {
+        // if (!bcrypt.compareSync(req.body.password, results[0].Password)) {
+        if (req.body.password !== results[0].pw) {
             return res.status(401).json({
                 error: "LOGIN FAILED",
                 code: 1
             });
         }
 
-        // ALTER SESSION
-        let session = req.session;
-        session.loginInfo = {
-            _id: req.body.studentID,
-        };
-
-        // RETURN SUCCESS
-        return res.json({
-            success: true
-        });
-
       });
+
+      // ALTER SESSION
+      let session = req.session;
+      session.loginInfo = {
+          _id: req.body.studentID,
+          username: req.body.studentID,
+      };
+
+      // RETURN SUCCESS
+      return res.json({ success: true });
 
     });
     // Account.findOne({ username: req.body.username }, (err, account) => {
