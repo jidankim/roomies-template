@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS student;
 DROP TABLE IF EXISTS room;
 DROP TABLE IF EXISTS dormitory;
 
+
 CREATE TABLE dormitory (
     dorm_id VARCHAR(10) PRIMARY KEY,
     name VARCHAR(30) NOT NULL,
