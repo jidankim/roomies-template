@@ -92,6 +92,15 @@ class Authentication extends React.Component {
     let club = this.state.club;
     let pn = this.state.phoneNumber;
 
+    console.log(id);
+    console.log(pw);
+    console.log(fn);
+    console.log(ln);
+    console.log(age);
+    console.log(maj);
+    console.log(club);
+    console.log(pn);
+
     this.props
     .onRegister(id, pw, pwa, fn, ln, age, maj, club, pn)
     .then(result => {

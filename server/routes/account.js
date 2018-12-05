@@ -1,4 +1,4 @@
-import bcrpyt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import express from 'express';
 import pool from '../config.js';
 // import Account from '../models/account';
@@ -14,10 +14,27 @@ const router = express.Router();
         3: USERNAME EXISTS
 */
 router.post('/signup', (req, res) => {
-    // CHECK USERNAME FORMAT
-    let idRegex = /^\d{9}$/;
+    const id = parseInt(req.body.studentID);
+    const pw = req.body.password;
+    const fn = req.body.firstName;
+    const ln = req.body.lastName;
+    const age = req.body.age === '' ? null : req.body.age;
+    const maj = req.body.major === '' ? null : req.body.major;
+    const club = req.body.club === '' ? null : req.body.club;
+    const pn = req.body.phoneNumber === '' ? null : req.body.phoneNumber;
 
-    if (!idRegex.test(req.body.studentID)) {
+    console.log(id);
+    console.log(pw);
+    console.log(fn);
+    console.log(ln);
+    console.log(age);
+    console.log(maj);
+    console.log(club);
+    console.log(pn);
+    // CHECK USERNAME FORMAT
+    let idRegex = /^\d{8}$/;
+
+    if (!idRegex.test(id)) {
         return res.status(400).json({
             error: "BAD USERNAME",
             code: 1
@@ -25,7 +42,7 @@ router.post('/signup', (req, res) => {
     }
 
     // CHECK PASS LENGTH
-    if (req.body.password.length < 4 || typeof req.body.password !== "string") {
+    if (pw.length < 4 || typeof pw !== "string") {
         return res.status(400).json({
             error: "BAD PASSWORD",
             code: 2
@@ -37,37 +54,44 @@ router.post('/signup', (req, res) => {
     pool.getConnection((err, connection) => {
       if (err) throw err;
 
-      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
+      let queryString = "SELECT * FROM STUDENT WHERE Student_ID = ?";
       // use the connection
-      connection.query(queryString, req.body.studentID, (err, results, fields) => {
-        // when done with the connection, release interval
-        connection.release();
-
-        // handle error after the release
+      connection.query(queryString, [id], (err, results, fields) => {
         if (err) throw err;
 
-        if (results.length() != 0) {
+        if (results.length != 0) {
           return res.status(409).json({
             error: "USERNAME EXISTS",
             code: 3
           });
         }
+
+        // // when done with the connection, release interval
+        // connection.release();
+        //
+        // // handle error after the release
+        // if (err) throw err;
       });
 
       // SAVE IN THE DATABASE
-      const password = bcrypt.hashSync(req.body.password, 8);
+      const password = bcrypt.hashSync(pw, 8);
+
+      // queryString =
+      // `INSERT INTO STUDENT (Student_ID, Password, First_Name, Last_Name, Age, Major, Club, Phone_Number) VALUES ("`
+			// 		+ req.body.studentID + '","'
+      //     + password + '","'
+      //     + req.body.firstName + '","'
+      //     + req.body.lastName + '","'
+      //     + (req.body.age === '' ? 'NULL' : req.body.age) + '","'
+      //     + (req.body.major === '' ? 'NULL' : req.body.age) + '","'
+      //     + req.body.club + '");'
 
       queryString =
-      `INSERT INTO user_tbl (Student_ID, Password, First_Name, Last_Name, Age, Major, Club, Phone_Number) VALUES ("`
-					+ req.body.studentID + '","'
-          + password + '","'
-          + req.body.firstName + '","'
-          + req.body.lastName + '","'
-          + (req.body.age === '' ? 'NULL' : req.body.age) + '","'
-          + (req.body.major === '' ? 'NULL' : req.body.age) + '","'
-          + req.body.club + '");'
+        `INSERT INTO STUDENT SET
+        Student_ID = ?, Password = ?, First_Name = ?, Last_Name = ?,
+        Age = ?, Major = ?, Club = ?, Phone_Number = ?`;
 
-      connection.query(queryString, (err, results, fields) => {
+      connection.query(queryString, [id, pw, fn, ln, age, maj, club, pn], (err, results, fields) => {
         connection.release();
 
         if (err) throw err;
@@ -131,7 +155,7 @@ router.post('/signin', (req, res) => {
         if (err) throw err;
 
         // CHECK ACCOUNT EXISTANCY
-        if (results.length() == 0) {
+        if (results.length == 0) {
           return res.status(401).json({
             error: "LOGIN FAILED",
             code: 1
@@ -139,7 +163,7 @@ router.post('/signin', (req, res) => {
         }
 
         // CHECK WHETHER THE PASSWORD IS VALID
-        if (!account.validateHash(req.body.password)) {
+        if (!bcrpyt.compareSync(req.body.password, results[0].Password)) {
             return res.status(401).json({
                 error: "LOGIN FAILED",
                 code: 1

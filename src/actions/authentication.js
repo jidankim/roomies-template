@@ -56,17 +56,18 @@ export function loginFailure() {
 }
 
 /* REGISTER */
-export function registerRequest(studentID, password, firstName, lastName, age, major, club) {
+export function registerRequest(studentID, password, firstName, lastName, age, major, club, phoneNumber) {
   return dispatch => {
     // Inform Register API is starting
     dispatch(register());
 
     return axios
-      .post('/api/account/signup', { studentID, password, firstName, lastName, age, major, club })
+      .post('/api/account/signup', { studentID, password, firstName, lastName, age, major, club, phoneNumber })
       .then(response => {
         dispatch(registerSuccess());
       })
       .catch(error => {
+        console.log(error.response);
         dispatch(registerFailure(error.response.data.code));
       });
   };

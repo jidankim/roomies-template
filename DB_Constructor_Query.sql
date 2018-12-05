@@ -1,11 +1,11 @@
 create database if not exists ROOMIE;
 use ROOMIE;
 
-drop table COMMENTS;
-drop table STUDENT;
-drop table ROOM;
-drop table PREFERENCE;
-drop table DORMITORY;
+drop table if exists COMMENTS;
+drop table if exists STUDENT;
+drop table if exists ROOM;
+drop table if exists PREFERENCE;
+drop table if exists DORMITORY;
 
 create table if not exists PREFERENCE (
 	Student_ID int,
@@ -88,3 +88,8 @@ insert into PREFERENCE (Student_ID, Smokes, Sleep_Start_Time, Sleep_End_Time, Mu
 insert into COMMENTS (Student_ID, Room_ID, Content) values 
 	(20130736, "N20_228", "This room sucks man")
     ;
+
+--create user if not exists 'test'@'localhost' identified by 'roommate';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+GRANT ALL PRIVILEGES ON ROOMIE.* TO 'root'@'localhost';
+flush privileges;
