@@ -46,7 +46,6 @@ class Authentication extends React.Component {
     super(props);
     this.state = {
       age: '',
-      club: '',
       firstName: '',
       lastName: '',
       major: '',
@@ -89,20 +88,10 @@ class Authentication extends React.Component {
     let ln = this.state.lastName;
     let age = this.state.age;
     let maj = this.state.major;
-    let club = this.state.club;
     let pn = this.state.phoneNumber;
 
-    console.log(id);
-    console.log(pw);
-    console.log(fn);
-    console.log(ln);
-    console.log(age);
-    console.log(maj);
-    console.log(club);
-    console.log(pn);
-
     this.props
-    .onRegister(id, pw, pwa, fn, ln, age, maj, club, pn)
+    .onRegister(id, pw, pwa, fn, ln, age, maj, pn)
     .then(result => {
       if (!result) {
         this.setState({
@@ -228,14 +217,6 @@ class Authentication extends React.Component {
           </TextField>
           <TextField
             fullWidth
-            label="Club"
-            margin="normal"
-            name="club"
-            onChange={this.handleChange}
-            value={this.state.club}
-          />
-          <TextField
-            fullWidth
             label="Phone Number"
             margin="normal"
             name="phoneNumber"
@@ -279,7 +260,7 @@ Authentication.defaultProps = {
   onLogin: (id, pw) => {
     console.error('login function not defined');
   },
-  onRegister: (id, pw) => {
+  onRegister: (id, pw, pwa, fn, ln, age, maj, pn) => {
     console.error('register function not defined');
   }
 };

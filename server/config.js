@@ -3,8 +3,9 @@ const pool = mysql.createPool({
   host: 'localhost',
   port: 3306,
   user: 'root',
-  password: 'password',
-  database: 'ROOMIE'
+  password: 'roommate',
+  database: 'ROOMIE',
+  debug: true
 });
 
 // pool.getConnection = callback => {

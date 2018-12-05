@@ -18,19 +18,11 @@ router.post('/signup', (req, res) => {
     const pw = req.body.password;
     const fn = req.body.firstName;
     const ln = req.body.lastName;
-    const age = req.body.age === '' ? null : req.body.age;
+    const age = req.body.age === '' ? null : parseInt(req.body.age);
     const maj = req.body.major === '' ? null : req.body.major;
     const club = req.body.club === '' ? null : req.body.club;
     const pn = req.body.phoneNumber === '' ? null : req.body.phoneNumber;
 
-    console.log(id);
-    console.log(pw);
-    console.log(fn);
-    console.log(ln);
-    console.log(age);
-    console.log(maj);
-    console.log(club);
-    console.log(pn);
     // CHECK USERNAME FORMAT
     let idRegex = /^\d{8}$/;
 
@@ -54,7 +46,7 @@ router.post('/signup', (req, res) => {
     pool.getConnection((err, connection) => {
       if (err) throw err;
 
-      let queryString = "SELECT * FROM STUDENT WHERE Student_ID = ?";
+      let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
       // use the connection
       connection.query(queryString, [id], (err, results, fields) => {
         if (err) throw err;
@@ -88,16 +80,16 @@ router.post('/signup', (req, res) => {
 
       queryString =
         `INSERT INTO STUDENT SET
-        Student_ID = ?, Password = ?, First_Name = ?, Last_Name = ?,
-        Age = ?, Major = ?, Club = ?, Phone_Number = ?`;
+        student_id = ?, pw = ?, room_id = ?, first_name = ?, last_name = ?,
+        age = ?, major = ?, phonenumber = ?`;
 
-      connection.query(queryString, [id, pw, fn, ln, age, maj, club, pn], (err, results, fields) => {
+      connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
         connection.release();
 
         if (err) throw err;
 
-        return res.json({ success: true });
       });
+      return res.json({ success: true });
 
 
     });
@@ -145,9 +137,9 @@ router.post('/signin', (req, res) => {
     pool.getConnection((err, connection) => {
       if (err) throw err;
 
-      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
+      let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
       // use the connection
-      connection.query(queryString, req.body.studentID, (err, results, fields) => {
+      connection.query(queryString, [req.body.studentID], (err, results, fields) => {
         // when done with the connection, release interval
         connection.release();
 
@@ -163,6 +155,8 @@ router.post('/signin', (req, res) => {
         }
 
         // CHECK WHETHER THE PASSWORD IS VALID
+        console.log("results");
+        console.log(results);
         if (!bcrpyt.compareSync(req.body.password, results[0].Password)) {
             return res.status(401).json({
                 error: "LOGIN FAILED",
