@@ -24,8 +24,8 @@ router.post('/signup', (req, res) => {
     const pn = req.body.phoneNumber === '' ? null : req.body.phoneNumber;
 
     // CHECK USERNAME FORMAT
-    let idRegex = /^\d{8}$/;
-
+    const idRegex = /^\d{8}$/;
+    
     if (!idRegex.test(id)) {
         return res.status(400).json({
             error: "BAD USERNAME",
@@ -131,7 +131,7 @@ router.post('/signin', (req, res) => {
         if (err) throw err;
 
         // CHECK ACCOUNT EXISTANCY
-        if (results.length == 0) {
+        if (results.length === 0) {
           return res.status(401).json({
             error: "LOGIN FAILED",
             code: 1
@@ -147,17 +147,16 @@ router.post('/signin', (req, res) => {
             });
         }
 
+        // ALTER SESSION
+        let session = req.session;
+        session.loginInfo = {
+            _id: req.body.studentID,
+            username: req.body.studentID,
+        };
+
+        // RETURN SUCCESS
+        return res.json({ success: true });
       });
-
-      // ALTER SESSION
-      let session = req.session;
-      session.loginInfo = {
-          _id: req.body.studentID,
-          username: req.body.studentID,
-      };
-
-      // RETURN SUCCESS
-      return res.json({ success: true });
 
     });
     // Account.findOne({ username: req.body.username }, (err, account) => {
