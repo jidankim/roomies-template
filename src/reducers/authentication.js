@@ -75,7 +75,7 @@ export default function authentication(state, action) {
       return update(state, {
         status: {
           valid: { $set: true },
-          currentUser: { $set: action.username }
+          currentUser: { $set: action.studentID }
         }
       });
     case types.AUTH_GET_STATUS_FAILURE:

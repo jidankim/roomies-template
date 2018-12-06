@@ -31,7 +31,7 @@ class Register extends React.Component {
         let errorMessage = [
           'Invalid Username',
           'Password is too short',
-          'Username already exists'
+          'StudentID already exists'
         ];
 
         this.props.openNotif(errorMessage[this.props.errorCode - 1], 'error');

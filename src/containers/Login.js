@@ -17,15 +17,15 @@ class Login extends React.Component {
         // create session data
         let loginData = {
           isLoggedIn: true,
-          username: id
+          studentID: id
         };
 
         document.cookie = 'key=' + btoa(JSON.stringify(loginData));
-        this.props.openNotif(`Welcome ${id} !`, 'info');
+        this.props.openNotif(`Welcome ${id}!`, 'info');
         this.props.history.push('/');
         return true;
       } else {
-        this.props.openNotif('Incorrect username or password', 'error');
+        this.props.openNotif('Incorrect studentID or password', 'error');
         return false;
       }
     });

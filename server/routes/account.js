@@ -49,10 +49,6 @@ router.post('/signup', (req, res) => {
       let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
       // use the connection
       connection.query(queryString, [id], (err, results, fields) => {
-        // when done with the connection, release interval
-        connection.release();
-
-        // handle error after the release
         if (err) throw err;
 
         if (results.length != 0) {
@@ -61,24 +57,24 @@ router.post('/signup', (req, res) => {
             code: 3
           });
         }
+
+        // SAVE IN THE DATABASE
+        // const password = bcrypt.hashSync(pw, 8);
+
+        queryString =
+          `INSERT INTO STUDENT SET
+          student_id = ?, pw = ?, room_id = ?, first_name = ?, last_name = ?,
+          age = ?, major = ?, phonenumber = ?`;
+
+        connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
+          // when done with the connection, release interval
+          connection.release();
+
+          // handle error after the release
+          if (err) throw err;
+        });
+        return res.json({ success: true });
       });
-
-      // SAVE IN THE DATABASE
-      // const password = bcrypt.hashSync(pw, 8);
-
-      queryString =
-        `INSERT INTO STUDENT SET
-        student_id = ?, pw = ?, room_id = ?, first_name = ?, last_name = ?,
-        age = ?, major = ?, phonenumber = ?`;
-
-      connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
-        connection.release();
-
-        if (err) throw err;
-
-      });
-      return res.json({ success: true });
-
 
     });
     // Account.findOne({ username: req.body.username }, (err, exists) => {
