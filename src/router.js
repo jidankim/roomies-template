@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 // Router
 import {
@@ -9,14 +10,23 @@ import {
 } from 'react-router-dom';
 
 // Container Components
-import { App, Home, Login, Register } from 'containers';
+import { App, Home, Login, Profile, Register } from 'containers';
 
-const router = () => (
+const PrivateRoute = ({ component: Component, authed, ...rest }) => (
+  <Route {...rest} render={(props) =>
+    authed
+    ? <Component {...props} />
+    : <Redirect to={{ pathname: '/login', state: { from: props.location.pathname } }} /> }
+  />
+);
+
+const router = (props) => (
   <div>
     <Router>
       <div>
         <App />
         <Switch>
+          <PrivateRoute authed={props.isLoggedIn} exact path="/profile" component={Profile} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/" component={Home} />
@@ -26,4 +36,10 @@ const router = () => (
   </div>
 );
 
-export default router;
+const mapStateToProps = state => {
+  return {
+    isLoggedIn: state.authentication.status.isLoggedIn
+  }
+}
+
+export default connect(mapStateToProps)(router);

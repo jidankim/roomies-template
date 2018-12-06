@@ -22,7 +22,9 @@ class Login extends React.Component {
 
         document.cookie = 'key=' + btoa(JSON.stringify(loginData));
         this.props.openNotif(`Welcome ${id}!`, 'info');
-        this.props.history.push('/');
+
+        const { from } = this.props.location.state || { from: '/' };
+        this.props.history.push(from);
         return true;
       } else {
         this.props.openNotif('Incorrect studentID or password', 'error');

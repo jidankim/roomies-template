@@ -59,7 +59,9 @@ class Header extends React.Component {
                   color="inherit"
                   aria-label="profile"
                 >
-                  <ProfileIcon className={classes.icon} />
+                  <Link to="/profile">
+                    <ProfileIcon className={classes.icon} />
+                  </Link>
                 </IconButton>,
                 <IconButton
                   className={classes.corner}
