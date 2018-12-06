@@ -7,7 +7,7 @@ import pool from '../config.js';
 const router = express.Router();
 
 //Get Student Information, given Student ID
-router.post('/getprofile', (req, res) => {
+router.post('/getProfile', (req, res) => {
     //Extracting values from the request
     var student_id = parseInt(req.body.student_id);
 
@@ -34,7 +34,7 @@ router.post('/getprofile', (req, res) => {
 })
 
 //Set Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
-router.post('/updateprofile', (req, res) => {
+router.post('/updateProfile', (req, res) => {
     //Extracting variables from the request
     var student_id = parseInt(req.body.student_id);
     var first_name = req.body.first_name;
@@ -58,7 +58,7 @@ router.post('/updateprofile', (req, res) => {
 });
 
 //Get Preference, given Student ID
-router.post('/getpreference', (req, res) => {
+router.post('/getPreference', (req, res) => {
     //Extracting values from the request
     var student_id = parseInt(req.body.student_id);
 
@@ -85,7 +85,7 @@ router.post('/getpreference', (req, res) => {
 })
 
 //Set Preference, given Student ID and preference data
-router.post('/updatepreference', (req, res) => {
+router.post('/updatePreference', (req, res) => {
 	//Extracting variables from the request
     var student_id = parseInt(req.body.student_id);
     var smoker = req.body.smoker;
@@ -142,6 +142,147 @@ router.post('/updatepreference', (req, res) => {
 	});
 });
 
+//Get all dormitory information, given request
+router.post('/getAllDormitory', (req, res) => {
+    pool.getConnection((err, connection) => {
+        let queryString = "SELECT * FROM dormitory"
+        connection.query(queryString, [], (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({results: results});
+        });
+    });
+});
+
+//Get all room information, given Dormitory ID
+router.post('/getAllRoom', (req, res) => {
+    //Extract variables from the request
+    var dorm_id = req.body.dorm_id;
+
+    pool.getConnection((err, connection) => {
+        let queryString = "SELECT * FROM room WHERE dorm_id = ?";
+        connection.query(queryString, [dorm_id], (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({results: results});
+        });
+    });
+});
+
+//Move student into a room, given Student ID and Room ID
+router.post('/moveIntoRoom', (req, res) => {
+    //Extract variables from the request
+    var student_id = req.body.student_id;
+    var room_id = req.body.room_id;
+
+    pool.getConnection((err, connection) => {
+        let queryString = "UPDATE student SET room_id = ? WHERE student_id = ?";
+        connection.query(queryString, [room_id, student_id], (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({success: true});
+        });
+    });
+});
+
+//Get all comments of a room, given Room ID
+router.post('/getCommentsByRoomID', (req, res) => {
+    //Extract variables from the request
+    var room_id = req.body.room_id;
+
+    pool.getConnection((err, connection) => {
+        let queryString = "SELECT * FROM commentary WHERE room_id = ?";
+        connection.query(queryString, [room_id], (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({results: results});
+        });
+    });
+});
+
+//Get comments of a student, given Student ID
+router.post('/getCommentsByStudentID', (req, res) => {
+    //Extract variables from the request
+    var student_id = req.body.student_id;
+
+    pool.getConnection((err, connection) => {
+        let queryString = "SELECT * FROM commentary WHERE student_id = ?";
+        connection.query(queryString, [student_id], (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({results: results});
+        });
+    });
+});
+
+//Update a comment, given Comment ID and Comment Text
+router.post('/updateComment', (req, res) => {
+    //Extract variables from the request
+    var comment_id = req.body.comment_id;
+    var comment_txt = req.body.comment_txt;
+
+    pool.getConnection((err, connection) => {
+        let queryString = "UPDATE commentary SET comment_txt = ? WHERE comment_id = ?";
+        connection.query(queryString, [comment_txt, comment_id], (err, results) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({success = true});
+        });
+    });
+});
+
+//Delete a comment, given Comment ID
+router.post('/deleteComment', (req, res) => {
+    //Extract variables from the request
+    var comment_id = req.body.comment_id;
+
+    pool.getConnection((err, connection) => {
+        let queryString = "DELETE FROM commentary WHERE comment_id = ?";
+        connection.query(queryString, [comment_id], (err, results) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({success = true});
+        });
+    });
+});
+
+//Change password, given Student ID, old password (not encrypted), and new password (not encrypted)
+router.post('/changePassword', (req, res) => {
+    var student_id = req.body.student_id;
+    var old_pw = req.body.old_pw;
+    var new_pw = req.body.new_pw;
+
+    
+});
+
 router.post('/signup', (req, res) => {
     /*
     const id = parseInt(req.body.studentID);
@@ -152,24 +293,6 @@ router.post('/signup', (req, res) => {
     const maj = req.body.major === '' ? null : req.body.major;
     const club = req.body.club === '' ? null : req.body.club;
     const pn = req.body.phoneNumber === '' ? null : req.body.phoneNumber;
-
-    console.log(id);
-    console.log(pw);
-    console.log(fn);
-    console.log(ln);
-    console.log(age);
-    console.log(maj);
-    console.log(club);
-    console.log(pn);
-    // CHECK USERNAME FORMAT
-    let idRegex = /^\d{8}$/;
-
-    if (!idRegex.test(id)) {
-        return res.status(400).json({
-            error: "BAD USERNAME",
-            code: 1
-        });
-    }
 
     // CHECK PASS LENGTH
     if (pw.length < 4 || typeof pw !== "string") {
@@ -232,118 +355,6 @@ router.post('/signup', (req, res) => {
 
     });
     */
-});
-
-/*
-    ACCOUNT SIGN IN: POST /api/account/signin
-    BODY SAMPLE: { "username": "test", "password": "test" }
-    ERROR CODES:
-        1: LOGIN FAILED
-*/
-router.post('/signin', (req, res) => {
-    if (typeof req.body.password !== "string") {
-        return res.status(401).json({
-            error: "LOGIN FAILED",
-            code: 1
-        });
-    }
-
-    // FIND THE USER BY USERNAME
-
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-
-      let queryString = "SELECT * FROM user_tbl WHERE Student_ID = ?";
-      // use the connection
-      connection.query(queryString, req.body.studentID, (err, results, fields) => {
-        // when done with the connection, release interval
-        connection.release();
-
-        // handle error after the release
-        if (err) throw err;
-
-        // CHECK ACCOUNT EXISTANCY
-        if (results.length == 0) {
-          return res.status(401).json({
-            error: "LOGIN FAILED",
-            code: 1
-          });
-        }
-
-        // CHECK WHETHER THE PASSWORD IS VALID
-        if (!bcrpyt.compareSync(req.body.password, results[0].Password)) {
-            return res.status(401).json({
-                error: "LOGIN FAILED",
-                code: 1
-            });
-        }
-
-        // ALTER SESSION
-        let session = req.session;
-        session.loginInfo = {
-            _id: req.body.studentID,
-        };
-
-        // RETURN SUCCESS
-        return res.json({
-            success: true
-        });
-
-      });
-
-    });
-    // Account.findOne({ username: req.body.username }, (err, account) => {
-    //     if (err) throw err;
-    //
-    //     // CHECK ACCOUNT EXISTANCY
-    //     if (!account) {
-    //         return res.status(401).json({
-    //             error: "LOGIN FAILED",
-    //             code: 1
-    //         });
-    //     }
-    //
-    //     // CHECK WHETHER THE PASSWORD IS VALID
-    //     if (!account.validateHash(req.body.password)) {
-    //         return res.status(401).json({
-    //             error: "LOGIN FAILED",
-    //             code: 1
-    //         });
-    //     }
-    //
-    //     // ALTER SESSION
-    //     let session = req.session;
-    //     session.loginInfo = {
-    //         _id: account._id,
-    //         username: account.username
-    //     };
-    //
-    //     // RETURN SUCCESS
-    //     return res.json({
-    //         success: true
-    //     });
-    // });
-});
-
-/*
-    GET CURRENT USER INFO GET /api/account/getInfo
-*/
-router.get('./getinfo', (req, res) => {
-    if (typeof req.session.loginInfo === "undefined") {
-        return res.status(401).json({
-            error: 1
-        });
-    }
-
-    res.json({ info: req.session.loginInfo });
-});
-
-/*
-    LOGOUT: POST /api/account/logout
-*/
-router.post('/logout', (req, res) => {
-    req.session.destroy(err => { if (err) throw err; });
-    return res.json({ success: true });
 });
 
 export default router;
