@@ -276,11 +276,12 @@ router.post('/deleteComment', (req, res) => {
 
 //Change password, given Student ID, old password (not encrypted), and new password (not encrypted)
 router.post('/changePassword', (req, res) => {
+    //Extract variable
     var student_id = req.body.student_id;
     var old_pw = req.body.old_pw;
     var new_pw = req.body.new_pw;
 
-    
+    const password = bcrypt.hashSync(new_pw, 8);
 });
 
 router.post('/signup', (req, res) => {
