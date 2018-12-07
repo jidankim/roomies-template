@@ -7,9 +7,9 @@ import pool from '../config.js';
 const router = express.Router();
 
 //Get Student Information, given Student ID
-router.post('/:studentID', (req, res) => {
+router.get('/:studentID', (req, res) => {
     //Extracting values from the request
-    var student_id = parseInt(studentID);
+    var student_id = parseInt(req.params.studentID);
 
     pool.getConnection((err, connection) => {
         let queryString = "SELECT * FROM student WHERE student_id = ?"
@@ -36,7 +36,7 @@ router.post('/:studentID', (req, res) => {
 //Set Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
 router.post('/updateProfile', (req, res) => {
     //Extracting variables from the request
-    var student_id = parseInt(req.body.student_id);
+    var student_id = parseInt(req.params.studentID);
     var first_name = req.body.first_name;
     var last_name = req.body.last_name;
     var age = req.body.age;
@@ -58,9 +58,9 @@ router.post('/updateProfile', (req, res) => {
 });
 
 //Get Preference, given Student ID
-router.post('/getPreference', (req, res) => {
+router.get('/getPreference', (req, res) => {
     //Extracting values from the request
-    var student_id = parseInt(req.body.student_id);
+    var student_id = parseInt(req.session.logininfo.username);
 
     pool.getConnection((err, connection) => {
         let queryString = "SELECT * FROM preference WHERE student_id = ?"
@@ -87,7 +87,7 @@ router.post('/getPreference', (req, res) => {
 //Set Preference, given Student ID and preference data
 router.post('/updatePreference', (req, res) => {
 	//Extracting variables from the request
-    var student_id = parseInt(req.body.student_id);
+    var student_id = parseInt(req.session.logininfo.username);
     var smoker = req.body.smoker;
     var sleep_start_time = req.body.sleep_start_time;
     var sleep_end_time = req.body.sleep_end_time;
