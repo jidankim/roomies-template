@@ -84,12 +84,10 @@ class InfoForm extends React.Component {
 
   render() {
     const { classes, mode } = this.props;
-    console.log(this.props.userPref);
-    console.log(this.props.userProfile);
 
     const profileView = (
       [
-        <CardContent>
+        <CardContent key="content">
           <TextField
             autoFocus
             disabled
@@ -202,7 +200,7 @@ class InfoForm extends React.Component {
             value={this.state.userProfile.phonenumber}
           />
         </CardContent>,
-        <CardActions className={classes.centering}>
+        <CardActions key="actions" className={classes.centering}>
           <Button onClick={this.handleEditProfile}>Update</Button>
         </CardActions>
       ]
@@ -210,7 +208,7 @@ class InfoForm extends React.Component {
 
     const prefView = (
       [
-        <CardContent>
+        <CardContent key="content">
           <FormControlLabel
             control={
               <Switch
@@ -323,7 +321,7 @@ class InfoForm extends React.Component {
             ))}
           </TextField>
         </CardContent>,
-        <CardActions className={classes.centering}>
+        <CardActions key="actions" className={classes.centering}>
           <Button onClick={this.handleEditPref}>Update</Button>
         </CardActions>
       ]
