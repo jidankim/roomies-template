@@ -12,11 +12,19 @@ import {
 // Container Components
 import { App, Home, Login, Profile, Register } from 'containers';
 
+// const PrivateRoute = ({ component: Component, authed, ...rest }) => (
+//   <Route {...rest} render={(props) =>
+//     authed
+//     ? <Component {...props} />
+//     : <Redirect to={{ pathname: '/login', state: { from: props.location.pathname } }} /> }
+//   />
+// );
+
 const PrivateRoute = ({ component: Component, authed, ...rest }) => (
   <Route {...rest} render={(props) =>
     authed
     ? <Component {...props} />
-    : <Redirect to={{ pathname: '/login', state: { from: props.location.pathname } }} /> }
+    : <Redirect to={{ pathname: '/login', state: { from: '/' } }} /> }
   />
 );
 
