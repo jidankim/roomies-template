@@ -33,8 +33,8 @@ router.get('/:studentID', (req, res) => {
     });
 })
 
-//Set Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
-router.post('/updateProfile', (req, res) => {
+//Update Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
+router.post('/:studentID/updateProfile', (req, res) => {
     //Extracting variables from the request
     var student_id = parseInt(req.params.studentID);
     var first_name = req.body.first_name;
@@ -60,7 +60,7 @@ router.post('/updateProfile', (req, res) => {
 //Get Preference, given Student ID
 router.get('/getPreference', (req, res) => {
     //Extracting values from the request
-    var student_id = parseInt(req.session.logininfo.username);
+    var student_id = parseInt(req.session.loginInfo.username);
 
     pool.getConnection((err, connection) => {
         let queryString = "SELECT * FROM preference WHERE student_id = ?"
@@ -87,7 +87,7 @@ router.get('/getPreference', (req, res) => {
 //Set Preference, given Student ID and preference data
 router.post('/updatePreference', (req, res) => {
 	//Extracting variables from the request
-    var student_id = parseInt(req.session.logininfo.username);
+    var student_id = parseInt(req.session.loginInfo.username);
     var smoker = req.body.smoker;
     var sleep_start_time = req.body.sleep_start_time;
     var sleep_end_time = req.body.sleep_end_time;
