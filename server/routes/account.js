@@ -46,32 +46,28 @@ router.post('/signup', (req, res) => {
     pool.getConnection((err, connection) => {
       if (err) throw err;
 
-      let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
-      // use the connection
-      connection.query(queryString, [id], (err, results, fields) => {
-        if (err) throw err;
+        let queryString = "SELECT * FROM STUDENT WHERE student_id = ?";
+        // use the connection
+        connection.query(queryString, [id], (err, results, fields) => {
+            if (err) throw err;
 
-        if (results.length != 0) {
-          return res.status(409).json({
-            error: "USERNAME EXISTS",
-            code: 3
-          });
-        }
+            if (results.length != 0) {
+                return res.status(409).json({
+                    error: "USERNAME EXISTS",
+                    code: 3
+                });
+            }
 
-        // SAVE IN THE DATABASE
-        // const password = bcrypt.hashSync(pw, 8);
+            queryString = "INSERT INTO STUDENT SET student_id = ?, pw = ?, room_id = ?, first_name = ?, last_name = ?, age = ?, major = ?, phonenumber = ?";
 
-        queryString =
-          `INSERT INTO STUDENT SET
-          student_id = ?, pw = ?, room_id = ?, first_name = ?, last_name = ?,
-          age = ?, major = ?, phonenumber = ?`;
-
-        connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
-          // when done with the connection, release interval
-          connection.release();
-
-          // handle error after the release
-          if (err) throw err;
+            connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
+                if (err) throw err;
+                //Add NULL preference also when registering
+                queryString = "INSERT INTO preferences set student_id = ?";
+                connection.query(queryString, [id], (err, results, fields) => {
+                    if (err) throw err;
+                    connection.release();
+                })
         });
         return res.json({ success: true });
       });

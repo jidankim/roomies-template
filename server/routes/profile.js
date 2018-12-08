@@ -7,7 +7,7 @@ import pool from '../config.js';
 const router = express.Router();
 
 //Get Student Information, given Student ID
-router.get('/:studentID', (req, res) => {
+router.get('/getProfile', (req, res) => {
     //Extracting values from the request
     var student_id = parseInt(req.session.loginInfo.username);
 
@@ -34,18 +34,18 @@ router.get('/:studentID', (req, res) => {
 })
 
 //Update Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
-router.post('/:studentID/updateProfile', (req, res) => {
+router.put('/updateProfile', (req, res) => {
     //Extracting variables from the request
     var student_id = parseInt(req.session.loginInfo.username);
-    var first_name = req.body.first_name;
-    var last_name = req.body.last_name;
-    var age = req.body.age;
-    var major = req.body.major;
-    var phonennumber = req.body.phonennumber;
+    var first_name = req.body.newUserProfile.first_name;
+    var last_name = req.body.newUserProfile.last_name;
+    var age = req.body.newUserProfile.age;
+    var major = req.body.newUserProfile.major;
+    var phone_number = req.body.newUserProfile.phone_number;
 
     pool.getConnection((err, connection) => {
         let queryString = "UPDATE student SET first_name = ?, last_name = ?, age = ?, major = ?, phonenumber = ? WHERE student_id = ?"
-        connection.query(queryString, [first_name, last_name, age, major, phonenumber, student_id], (err, results, fields) => {
+        connection.query(queryString, [first_name, last_name, age, major, phone_number, student_id], (err, results, fields) => {
             if (err) {
                 connection.release();
                 console.log(err);
@@ -85,15 +85,15 @@ router.get('/getPreference', (req, res) => {
 })
 
 //Set Preference, given Student ID and preference data
-router.post('/updatePreference', (req, res) => {
+router.put('/updatePreference', (req, res) => {
 	//Extracting variables from the request
     var student_id = parseInt(req.session.loginInfo.username);
-    var smoker = req.body.smoker;
-    var sleep_start_time = req.body.sleep_start_time;
-    var sleep_end_time = req.body.sleep_end_time;
-    var music_Preference = req.body.music_Preference;
-    var hobby = req.body.hobby;
-    var club = req.body.club;
+    var smoker = req.body.newUserPref.smoker;
+    var sleep_start_time = req.body.newUserPref.sleep_start_time;
+    var sleep_end_time = req.body.newUserPref.sleep_end_time;
+    var music_Preference = req.body.newUserPref.music_preference;
+    var hobby = req.body.newUserPref.hobby;
+    var club = req.body.newUserPref.club;
 
 	pool.getConnection((err, connection) => {
 		let queryString = "SELECT * FROM preference WHERE student_id = ?"
@@ -103,21 +103,8 @@ router.post('/updatePreference', (req, res) => {
                 console.log(err);
                 throw err;
             }
-			//First time entering preference - save preference using INSERT
-			if (results.length == 0) {
-                queryString = "INSERT INTO preference VALUES ?";
-                connection.query(queryString, [[student_id, smoker, sleep_start_time, sleep_end_time, music_Preference, hobby, club]], (err, result) => {
-                    if (err) {
-                        connection.release();
-                        console.log(err);
-                        throw err;
-                    }
-                    connection.release();
-                    return res.json({success: true});
-                });
-			}
             //Editing preference - save preference using UPDATE
-			else if (results.length == 1) {
+			if (results.length == 1) {
                 queryString = "UPDATE preference SET smoker = ?, sleep_start_time = ?, sleep_end_time = ?, music_Preference = ?, hobby = ?, club = ? where student_id = ?";
                 connection.query(queryString, [smoker, sleep_start_time, sleep_end_time, music_Preference, hobby, club, student_id], (err, result) => {
                     if (err) {
@@ -133,7 +120,7 @@ router.post('/updatePreference', (req, res) => {
             else {
                 connection.release();
                 return res.status(500).json({
-                    error: "error in DB: two preferences exist for the student_id: " + student_id,
+                    error: "error in DB: no preferences exist for the student_id: " + student_id,
                     code: 999
                 });
             }
