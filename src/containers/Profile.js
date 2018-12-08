@@ -13,6 +13,7 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
+import { getPrefRequest, getProfileRequest } from 'actions/profile';
 
 function TabContainer(props) {
   return (
@@ -80,7 +81,7 @@ class Profile extends React.Component {
 
   }
 
-  hanldeTabChange = (event, value) => {
+  handleTabChange = (event, value) => {
     this.setState({
       ...this.state,
       value
@@ -96,7 +97,7 @@ class Profile extends React.Component {
         <Tabs
           value={value}
           onChange={this.handleTabChange}
-          indicateColor="primary"
+          indicatorColor="primary"
           textColor="primary"
           centered
         >

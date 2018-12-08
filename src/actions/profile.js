@@ -1,122 +1,161 @@
-import * as types from 'actions/ActionTypes';
-import update from 'immutability-helper';
+import axios from 'axios';
+import {
+  AUTH_GET_PREF,
+  AUTH_GET_PREF_SUCCESS,
+  AUTH_GET_PREF_FAILURE,
+  AUTH_EDIT_PREF,
+  AUTH_EDIT_PREF_SUCCESS,
+  AUTH_EDIT_PREF_FAILURE,
+  AUTH_GET_PROFILE,
+  AUTH_GET_PROFILE_SUCCESS,
+  AUTH_GET_PROFILE_FAILURE,
+  AUTH_EDIT_PROFILE,
+  AUTH_EDIT_PROFILE_SUCCESS,
+  AUTH_EDIT_PROFILE_FAILURE
+} from './ActionTypes';
 
-const initialState = {
-  userPref: {
-    status: 'INIT',
-    error: -1,
-    data: {
-      smoker: 'N',
-      sleep_start_time: '',
-      sleep_end_time: '',
-      music_preference: '',
-      hobby: '',
-      club: ''
-    }
-  },
-  userProfile: {
-    room_id: '',
-    first_name: '',
-    last_name: '',
-    age: 0,
-    major: 'undecided',
-    phonenumber: ''
-  }
-};
+/*=======================
+    profile
+=======================*/
 
-export default function authentication(state, action) {
-  if (typeof state === 'undefined') state = initialState;
+/* GET PREF */
+export function getPrefRequest() {
+  return dispatch => {
+    // Inform Get Pref API is starting
+    dispatch(getPref());
 
-  switch (action.type) {
-    /* GET_PREF */
-    case types.AUTH_GET_PREF:
-      return update(state, {
-        // status: {
-        //   isLoggedIn: { $set: true }
-        // }
+    return axios
+      .get('/api/profile/getPreference')
+      .then(response => {
+        dispatch(getPrefSuccess(response.data.result));
+      })
+      .catch(error => {
+        dispatch(getPrefFailure());
       });
-    case types.AUTH_GET_PREF_SUCCESS:
-      return update(state, {
-        userPref: { $merge: action.userPref },
-        // status: {
-        //   valid: { $set: true },
-        //   currentUser: { $set: action.userPref.student_id },
-        // }
+  };
+}
+
+export function getPref() {
+  return {
+    type: AUTH_GET_PREF
+  };
+}
+
+export function getPrefSuccess(userPref) {
+  return {
+    type: AUTH_GET_PREF_SUCCESS,
+    userPref
+  };
+}
+
+export function getPrefFailure() {
+  return {
+    type: AUTH_GET_PREF_FAILURE
+  };
+}
+
+/* EDIT PREF */
+export function editPrefRequest(newUserPref) {
+  return dispatch => {
+    // Inform Edit Pref API is starting
+    dispatch(editPref());
+
+    return axios
+      .put('/api/profile/updatePreference', newUserPref)
+      .then(response => {
+        dispatch(editPrefSuccess());
+      })
+      .catch(error => {
+        dispatch(editPrefFailure(error.response.data.code));
       });
-    case types.AUTH_GET_PREF_FAILURE:
-      return update(state, {
-        // status: {
-        //   valid: { $set: false },
-        //   isLoggedIn: { $set: false }
-        // }
+  };
+}
+
+export function editPref() {
+  return {
+    type: AUTH_EDIT_PREF
+  };
+}
+
+export function editPrefSuccess() {
+  return {
+    type: AUTH_EDIT_PREF_SUCCESS,
+  };
+}
+
+export function editPrefFailure() {
+  return {
+    type: AUTH_EDIT_PREF_FAILURE
+  };
+}
+
+/* GET PROFILE */
+export function getProfileRequest() {
+  return dispatch => {
+    // Inform Get Profile API is starting
+    dispatch(getProfile());
+
+    return axios
+      .get('/api/profile/getProfile')
+      .then(response => {
+        dispatch(getProfileSuccess(response.data.result));
+      })
+      .catch(error => {
+        dispatch(getProfileFailure());
       });
-    /* EDIT_PREF */
-    case types.AUTH_EDIT_PREF:
-      return update(state, {
-        // status: {
-        //   isLoggedIn: { $set: true }
-        // }
+  };
+}
+
+export function getProfile() {
+  return {
+    type: AUTH_GET_PROFILE
+  };
+}
+
+export function getProfileSuccess(userProfile) {
+  return {
+    type: AUTH_GET_PROFILE_SUCCESS,
+    userProfile
+  };
+}
+
+export function getProfileFailure() {
+  return {
+    type: AUTH_GET_PROFILE_FAILURE
+  };
+}
+
+/* EDIT PROFILE */
+export function editProfileRequest(newUserProfile) {
+  return dispatch => {
+    // Inform Edit Profile API is starting
+    dispatch(editProfile());
+
+    return axios
+      .put('/api/profile/updateProfile', newUserProfile)
+      .then(response => {
+        dispatch(editProfileSuccess());
+      })
+      .catch(error => {
+        dispatch(editProfileFailure());
       });
-    case types.AUTH_EDIT_PREF_SUCCESS:
-      return update(state, {
-        // userPref: { $merge: action.userPref },
-        // status: {
-        //   valid: { $set: true },
-        //   currentUser: { $set: action.userPref.student_id },
-        // }
-      });
-    case types.AUTH_EDIT_PREF_FAILURE:
-      return update(state, {
-        // status: {
-        //   valid: { $set: false },
-        //   isLoggedIn: { $set: false }
-        // }
-      });
-    /* GET_PROFILE */
-    case types.AUTH_GET_PROFILE:
-      return update(state, {
-        // status: {
-        //   isLoggedIn: { $set: true }
-        // }
-      });
-    case types.AUTH_GET_PROFILE_SUCCESS:
-      return update(state, {
-        userProfile: { $merge: action.userProfile },
-        // status: {
-        //   valid: { $set: true },
-        //   currentUser: { $set: action.userProfile.studentID },
-        // }
-      });
-    case types.AUTH_GET_PROFILE_FAILURE:
-      return update(state, {
-        // status: {
-        //   valid: { $set: false },
-        //   isLoggedIn: { $set: false }
-        // }
-      });
-    /* EDIT_PROFILE */
-    case types.AUTH__EDIT_PROFILE:
-      return update(state, {
-        // status: {
-        //   isLoggedIn: { $set: true }
-        // }
-      });
-    case types.AUTH_EDIT_PROFILE_SUCCESS:
-      return update(state, {
-        userProfile: { $merge: action.userProfile },
-        // status: {
-        //   valid: { $set: true },
-        //   currentUser: { $set: action.userProfile.studentID },
-        // }
-      });
-    case types.AUTH_EDIT_PROFILE_FAILURE:
-      return update(state, {
-        // status: {
-        //   valid: { $set: false },
-        //   isLoggedIn: { $set: false }
-        // }
-      });
-    default:
-      return state;
-  }
+  };
+}
+
+export function editProfile() {
+  return {
+    type: AUTH_EDIT_PROFILE
+  };
+}
+
+export function editProfileSuccess() {
+  return {
+    type: AUTH_EDIT_PROFILE_SUCCESS,
+  };
+}
+
+export function editProfileFailure() {
+  return {
+    type: AUTH_EDIT_PROFILE_FAILURE
+  };
 }
