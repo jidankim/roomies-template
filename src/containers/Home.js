@@ -8,6 +8,7 @@ import {
   eventRemoveRequest
 } from 'actions/event';
 import { openNotif } from 'actions/notification';
+import { getPrefRequest, getProfileRequest } from 'actions/profile';
 import { updateMonth, updateFilter } from 'actions/calendar';
 
 class Home extends React.Component {
@@ -20,6 +21,12 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.isLoggedIn) {
+      // LOAD USER PROFILE AND PREFERENCE
+      this.props.getPrefRequest();
+      this.props.getProfileRequest();
+    }
+
     // LOAD NEW EVENT EVERY 5 SECONDS
     const loadEventLoop = () => {
       this.loadNewEvent().then(() => {
@@ -248,6 +255,8 @@ const mapDispatchToProps = dispatch => {
     eventRemoveRequest: (id, index) => {
       return dispatch(eventRemoveRequest(id, index));
     },
+    getPrefRequest: () => dispatch(getPrefRequest()),
+    getProfileRequest: () => dispatch(getProfileRequest()),
     openNotif: (message, variant) => dispatch(openNotif(message, variant)),
     updateFilter: filter => dispatch(updateFilter(filter)),
     updateMonth: month => dispatch(updateMonth(month))

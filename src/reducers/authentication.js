@@ -88,9 +88,11 @@ export default function authentication(state, action) {
     /* LOGOUT */
     case types.AUTH_LOGOUT:
       return update(state, {
+        userPref: { $set: initialState.userPref },
+        userProfile: { $set: initialState.userProfile },
         status: {
           isLoggedIn: { $set: false },
-          currentUser: { $set: '' }
+          currentUser: { $set: '' },
         }
       });
     default:

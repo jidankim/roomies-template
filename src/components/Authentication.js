@@ -38,7 +38,9 @@ const styles = theme => ({
 });
 
 const majors = [
-  'Biology', 'Chemistry', 'Computer Science', 'Physics'
+  'Biological Sciences', 'Chemistry', 'Computer Science',
+  'Electrical Engineering', 'Mathematical Sciences',
+  'Mechanical Engineering', 'Physics'
 ];
 
 class Authentication extends React.Component {
@@ -127,6 +129,7 @@ class Authentication extends React.Component {
           name="studentID"
           onChange={this.handleChange}
           required
+          type="number"
           value={this.state.studentID}
         />
         <TextField
@@ -193,6 +196,7 @@ class Authentication extends React.Component {
             margin="normal"
             name="age"
             onChange={this.handleChange}
+            type="number"
             value={this.state.age}
           />
           <TextField
