@@ -428,3 +428,15 @@ INSERT INTO preference VALUES(20170057, 'Y', '22:00:00', '06:00:00', 'EDM', 'Soc
 
 
 INSERT INTO commentary VALUES(NULL, 20180032, 'N20_504', '2018-11-14', "It's too hard to get to my room.");
+INSERT INTO commentary VALUES(NULL, 20170054, 'W4_306', '2018-10-23', "The room was pretty dirty");
+INSERT INTO commentary VALUES(NULL, 20170012, 'W4_804', '2018-08-21', "My room was too far from the toilet and the shower");
+INSERT INTO commentary VALUES(NULL, 20180008, 'N20_203', '2018-12-03', "I like the second floor. It is easy to go out and come back into my room everyday.");
+INSERT INTO commentary VALUES(NULL, 20170040, 'W4_104', '2018-09-14', "I saw a cockroach!");
+INSERT INTO commentary VALUES(NULL, 20180012, 'N20_102', '2018-06-30', "Smoke comes into my room when I open the window");
+
+
+SELECT commentary.date, commentary.room_id, commentary.comment_txt, student.first_name, student.last_name
+FROM commentary
+JOIN student
+ON commentary.student_id = student.student_id
+ORDER BY commentary.date;
