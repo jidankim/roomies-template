@@ -9,7 +9,7 @@ const router = express.Router();
 //Get Student Information, given Student ID
 router.get('/:studentID', (req, res) => {
     //Extracting values from the request
-    var student_id = parseInt(req.params.studentID);
+    var student_id = parseInt(req.session.loginInfo.username);
 
     pool.getConnection((err, connection) => {
         let queryString = "SELECT * FROM student WHERE student_id = ?"
@@ -36,7 +36,7 @@ router.get('/:studentID', (req, res) => {
 //Update Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
 router.post('/:studentID/updateProfile', (req, res) => {
     //Extracting variables from the request
-    var student_id = parseInt(req.params.studentID);
+    var student_id = parseInt(req.session.loginInfo.username);
     var first_name = req.body.first_name;
     var last_name = req.body.last_name;
     var age = req.body.age;
