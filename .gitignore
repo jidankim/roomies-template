@@ -1,2 +1,3 @@
 node_modules/babel-loader/*
 package-lock.json
+node_modules/.cache
