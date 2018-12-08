@@ -27,7 +27,7 @@ router.get('/:studentID', (req, res) => {
             //Return result of query
             else {
                 connection.release();
-                return res.json({exists: true, result: result[0]});
+                return res.json({exists: true, result: results[0]});
             }
         });
     });
@@ -52,7 +52,7 @@ router.post('/:studentID/updateProfile', (req, res) => {
                 throw err;
             }
             connection.release();
-            return res.json({success = true});
+            return res.json({success : true});
         });
     });
 });
@@ -78,7 +78,7 @@ router.get('/getPreference', (req, res) => {
             //Return result of query
             else {
                 connection.release();
-                return res.json({exists: true, result: result[0]});
+                return res.json({exists: true, result: results[0]});
             }
         });
     });
@@ -137,7 +137,7 @@ router.post('/updatePreference', (req, res) => {
                     code: 999
                 });
             }
-			
+
 		});
 	});
 });
