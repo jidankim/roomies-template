@@ -6,144 +6,8 @@ import pool from '../config.js';
 
 const router = express.Router();
 
-//Get Student Information, given Student ID
-router.post('/getProfile', (req, res) => {
-    //Extracting values from the request
-    var student_id = parseInt(req.body.student_id);
-
-    pool.getConnection((err, connection) => {
-        let queryString = "SELECT * FROM student WHERE student_id = ?"
-        connection.query(queryString, [student_id], (err, results, fields) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            //If no result, return null
-            if (results.length == 0) {
-                connection.release();
-                return res.json({exists: false, result: null});
-            }
-            //Return result of query
-            else {
-                connection.release();
-                return res.json({exists: true, result: result[0]});
-            }
-        });
-    });
-})
-
-//Set Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
-router.post('/updateProfile', (req, res) => {
-    //Extracting variables from the request
-    var student_id = parseInt(req.body.student_id);
-    var first_name = req.body.first_name;
-    var last_name = req.body.last_name;
-    var age = req.body.age;
-    var major = req.body.major;
-    var phonennumber = req.body.phonennumber;
-
-    pool.getConnection((err, connection) => {
-        let queryString = "UPDATE student SET first_name = ?, last_name = ?, age = ?, major = ?, phonenumber = ? WHERE student_id = ?"
-        connection.query(queryString, [first_name, last_name, age, major, phonenumber, student_id], (err, results, fields) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            connection.release();
-            return res.json({success = true});
-        });
-    });
-});
-
-//Get Preference, given Student ID
-router.post('/getPreference', (req, res) => {
-    //Extracting values from the request
-    var student_id = parseInt(req.body.student_id);
-
-    pool.getConnection((err, connection) => {
-        let queryString = "SELECT * FROM preference WHERE student_id = ?"
-        connection.query(queryString, [student_id], (err, results, fields) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            //If no result, return null
-            if (results.length == 0) {
-                connection.release();
-                return res.json({exists: false, result: null});
-            }
-            //Return result of query
-            else {
-                connection.release();
-                return res.json({exists: true, result: result[0]});
-            }
-        });
-    });
-})
-
-//Set Preference, given Student ID and preference data
-router.post('/updatePreference', (req, res) => {
-	//Extracting variables from the request
-    var student_id = parseInt(req.body.student_id);
-    var smoker = req.body.smoker;
-    var sleep_start_time = req.body.sleep_start_time;
-    var sleep_end_time = req.body.sleep_end_time;
-    var music_Preference = req.body.music_Preference;
-    var hobby = req.body.hobby;
-    var club = req.body.club;
-
-	pool.getConnection((err, connection) => {
-		let queryString = "SELECT * FROM preference WHERE student_id = ?"
-		connection.query(queryString, [student_id], (err, results, fields) => {
-			if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-			//First time entering preference - save preference using INSERT
-			if (results.length == 0) {
-                queryString = "INSERT INTO preference VALUES ?";
-                connection.query(queryString, [[student_id, smoker, sleep_start_time, sleep_end_time, music_Preference, hobby, club]], (err, result) => {
-                    if (err) {
-                        connection.release();
-                        console.log(err);
-                        throw err;
-                    }
-                    connection.release();
-                    return res.json({success: true});
-                });
-			}
-            //Editing preference - save preference using UPDATE
-			else if (results.length == 1) {
-                queryString = "UPDATE preference SET smoker = ?, sleep_start_time = ?, sleep_end_time = ?, music_Preference = ?, hobby = ?, club = ? where student_id = ?";
-                connection.query(queryString, [smoker, sleep_start_time, sleep_end_time, music_Preference, hobby, club, student_id], (err, result) => {
-                    if (err) {
-                        connection.release();
-                        console.log(err);
-                        throw err;
-                    }
-                    connection.release();
-                    return res.json({success: true});
-                });
-			}
-            //Error
-            else {
-                connection.release();
-                return res.status(500).json({
-                    error: "error in DB: two preferences exist for the student_id: " + student_id,
-                    code: 999
-                });
-            }
-			
-		});
-	});
-});
-
 //Get all dormitory information, given request
-router.post('/getAllDormitory', (req, res) => {
+router.get('/getAllDormitory', (req, res) => {
     pool.getConnection((err, connection) => {
         let queryString = "SELECT * FROM dormitory"
         connection.query(queryString, [], (err, results, fields) => {
@@ -159,9 +23,9 @@ router.post('/getAllDormitory', (req, res) => {
 });
 
 //Get all room information, given Dormitory ID
-router.post('/getAllRoom', (req, res) => {
+router.get('/:dormName', (req, res) => {
     //Extract variables from the request
-    var dorm_id = req.body.dorm_id;
+    var dorm_id = req.params.dorm_id;
 
     pool.getConnection((err, connection) => {
         let queryString = "SELECT * FROM room WHERE dorm_id = ?";
@@ -197,21 +61,29 @@ router.post('/moveIntoRoom', (req, res) => {
     });
 });
 
-//Get all comments of a room, given Room ID
-router.post('/getCommentsByRoomID', (req, res) => {
+//Get all information and comments of a room, given Room ID
+router.get('/:RoomID', (req, res) => {
     //Extract variables from the request
-    var room_id = req.body.room_id;
+    var room_id = req.params.room_id;
 
     pool.getConnection((err, connection) => {
-        let queryString = "SELECT * FROM commentary WHERE room_id = ?";
-        connection.query(queryString, [room_id], (err, results, fields) => {
+        let queryString = "SELECT * FROM room WHERE room_id = ?";
+        connection.query(queryString, [room_id], (err, roomInfo, fields) => {
             if (err) {
                 connection.release();
                 console.log(err);
                 throw err;
             }
-            connection.release();
-            return res.json({results: results});
+            let queryString = "SELECT * FROM commentary WHERE room_id = ? ORDER BY date";
+            connection.query(queryString, [room_id], (err, comments, fields) => {
+                if (err) {
+                    connection.release();
+                    console.log(err);
+                    throw err;
+                }
+                connection.release();
+                return res.json({roomInfo: roomInfo[0], comments: comments});
+            });
         });
     });
 });
@@ -274,13 +146,110 @@ router.post('/deleteComment', (req, res) => {
     });
 });
 
+//Search students with a matching criteria, given search criteria data (First Name, Last Name, Age (with age conditions >=, >, =, <, <=), Major)
+router.get('/studentSearchResults', (req, res) => {
+    //Assumes req.params = {major = "Computer Science", age = 23, age_condition = ">="} or {first_name = "Andrew"}, etc...
+    var conditions = req.params;
+
+    if (Object.keys(conditions).length == 0) {
+        return res.status(999).json({
+            error: "must have at least one condition!",
+            code = 999
+        });
+    }
+
+    pool.getConnection((err, connection) => {
+        let queryString = "SELECT * FROM student WHERE ";
+        let params = [];
+        let addAnd = false;
+        //Add to the query condition using the req.params
+        if (conditions.first_name !== undefined) {
+            if (addAnd) queryString += " AND ";
+            queryString += "first_name = ?";
+            addAnd = true;
+            params.push(conditions.first_name);
+        }
+        if (conditions.last_name !== undefined) {
+            if (addAnd) queryString += " AND ";
+            queryString += "last_name = ?";
+            addAnd = true;
+            params.push(conditions.last_name);
+        }
+        if (conditions.major !== undefined) {
+            if (addAnd) queryString += " AND ";
+            queryString += "major = ?";
+            addAnd = true;
+            params.push(conditions.major);
+        }
+        if (conditions.age !== undefined) {
+            if (addAnd) queryString += " AND ";
+            if (conditions.age_condition !== undefined) {
+                queryString = queryString + "age " + conditions.age_condition + " ?";
+            }
+            else {
+                queryString += "age = ?";
+            }
+            addAnd = true;
+            params.push(conditions.age);
+        }
+        console.log(queryString);
+
+        connection.query(queryString, params, (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({results: results});
+        });
+    });
+});
+
+//Search students with a matching preference, given search criteria data (Smoker, Sleep Start Time, Sleep End Time, Music Preference, Hobby, Club)
+router.get('/preferenceSearchResults', (req, res) => {
+    //Assumes req.params = {smoker = "N", hobby = "Game"} or {sleep_start_time = "00:00:00", sleep_end_time = "08:00:00"}, etc...
+    var conditions = req.params;
+
+    if (Object.keys(conditions).length == 0) {
+        return res.status(999).json({
+            error: "must have at least one condition!",
+            code = 999
+        });
+    }
+
+    pool.getConnection((err, connection) => {
+        let queryString = "SELECT * FROM student WHERE student_id IN (SELECT student_id FROM preference WHERE ";
+        let params = [];
+        let addAnd = false;
+
+        if (conditions.first_name !== undefined) {
+            if (addAnd) queryString += " AND ";
+            queryString += "first_name = ?";
+            addAnd = true;
+            params.push(conditions.first_name);
+        }
+
+        connection.query(queryString, params, (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({results: results});
+        });
+    });
+});
+
 //Change password, given Student ID, old password (not encrypted), and new password (not encrypted)
 router.post('/changePassword', (req, res) => {
+    //Extract variable
     var student_id = req.body.student_id;
     var old_pw = req.body.old_pw;
     var new_pw = req.body.new_pw;
 
-    
+    const password = bcrypt.hashSync(new_pw, 8);
 });
 
 router.post('/signup', (req, res) => {
@@ -318,26 +287,10 @@ router.post('/signup', (req, res) => {
             code: 3
           });
         }
-
-        // // when done with the connection, release interval
-        // connection.release();
-        //
-        // // handle error after the release
-        // if (err) throw err;
       });
 
       // SAVE IN THE DATABASE
       const password = bcrypt.hashSync(pw, 8);
-
-      // queryString =
-      // `INSERT INTO STUDENT (Student_ID, Password, First_Name, Last_Name, Age, Major, Club, Phone_Number) VALUES ("`
-			// 		+ req.body.studentID + '","'
-      //     + password + '","'
-      //     + req.body.firstName + '","'
-      //     + req.body.lastName + '","'
-      //     + (req.body.age === '' ? 'NULL' : req.body.age) + '","'
-      //     + (req.body.major === '' ? 'NULL' : req.body.age) + '","'
-      //     + req.body.club + '");'
 
       queryString =
         `INSERT INTO STUDENT SET
