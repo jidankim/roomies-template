@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardActions,
-  CardContent,
   MenuItem,
   Paper,
   Tab,
@@ -14,6 +13,7 @@ import {
   Typography
 } from '@material-ui/core';
 import { getPrefRequest, getProfileRequest } from 'actions/profile';
+import { InfoForm, Notification } from 'components';
 
 function TabContainer(props) {
   return (
@@ -26,7 +26,10 @@ function TabContainer(props) {
 const styles = {
   root: {
     flexGrow: 1
-  }
+  },
+  card: {
+    width: 400
+  },
 };
 
 class Profile extends React.Component {
@@ -39,7 +42,9 @@ class Profile extends React.Component {
         last_name: '',
         major: '',
         phone_number: '',
-        room_id: ''
+        room_id: '',
+        student_id: '',
+        pw: ''
       },
       userPref: {
         smoker: 'N',
@@ -51,8 +56,6 @@ class Profile extends React.Component {
       },
       value: 0
     };
-    this.handleEditPref = this.handleEditPref.bind(this);
-    this.handleEditProfile = this.handleEditProfile.bind(this);
   }
 
   componentDidMount() {
@@ -73,11 +76,11 @@ class Profile extends React.Component {
     });
   }
 
-  handleEditPref() {
+  handleEditPref = () => {
 
   }
 
-  handleEditProfile() {
+  handleEditProfile = () => {
 
   }
 
@@ -92,6 +95,9 @@ class Profile extends React.Component {
     const { classes } = this.props;
     const { value } = this.state;
 
+    console.log(this.state.userProfile);
+    console.log(this.state.userPref);
+
     return (
       <Paper className={classes.root}>
         <Tabs
@@ -104,8 +110,34 @@ class Profile extends React.Component {
           <Tab label="Profile" />
           <Tab label="Preference" />
         </Tabs>
-        { value === 0 && <TabContainer>Item One</TabContainer> }
-        { value === 1 && <TabContainer>Item Two</TabContainer> }
+        <TabContainer>
+          <Card className={classes.card}>
+            {value === 0 &&
+              [
+                <InfoForm
+                  mode={true}
+                  userProfile={this.state.userProfile}
+                  userPref={this.state.userPref}
+                />,
+                <CardActions className={classes.centering}>
+                  <Button onClick={this.handleEditProfile}>Update</Button>
+                </CardActions>
+              ]
+            }
+            {value === 1 &&
+              [
+                <InfoForm
+                  mode={false}
+                  userProfile={this.state.userProfile}
+                  userPref={this.state.userPref}
+                />,
+                <CardActions className={classes.centering}>
+                  <Button onClick={this.handleEditPref}>Update</Button>
+                </CardActions>
+              ]
+            }
+          </Card>
+        </TabContainer>
       </Paper>
     );
   }
