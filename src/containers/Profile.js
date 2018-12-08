@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Button,
   Card,
-  CardActions,
   MenuItem,
   Paper,
   Tab,
@@ -12,22 +10,17 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
-import { getPrefRequest, getProfileRequest } from 'actions/profile';
 import { InfoForm, Notification } from 'components';
-
-function TabContainer(props) {
-  return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
-      {props.children}
-    </Typography>
-  );
-}
 
 const styles = {
   root: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
     flexGrow: 1
   },
   card: {
+    margin: 30,
     width: 400
   },
 };
@@ -36,48 +29,43 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userProfile: {
-        age: '',
-        first_name: '',
-        last_name: '',
-        major: '',
-        phone_number: '',
-        room_id: '',
-        student_id: '',
-        pw: ''
-      },
-      userPref: {
-        smoker: 'N',
-        sleep_start_time: '',
-        sleep_end_time: '',
-        music_preference: '',
-        hobby: '',
-        club: ''
-      },
       value: 0
     };
   }
 
-  componentDidMount() {
-    this.props.getPrefRequest()
-    .then( userPref => {
-      this.setState({
-        ...this.state,
-        userPref
-      });
-    });
+  // handleRegister = (id, pw, pwa, fn, ln, age, maj, pn) => {
+  //   if (pw !== pwa) {
+  //     this.props.openNotif('Password does not match', 'error');
+  //     return new Promise.resolve(false);
+  //   }
+  //   return this.props.registerRequest(id, pw, fn, ln, age, maj, pn).then(() => {
+  //     if (this.props.status === 'SUCCESS') {
+  //       this.props.openNotif('Success! Please log in', 'success');
+  //       this.props.history.push('/login');
+  //       return true;
+  //     } else {
+  //       /*
+  //                       ERROR CODES:
+  //                           1: BAD USERNAME
+  //                           2: BAD PASSWORD
+  //                           3: USERNAME EXISTS
+  //                   */
+  //       let errorMessage = [
+  //         'Invalid Username',
+  //         'Password is too short',
+  //         'StudentID already exists'
+  //       ];
+  //
+  //       this.props.openNotif(errorMessage[this.props.errorCode - 1], 'error');
+  //       return false;
+  //     }
+  //   });
+  // }
 
-    this.props.getProfileRequest()
-    .then( userProfile => {
-      this.setState({
-        ...this.state,
-        userProfile
-      });
-    });
-  }
-
-  handleEditPref = () => {
-
+  handleEditPref = newUserPref => {
+    // return this.props.editPrefRequest(newUserPref).then(() => {
+    //
+    // })
   }
 
   handleEditProfile = () => {
@@ -85,18 +73,12 @@ class Profile extends React.Component {
   }
 
   handleTabChange = (event, value) => {
-    this.setState({
-      ...this.state,
-      value
-    });
+    this.setState({ value });
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, userPref, userProfile } = this.props;
     const { value } = this.state;
-
-    console.log(this.state.userProfile);
-    console.log(this.state.userPref);
 
     return (
       <Paper className={classes.root}>
@@ -110,44 +92,36 @@ class Profile extends React.Component {
           <Tab label="Profile" />
           <Tab label="Preference" />
         </Tabs>
-        <TabContainer>
-          <Card className={classes.card}>
-            {value === 0 &&
-              [
-                <InfoForm
-                  mode={true}
-                  userProfile={this.state.userProfile}
-                  userPref={this.state.userPref}
-                />,
-                <CardActions className={classes.centering}>
-                  <Button onClick={this.handleEditProfile}>Update</Button>
-                </CardActions>
-              ]
-            }
-            {value === 1 &&
-              [
-                <InfoForm
-                  mode={false}
-                  userProfile={this.state.userProfile}
-                  userPref={this.state.userPref}
-                />,
-                <CardActions className={classes.centering}>
-                  <Button onClick={this.handleEditPref}>Update</Button>
-                </CardActions>
-              ]
-            }
-          </Card>
-        </TabContainer>
+        <Card className={classes.card}>
+          <InfoForm
+            mode={value === 0}
+            userPref={userPref}
+            userProfile={userProfile}
+            onEditProfile={this.handleEditProfile}
+            onEditPref={this.handleEditPref}
+          />
+        </Card>
       </Paper>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
   return {
-    getPrefRequest: () => dispatch(getPrefRequest()),
-    getProfileRequest: () => dispatch(getProfileRequest())
+    userProfile: state.profile.userProfile.data,
+    userPref: state.profile.userPref.data
   }
 }
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(Profile));
+const mapDispatchToProps = dispatch => {
+  return {
+    editPrefRequest: newUserPref => {
+      dispatch(editPrefRequest(newUserPref));
+    },
+    editProfileRequest: newUserProfile => {
+      dispatch(editProfileRequest(newUserProfile));
+    }
+  }
+}
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Profile));
