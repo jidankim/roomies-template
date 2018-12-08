@@ -5,10 +5,15 @@ import { withStyles } from '@material-ui/core/styles';
 import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core';
 import LogoutIcon from '@material-ui/icons/lockOpen';
 import LoginIcon from '@material-ui/icons/vpnKey';
+import ProfileIcon from '@material-ui/icons/personOutline';
 
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1
+  },
+  corner: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
   },
   icon: {
     color: '#000',
@@ -26,9 +31,10 @@ const styles = {
     visibility: 'hidden'
   },
   right: {
-    marginLeft: 'auto'
+    marginLeft: 'auto',
+    marginRight: theme.spacing.unit
   }
-};
+});
 
 class Header extends React.Component {
   render() {
@@ -47,14 +53,25 @@ class Header extends React.Component {
             </Link>
 
             {this.props.isLoggedIn ? (
-              <IconButton
-                className={classes.right}
-                color="inherit"
-                aria-label="logout"
-                onClick={this.props.onLogout}
-              >
-                <LogoutIcon className={classes.icon} />
-              </IconButton>
+              [
+                <IconButton
+                  className={classes.right}
+                  color="inherit"
+                  aria-label="profile"
+                >
+                  <Link to="/profile">
+                    <ProfileIcon className={classes.icon} />
+                  </Link>
+                </IconButton>,
+                <IconButton
+                  className={classes.corner}
+                  color="inherit"
+                  aria-label="logout"
+                  onClick={this.props.onLogout}
+                >
+                  <LogoutIcon className={classes.icon} />
+                </IconButton>
+              ]
             ) : (
               <IconButton
                 className={classes.right}
