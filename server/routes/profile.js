@@ -33,7 +33,7 @@ router.get('/getProfile', (req, res) => {
     });
 })
 
-//Update Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber)
+//Update Student Information, given Student ID and student data (First Name, Last Name, Age, Major, PhoneNumber, pw)
 router.put('/updateProfile', (req, res) => {
     //Extracting variables from the request
     var student_id = parseInt(req.session.loginInfo.username);
@@ -42,10 +42,11 @@ router.put('/updateProfile', (req, res) => {
     var age = req.body.age;
     var major = req.body.major;
     var phone_number = req.body.phonenumber;
+    var pw = req.body.pw;
 
     pool.getConnection((err, connection) => {
-        let queryString = "UPDATE student SET first_name = ?, last_name = ?, age = ?, major = ?, phonenumber = ? WHERE student_id = ?"
-        connection.query(queryString, [first_name, last_name, age, major, phone_number, student_id], (err, results, fields) => {
+        let queryString = "UPDATE student SET first_name = ?, last_name = ?, age = ?, major = ?, phonenumber = ?, pw = ? WHERE student_id = ?"
+        connection.query(queryString, [first_name, last_name, age, major, phone_number, pw, student_id], (err, results, fields) => {
             if (err) {
                 connection.release();
                 console.log(err);
