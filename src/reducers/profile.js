@@ -39,34 +39,34 @@ export default function authentication(state, action) {
 
   switch (action.type) {
     /* GET_PREF */
-    case types.AUTH_GET_PREF:
+    case types.GET_PREF:
       return update(state, {
         userPref: {
           status: { $set: 'WAITING' },
         }
       });
-    case types.AUTH_GET_PREF_SUCCESS:
+    case types.GET_PREF_SUCCESS:
       return update(state, {
         userPref: {
           status: { $set: 'SUCCESS' },
           data: { $merge: action.userPref }
         }
       });
-    case types.AUTH_GET_PREF_FAILURE:
+    case types.GET_PREF_FAILURE:
       return update(state, {
         userPref: {
           status: { $set: 'FAILLURE' }
         }
       });
     /* EDIT_PREF */
-    case types.AUTH_EDIT_PREF:
+    case types.EDIT_PREF:
       return update(state, {
         editPref: {
           status: { $set: 'WAITING'},
           error: { $set: -1 }
         }
       });
-    case types.AUTH_EDIT_PREF_SUCCESS:
+    case types.EDIT_PREF_SUCCESS:
       return update(state, {
         editPref: {
           status: { $set: 'SUCCESS' }
@@ -75,7 +75,7 @@ export default function authentication(state, action) {
           data: { $merge: action.newUserPref }
         }
       });
-    case types.AUTH_EDIT_PREF_FAILURE:
+    case types.EDIT_PREF_FAILURE:
       return update(state, {
         editPref: {
           status: { $set: 'FAILURE' },
@@ -83,34 +83,34 @@ export default function authentication(state, action) {
         }
       });
     /* GET_PROFILE */
-    case types.AUTH_GET_PROFILE:
+    case types.GET_PROFILE:
       return update(state, {
         userProfile: {
           status: { $set: 'WAITING' },
         }
       });
-    case types.AUTH_GET_PROFILE_SUCCESS:
+    case types.GET_PROFILE_SUCCESS:
       return update(state, {
         userProfile: {
           status: { $set: 'SUCCESS' },
           data: { $merge: action.userProfile }
         }
       });
-    case types.AUTH_GET_PROFILE_FAILURE:
+    case types.GET_PROFILE_FAILURE:
       return update(state, {
         userProfile: {
           status: { $set: 'FAILLURE' }
         }
       });
     /* EDIT_PROFILE */
-    case types.AUTH__EDIT_PROFILE:
+    case types.EDIT_PROFILE:
       return update(state, {
         editProfile: {
           status: { $set: 'WAITING'},
           error: { $set: -1 }
         }
       });
-    case types.AUTH_EDIT_PROFILE_SUCCESS:
+    case types.EDIT_PROFILE_SUCCESS:
       return update(state, {
         editProfile: {
           status: { $set: 'SUCCESS' }
@@ -119,7 +119,7 @@ export default function authentication(state, action) {
           data: { $merge: action.newUserProfile }
         }
       });
-    case types.AUTH_EDIT_PROFILE_FAILURE:
+    case types.EDIT_PROFILE_FAILURE:
       return update(state, {
         editProfile: {
           status: { $set: 'FAILURE' },
