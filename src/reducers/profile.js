@@ -16,7 +16,7 @@ const initialState = {
       smoker: 'N',
       sleep_start_time: '',
       sleep_end_time: '',
-      music_preference: '',
+      music_Preference: '',
       hobby: '',
       club: ''
     }

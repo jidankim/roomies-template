@@ -37,11 +37,11 @@ router.get('/getProfile', (req, res) => {
 router.put('/updateProfile', (req, res) => {
     //Extracting variables from the request
     var student_id = parseInt(req.session.loginInfo.username);
-    var first_name = req.body.newUserProfile.first_name;
-    var last_name = req.body.newUserProfile.last_name;
-    var age = req.body.newUserProfile.age;
-    var major = req.body.newUserProfile.major;
-    var phone_number = req.body.newUserProfile.phone_number;
+    var first_name = req.body.first_name;
+    var last_name = req.body.last_name;
+    var age = req.body.age;
+    var major = req.body.major;
+    var phone_number = req.body.phonenumber;
 
     pool.getConnection((err, connection) => {
         let queryString = "UPDATE student SET first_name = ?, last_name = ?, age = ?, major = ?, phonenumber = ? WHERE student_id = ?"
@@ -52,7 +52,7 @@ router.put('/updateProfile', (req, res) => {
                 throw err;
             }
             connection.release();
-            return res.json({success : true});
+            return res.json({success : true, result: req.body});
         });
     });
 });
@@ -88,12 +88,12 @@ router.get('/getPreference', (req, res) => {
 router.put('/updatePreference', (req, res) => {
 	//Extracting variables from the request
     var student_id = parseInt(req.session.loginInfo.username);
-    var smoker = req.body.newUserPref.smoker;
-    var sleep_start_time = req.body.newUserPref.sleep_start_time;
-    var sleep_end_time = req.body.newUserPref.sleep_end_time;
-    var music_Preference = req.body.newUserPref.music_preference;
-    var hobby = req.body.newUserPref.hobby;
-    var club = req.body.newUserPref.club;
+    var smoker = req.body.smoker;
+    var sleep_start_time = req.body.sleep_start_time;
+    var sleep_end_time = req.body.sleep_end_time;
+    var music_Preference = req.body.music_Preference;
+    var hobby = req.body.hobby;
+    var club = req.body.club;
 
 	pool.getConnection((err, connection) => {
 		let queryString = "SELECT * FROM preference WHERE student_id = ?"
@@ -113,7 +113,7 @@ router.put('/updatePreference', (req, res) => {
                         throw err;
                     }
                     connection.release();
-                    return res.json({success: true});
+                    return res.json({success: true, result: req.body});
                 });
 			}
             //Error

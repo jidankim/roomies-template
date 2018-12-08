@@ -10,6 +10,8 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
+import { openNotif } from 'actions/notification';
+import { editPrefRequest, editProfileRequest } from 'actions/profile';
 import { InfoForm, Notification } from 'components';
 
 const styles = {
@@ -35,26 +37,26 @@ class Profile extends React.Component {
 
   handleEditPref = newUserPref => {
     return this.props.editPrefRequest(newUserPref).then(() => {
-      if (this.props.profileStatus === 'SUCCESS') {
+      if (this.props.prefStatus === 'SUCCESS') {
         this.props.openNotif('Perference updated successfully', 'success');
         return true;
       } else {
         this.props.openNotif('Update Failed', 'error');
         return false;
       }
-    })
+    });
   }
 
   handleEditProfile = newUserProfile => {
     return this.props.editProfileRequest(newUserProfile).then(() => {
-      if (this.props.prefStatus === 'SUCCESS') {
+      if (this.props.profileStatus === 'SUCCESS') {
         this.props.openNotif('Profile updated successfully', 'success');
         return true;
       } else {
         this.props.openNotif('Update Failed', 'error');
         return false;
       }
-    })
+    });
   }
 
   handleTabChange = (event, value) => {
@@ -103,10 +105,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     editPrefRequest: newUserPref => {
-      dispatch(editPrefRequest(newUserPref));
+      return dispatch(editPrefRequest(newUserPref));
     },
     editProfileRequest: newUserProfile => {
-      dispatch(editProfileRequest(newUserProfile));
+      return dispatch(editProfileRequest(newUserProfile));
     },
     openNotif: (message, variant) => dispatch(openNotif(message, variant)),
   }

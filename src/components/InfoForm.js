@@ -41,19 +41,27 @@ class InfoForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userProfile: props.userProfile,
-      userPref: props.userPref
+      userProfile: Object.keys(props.userProfile).reduce((result, key) => {
+        const val = props.userProfile[key];
+        result[key] = val === null ? '' : val;
+        return result;
+      }, {}),
+      userPref: Object.keys(props.userPref).reduce((result, key) => {
+        const val = props.userPref[key];
+        result[key] = val === null ? '' : val;
+        return result;
+      }, {})
     };
   }
 
   handleChange = name => e => {
     this.setState({
       ...this.state,
-      [name]: [
+      [name]: {
         ...this.state[name],
-        [e.target.name] = e.target.value
-      ]
-    })
+        [e.target.name]: e.target.value
+      }
+    });
   };
 
   handleCheck = e => {
@@ -68,11 +76,6 @@ class InfoForm extends React.Component {
 
   handleEditPref = () => {
     this.props.onEditPref(this.state.userPref);
-    // .then(success => {
-    //   if (!success) {
-    //
-    //   }
-    // });
   }
 
   handleEditProfile = () => {
@@ -91,6 +94,9 @@ class InfoForm extends React.Component {
             autoFocus
             disabled
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="StudentID"
             margin="normal"
             name="student_id"
@@ -101,6 +107,9 @@ class InfoForm extends React.Component {
           <TextField
             disabled
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Password"
             margin="normal"
             name="pw"
@@ -112,6 +121,9 @@ class InfoForm extends React.Component {
           <TextField
             disabled
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Room ID"
             margin="normal"
             name="room_id"
@@ -120,6 +132,9 @@ class InfoForm extends React.Component {
           />
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="First Name"
             margin="normal"
             name="first_name"
@@ -129,6 +144,9 @@ class InfoForm extends React.Component {
           />
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Last Name"
             margin="normal"
             name="last_name"
@@ -138,6 +156,9 @@ class InfoForm extends React.Component {
           />
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Age"
             margin="normal"
             name="age"
@@ -147,6 +168,9 @@ class InfoForm extends React.Component {
           />
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Major"
             margin="normal"
             name="major"
@@ -167,6 +191,9 @@ class InfoForm extends React.Component {
           </TextField>
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Phone Number"
             margin="normal"
             name="phonenumber"
@@ -228,9 +255,12 @@ class InfoForm extends React.Component {
           />
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Music Preference"
             margin="normal"
-            name="music_preference"
+            name="music_Preference"
             onChange={this.handleChange('userPref')}
             select
             SelectProps={{
@@ -238,7 +268,7 @@ class InfoForm extends React.Component {
                 className: classes.menu,
               },
             }}
-            value={this.state.userPref.music_preference}
+            value={this.state.userPref.music_Preference}
           >
             {musicPrefs.map((music, index) => (
               <MenuItem key={index} value={music}>
@@ -248,6 +278,9 @@ class InfoForm extends React.Component {
           </TextField>
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Hobby"
             margin="normal"
             name="hobby"
@@ -268,6 +301,9 @@ class InfoForm extends React.Component {
           </TextField>
           <TextField
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             label="Club"
             margin="normal"
             name="club"

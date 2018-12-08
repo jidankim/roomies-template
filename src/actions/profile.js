@@ -66,7 +66,7 @@ export function editPrefRequest(newUserPref) {
         dispatch(editPrefSuccess(response.data.result));
       })
       .catch(error => {
-        dispatch(editPrefFailure(error.response.data.code));
+        dispatch(editPrefFailure());
       });
   };
 }
