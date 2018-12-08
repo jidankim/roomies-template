@@ -63,7 +63,7 @@ export function editPrefRequest(newUserPref) {
     return axios
       .put('/api/profile/updatePreference', newUserPref)
       .then(response => {
-        dispatch(editPrefSuccess());
+        dispatch(editPrefSuccess(response.data.result));
       })
       .catch(error => {
         dispatch(editPrefFailure(error.response.data.code));
@@ -77,9 +77,10 @@ export function editPref() {
   };
 }
 
-export function editPrefSuccess() {
+export function editPrefSuccess(newUserPref) {
   return {
     type: AUTH_EDIT_PREF_SUCCESS,
+    newUserPref
   };
 }
 
@@ -134,7 +135,7 @@ export function editProfileRequest(newUserProfile) {
     return axios
       .put('/api/profile/updateProfile', newUserProfile)
       .then(response => {
-        dispatch(editProfileSuccess());
+        dispatch(editProfileSuccess(response.data.result));
       })
       .catch(error => {
         dispatch(editProfileFailure());
@@ -148,9 +149,10 @@ export function editProfile() {
   };
 }
 
-export function editProfileSuccess() {
+export function editProfileSuccess(newUserProfile) {
   return {
     type: AUTH_EDIT_PROFILE_SUCCESS,
+    newUserProfile
   };
 }
 

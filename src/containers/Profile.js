@@ -33,43 +33,28 @@ class Profile extends React.Component {
     };
   }
 
-  // handleRegister = (id, pw, pwa, fn, ln, age, maj, pn) => {
-  //   if (pw !== pwa) {
-  //     this.props.openNotif('Password does not match', 'error');
-  //     return new Promise.resolve(false);
-  //   }
-  //   return this.props.registerRequest(id, pw, fn, ln, age, maj, pn).then(() => {
-  //     if (this.props.status === 'SUCCESS') {
-  //       this.props.openNotif('Success! Please log in', 'success');
-  //       this.props.history.push('/login');
-  //       return true;
-  //     } else {
-  //       /*
-  //                       ERROR CODES:
-  //                           1: BAD USERNAME
-  //                           2: BAD PASSWORD
-  //                           3: USERNAME EXISTS
-  //                   */
-  //       let errorMessage = [
-  //         'Invalid Username',
-  //         'Password is too short',
-  //         'StudentID already exists'
-  //       ];
-  //
-  //       this.props.openNotif(errorMessage[this.props.errorCode - 1], 'error');
-  //       return false;
-  //     }
-  //   });
-  // }
-
   handleEditPref = newUserPref => {
-    // return this.props.editPrefRequest(newUserPref).then(() => {
-    //
-    // })
+    return this.props.editPrefRequest(newUserPref).then(() => {
+      if (this.props.profileStatus === 'SUCCESS') {
+        this.props.openNotif('Perference updated successfully', 'success');
+        return true;
+      } else {
+        this.props.openNotif('Update Failed', 'error');
+        return false;
+      }
+    })
   }
 
-  handleEditProfile = () => {
-
+  handleEditProfile = newUserProfile => {
+    return this.props.editProfileRequest(newUserProfile).then(() => {
+      if (this.props.prefStatus === 'SUCCESS') {
+        this.props.openNotif('Profile updated successfully', 'success');
+        return true;
+      } else {
+        this.props.openNotif('Update Failed', 'error');
+        return false;
+      }
+    })
   }
 
   handleTabChange = (event, value) => {
@@ -108,6 +93,8 @@ class Profile extends React.Component {
 
 const mapStateToProps = state => {
   return {
+    prefStatus: state.profile.editPref.status,
+    profileStatus: state.profile.editProfile.status,
     userProfile: state.profile.userProfile.data,
     userPref: state.profile.userPref.data
   }
@@ -120,7 +107,8 @@ const mapDispatchToProps = dispatch => {
     },
     editProfileRequest: newUserProfile => {
       dispatch(editProfileRequest(newUserProfile));
-    }
+    },
+    openNotif: (message, variant) => dispatch(openNotif(message, variant)),
   }
 }
 

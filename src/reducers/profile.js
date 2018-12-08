@@ -72,7 +72,7 @@ export default function authentication(state, action) {
           status: { $set: 'SUCCESS' }
         },
         userPref: {
-          data: { $merge: action.userPref }
+          data: { $merge: action.newUserPref }
         }
       });
     case types.AUTH_EDIT_PREF_FAILURE:
@@ -116,7 +116,7 @@ export default function authentication(state, action) {
           status: { $set: 'SUCCESS' }
         },
         userProfile: {
-          data: { $merge: action.userProfile }
+          data: { $merge: action.newUserProfile }
         }
       });
     case types.AUTH_EDIT_PROFILE_FAILURE:

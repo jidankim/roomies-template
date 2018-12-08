@@ -66,6 +66,19 @@ class InfoForm extends React.Component {
     });
   }
 
+  handleEditPref = () => {
+    this.props.onEditPref(this.state.userPref);
+    // .then(success => {
+    //   if (!success) {
+    //
+    //   }
+    // });
+  }
+
+  handleEditProfile = () => {
+    this.props.onEditProfile(this.state.userProfile);
+  }
+
   render() {
     const { classes, mode } = this.props;
     console.log(this.props.userPref);
@@ -76,8 +89,8 @@ class InfoForm extends React.Component {
         <CardContent>
           <TextField
             autoFocus
-            fullWidth
             disabled
+            fullWidth
             label="StudentID"
             margin="normal"
             name="student_id"
@@ -86,8 +99,8 @@ class InfoForm extends React.Component {
             value={this.state.userProfile.student_id}
           />
           <TextField
-            fullWidth
             disabled
+            fullWidth
             label="Password"
             margin="normal"
             name="pw"
@@ -97,6 +110,7 @@ class InfoForm extends React.Component {
             value={this.state.userProfile.pw}
           />
           <TextField
+            disabled
             fullWidth
             label="Room ID"
             margin="normal"
@@ -162,7 +176,7 @@ class InfoForm extends React.Component {
           />
         </CardContent>,
         <CardActions className={classes.centering}>
-          <Button>Update</Button>
+          <Button onClick={this.handleEditProfile}>Update</Button>
         </CardActions>
       ]
     );
@@ -181,7 +195,7 @@ class InfoForm extends React.Component {
             label="Smoker? "
           />
           <TextField
-            defaultValue="00:00:00"
+            defaultValue="00:00"
             fullWidth
             InputLabelProps={{
               shrink: true,
@@ -197,7 +211,7 @@ class InfoForm extends React.Component {
             value={this.state.userPref.sleep_start_time}
           />
           <TextField
-            defaultValue="00:00:00"
+            defaultValue="00:00"
             fullWidth
             InputLabelProps={{
               shrink: true,
@@ -274,7 +288,7 @@ class InfoForm extends React.Component {
           </TextField>
         </CardContent>,
         <CardActions className={classes.centering}>
-          <Button>Update</Button>
+          <Button onClick={this.handleEditPref}>Update</Button>
         </CardActions>
       ]
     );
