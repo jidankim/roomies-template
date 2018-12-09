@@ -81,7 +81,7 @@ export function roomList() {
 
 export function roomListSuccess(dormID, rooms) {
   return {
-    type: ROOM_LIST_SUCCESS
+    type: ROOM_LIST_SUCCESS,
     dormID,
     rooms
   };

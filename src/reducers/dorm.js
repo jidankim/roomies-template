@@ -8,7 +8,7 @@ const initialState = {
   },
   list: {
     status: 'INIT',
-    data: []
+    data: {}
   },
   editComment: {
     status: 'INIT',
