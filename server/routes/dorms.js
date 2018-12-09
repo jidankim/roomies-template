@@ -48,7 +48,7 @@ router.get('/:dormID', (req, res) => {
                 var floorRooms = [];
                 var currentFloor = 1;
                 for (var i = 0; i < results.length; i++) {
-                    if (results.floor > currentFloor) {
+                    if (results[i].floor > currentFloor) {
                         currentFloor++;
                         rooms.push(floorRooms);
                         floorRooms = [];

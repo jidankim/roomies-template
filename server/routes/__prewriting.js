@@ -6,64 +6,6 @@ import pool from '../config.js';
 
 const router = express.Router();
 
-//Get comments of a student, given Student ID
-router.get('/getCommentsByStudentID', (req, res) => {
-    //Extract variables from the request
-    var student_id = parseInt(req.session.loginInfo.username);
-
-    pool.getConnection((err, connection) => {
-        let queryString = "SELECT * FROM commentary WHERE student_id = ?";
-        connection.query(queryString, [student_id], (err, results, fields) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            connection.release();
-            return res.json({results: results});
-        });
-    });
-});
-
-//Update a comment, given Comment ID and Comment Text
-router.post('/updateComment', (req, res) => {
-    //Extract variables from the request
-    var comment_id = req.body.comment_id;
-    var comment_txt = req.body.comment_txt;
-
-    pool.getConnection((err, connection) => {
-        let queryString = "UPDATE commentary SET comment_txt = ? WHERE comment_id = ?";
-        connection.query(queryString, [comment_txt, comment_id], (err, results) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            connection.release();
-            return res.json({success = true});
-        });
-    });
-});
-
-//Delete a comment, given Comment ID
-router.post('/deleteComment', (req, res) => {
-    //Extract variables from the request
-    var comment_id = req.body.comment_id;
-
-    pool.getConnection((err, connection) => {
-        let queryString = "DELETE FROM commentary WHERE comment_id = ?";
-        connection.query(queryString, [comment_id], (err, results) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            connection.release();
-            return res.json({success = true});
-        });
-    });
-});
-
 //Search students with a matching criteria, given search criteria data (First Name, Last Name, Age (with age conditions >=, >, =, <, <=), Major)
 router.get('/studentSearchResults', (req, res) => {
     //Assumes req.params = {major = "Computer Science", age = 23, age_condition = ">="} or {first_name = "Andrew"}, etc...
