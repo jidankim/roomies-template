@@ -113,7 +113,7 @@ export default function event(state, action) {
             { 'rooms':
               { [Math.floor(parseInt(action.roomID.split('_')[1])/100) - 1]:
                 { [parseInt(action.roomID.split('_')[1]) % 10 - 1]:
-                  { 'comments': { $push: action.comment } }
+                  { 'comments': { $push: [action.comment] } }
                 }
               }
             }

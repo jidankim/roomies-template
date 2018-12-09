@@ -2,8 +2,8 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Paper, Typography } from '@material-ui/core';
-import { getRoomRequest, roomListRequest } from 'actions/dorm';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Paper, TextField, Typography } from '@material-ui/core';
+import { getRoomRequest, postCommentRequest, roomListRequest } from 'actions/dorm';
 import { moveInRequest, moveOutRequest } from 'actions/profile';
 
 const styles = theme => ({
@@ -11,6 +11,10 @@ const styles = theme => ({
     height: 500,
     display: 'flex',
     width: 800,
+  },
+  commentBox: {
+    display: 'flex',
+    flexDirection: 'column',
   },
   floor: {
     alignItems: 'stretch',
@@ -52,6 +56,7 @@ class DormFloor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      comment: '',
       comments: [],
       room_id: '',
       students: []
@@ -67,6 +72,13 @@ class DormFloor extends React.Component {
       } else {
         return false;
       }
+    });
+  }
+
+  handleChange = e => {
+    this.setState({
+      ...this.state,
+      [e.target.name]: e.target.value
     });
   }
 
@@ -111,6 +123,21 @@ class DormFloor extends React.Component {
     })
   }
 
+  handlePost = () => {
+    const dormID = this.props.match.params.dormID;
+    this.props.postCommentRequest(dormID, this.state.room_id, this.state.comment).then(() => {
+      if (this.props.roomListStatus === 'SUCCESS') {
+        this.setState({
+          ...this.state,
+          comment: ''
+        });
+        return true;
+      } else {
+        return false;
+      }
+    })
+  }
+
   render() {
     const { classes, currentRoom, match, moveInRequest, moveOutRequest } = this.props;
     const { comments, room_id, students } = this.state;
@@ -140,16 +167,30 @@ class DormFloor extends React.Component {
               })}
             </Paper>
             <Paper className={classes.right}>
-              <Typography variant="p">Comments:</Typography>
-              <Divider />
-              {comments.map(cur => {
-                return (
-                  [
-                    <Typography>{`${cur.student_id}: ${cur.comment_txt}`}</Typography>,
-                    <Divider />
-                  ]
-                );
-              })}
+              <Paper className={classes.commentBox}>
+                <Typography variant="p">Comments:</Typography>
+                <Divider />
+                {comments.map(cur => {
+                  return (
+                    [
+                      <Typography>{`${cur.student_id}: ${cur.comment_txt}`}</Typography>,
+                      <Divider />
+                    ]
+                  );
+                })}
+                <TextField
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  placeholder="New Comment"
+                  margin="normal"
+                  name="comment"
+                  onChange={this.handleChange}
+                  value={this.state.comment}
+                />
+                <Button onClick={this.handlePost}>Post</Button>
+              </Paper>
             </Paper>
           </DialogContent>
           <DialogActions>
@@ -218,6 +259,7 @@ const mapDispatchToProps = dispatch => {
     getRoomRequest: (dormID, roomID) => dispatch(getRoomRequest(dormID, roomID)),
     moveInRequest: newRoomID => dispatch(moveInRequest(newRoomID)),
     moveOutRequest: () => dispatch(moveOutRequest()),
+    postCommentRequest: (dormID, roomID, comment) => dispatch(postCommentRequest(dormID, roomID, comment)),
     roomListRequest: dormID => dispatch(roomListRequest(dormID))
   };
 };

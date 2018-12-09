@@ -135,7 +135,7 @@ export function getRoomFailure() {
 }
 
 /* COMMENT POST */
-export function postCommentRequest(roomID, commenTxt) {
+export function postCommentRequest(dormID, roomID, commentTxt) {
   return dispatch => {
     // inform COMMENT POST API is starting
     dispatch(postComment());

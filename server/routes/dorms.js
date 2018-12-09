@@ -108,4 +108,28 @@ router.get('/:dormID/:roomID', (req, res) => {
     });
 });
 
+router.post('/comment', (req, res) => {
+    //Extract variables from the request
+    var room_id = req.body.roomID;
+    var comment_txt = req.body.commentTxt;
+    var student_id = req.session.loginInfo.username;
+    var dateObj = new Date();
+    var date = `${dateObj.getUTCFullYear()}-${dateObj.getUTCMonth() + 1}-${dateObj.getUTCDate()}`;
+    var commentObj = { student_id, room_id, date, comment_txt };
+
+    pool.getConnection((err, connection) => {
+      let queryString = "INSERT INTO COMMENTARY SET student_id = ?, room_id = ?, date = ?, comment_txt = ?";
+      connection.query(queryString, [student_id, room_id, date, comment_txt], (err, results, fields) => {
+        if (err) {
+          connection.release();
+          console.log(err);
+          throw err;
+        }
+        connection.release();
+        return res.json({comment: commentObj});
+      });
+
+    });
+});
+
 export default router;
