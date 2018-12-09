@@ -66,47 +66,8 @@ router.get('/:dormID', (req, res) => {
     });
 });
 
-//Move student into a room, given Student ID and Room ID
-router.post('/moveIntoRoom', (req, res) => {
-    //Extract variables from the request
-    var student_id = parseInt(req.session.loginInfo.username);
-    var room_id = req.body.room_id;
-
-    pool.getConnection((err, connection) => {
-        let queryString = "UPDATE student SET room_id = ? WHERE student_id = ?";
-        connection.query(queryString, [room_id, student_id], (err, results, fields) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            connection.release();
-            return res.json({success: true});
-        });
-    });
-});
-
-//Move student out of a room, given Student ID
-router.post('/moveOutOfRoom', (req, res) => {
-    //Extract variables from the request
-    var student_id = parseInt(req.session.loginInfo.username);
-
-    pool.getConnection((err, connection) => {
-        let queryString = "UPDATE student SET room_id = NULL WHERE student_id = ?";
-        connection.query(queryString, [room_id, student_id], (err, results, fields) => {
-            if (err) {
-                connection.release();
-                console.log(err);
-                throw err;
-            }
-            connection.release();
-            return res.json({success: true});
-        });
-    });
-});
-
 //Get all information and comments of a room, given Room ID
-router.get('/${roomID}', (req, res) => {
+router.get('/:roomID', (req, res) => {
     //Extract variables from the request
     var room_id = req.params.roomID;
 

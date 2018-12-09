@@ -11,7 +11,11 @@ import {
   GET_PROFILE_FAILURE,
   EDIT_PROFILE,
   EDIT_PROFILE_SUCCESS,
-  EDIT_PROFILE_FAILURE
+  EDIT_PROFILE_FAILURE,
+  MOVE_IN_ROOM,
+  MOVE_IN_ROOM_SUCCESS,
+  MOVE_IN_ROOM_FAILURE,
+  MOVE_OUT_ROOM
 } from './ActionTypes';
 
 /*=======================
@@ -159,5 +163,56 @@ export function editProfileSuccess(newUserProfile) {
 export function editProfileFailure() {
   return {
     type: EDIT_PROFILE_FAILURE
+  };
+}
+
+/* Move In */
+export function moveInRequest(room_id) {
+  return dispatch => {
+    // Inform Move In API is starting
+    dispatch(moveIn());
+
+    return axios
+      .put('/api/profile/moveIntoRoom', { room_id })
+      .then(response => {
+        dispatch(moveInSuccess(response.data.result));
+      })
+      .catch(error => {
+        dispatch(moveInFailure());
+      });
+  };
+}
+
+export function moveIn() {
+  return {
+    type: MOVE_IN_ROOM
+  };
+}
+
+export function moveInSuccess(newRoomID) {
+  return {
+    type: MOVE_IN_ROOM_SUCCESS,
+    newRoomID
+  };
+}
+
+export function moveInFailure() {
+  return {
+    type: MOVE_IN_ROOM_FAILURE
+  };
+}
+
+/* MOVE OUT */
+export function moveOutRequest() {
+  return dispatch => {
+    return axios.put('/api/profile/moveOutOfRoom').then(response => {
+        dispatch(moveOut());
+    });
+  };
+}
+
+export function moveOut() {
+  return {
+    type: MOVE_OUT_ROOM
   };
 }

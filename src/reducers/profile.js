@@ -126,6 +126,31 @@ export default function authentication(state, action) {
           error: { $set: action.error }
         }
       });
+    case types.MOVE_IN_ROOM:
+      return update(state, {
+        userProfile: {
+          status: { $set: 'WAITING' }
+        }
+      });
+    case types.MOVE_IN_ROOM_SUCCESS:
+      return update(state, {
+        userProfile: {
+          status: { $set: 'SUCCESS' },
+          data: { room_id: { $set: action.newRoomID } }
+        }
+      });
+    case types.MOVE_IN_ROOM_FAILURE:
+      return update(state, {
+        userProfile: {
+          status: { $set: 'FAILURE' }
+        }
+      });
+    case types.MOVE_OUT_ROOM:
+      return update(state, {
+        userProfile: {
+          data: { room_id: { $set: '' } }
+        }
+      });
     default:
       return state;
   }
