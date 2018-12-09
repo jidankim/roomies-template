@@ -133,3 +133,42 @@ export function getRoomFailure() {
     type: GET_ROOM_FAILURE
   }
 }
+
+/* COMMENT POST */
+export function postCommentRequest(roomID, commenTxt) {
+  return dispatch => {
+    // inform COMMENT POST API is starting
+    dispatch(postComment());
+
+    return axios
+      .post('/api/dorms/comment/', { roomID, commentTxt })
+      .then(response => {
+        dispatch(postCommentSuccess(dormID, roomID, response.data.comment));
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch(postCommentFailure());
+      });
+  }
+}
+
+export function postComment() {
+  return {
+    type: COMMENT_POST
+  };
+}
+
+export function postCommentSuccess(dormID, roomID, comment) {
+  return {
+    type: COMMENT_POST_SUCCESS,
+    dormID,
+    roomID,
+    comment
+  };
+}
+
+export function postCommentFailure() {
+  return {
+    type: COMMENT_POST_FAILURE
+  }
+}

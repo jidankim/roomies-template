@@ -99,6 +99,33 @@ export default function event(state, action) {
           status: { $set: 'FAILURE' }
         }
       });
+    case types.COMMENT_POST:
+      return update(state, {
+        list: {
+          status: { $set: 'WAITING' }
+        }
+      });
+    case types.COMMENT_POST_SUCCESS:
+      return update(state, {
+        list: {
+          status: { $set: 'SUCCESS' },
+          data: { [action.dormID]:
+            { 'rooms':
+              { [Math.floor(parseInt(action.roomID.split('_')[1])/100) - 1]:
+                { [parseInt(action.roomID.split('_')[1]) % 10 - 1]:
+                  { 'comments': { $push: action.comment } }
+                }
+              }
+            }
+          }
+        }
+      });
+    case types.COMMENT_POST_FAILURE:
+      return update(state, {
+        list: {
+          status: { $set: 'FAILURE' }
+        }
+      });
     default:
       return state;
   }
