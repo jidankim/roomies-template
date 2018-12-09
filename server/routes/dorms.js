@@ -28,7 +28,7 @@ router.get('${dormID}', (req, res) => {
     var dorm_id = req.params.dormID;
 
     pool.getConnection((err, connection) => {
-        let queryString = "SELECT * FROM room WHERE dorm_id = ? ORDER BY room_id ASC, floor ASC";
+        let queryString = "SELECT * FROM room WHERE dorm_id = ? ORDER BY floor ASC, room_id ASC";
         connection.query(queryString, [dorm_id], (err, results, fields) => {
             if (err) {
                 connection.release();
@@ -37,8 +37,27 @@ router.get('${dormID}', (req, res) => {
             }
             queryString = "SELECT MAX(floor) FROM room WHERE dorm_id = ?";
             connection.query(queryString, [dorm_id], (err, maxFloor, fields) => {
+                if (err) {
+                    connection.release();
+                    console.log(err);
+                    throw err;
+                }
                 connection.release();
-                return res.json({results: results, maxFloor: maxFloor});
+                //Group resulting rooms into same floors
+                var rooms = [];
+                var floorRooms = [];
+                var currentFloor = 1;
+                for (var i = 0; i < results.length; i++) {
+                    if (results.floor > currentFloor) {
+                        currentFloor++;
+                        rooms.push(floorRooms);
+                        floorRooms = [];
+                    }
+                    floorRooms.push(results[i]);
+                }
+
+                console.log(rooms);
+                return res.json({results: rooms, maxFloor: maxFloor});
             });
         });
     });
