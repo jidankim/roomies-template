@@ -66,7 +66,7 @@ const DormGrid = props => {
                   title={images[key].title}
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="subheading" component="h2">
+                  <Typography gutterBottom variant="title" component="h2">
                     {dormData[key].name}
                   </Typography>
                   <Typography component="p">

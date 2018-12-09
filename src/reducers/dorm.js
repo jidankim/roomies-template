@@ -59,13 +59,8 @@ export default function event(state, action) {
       return update(state, {
         list: {
           status: { $set: 'SUCCESS' },
-          data: { [action.dormID]:
-            { rooms:
-              { $merge: acion.rooms.reduce((acc, cur) => {
-                  return ({...acc, [cur.room_id]: cur });
-                }, {}),
-                maxFloor: { $set: action.maxFloor }
-              }
+          data: { [action.dormID]: {
+              $merge: { rooms: action.rooms }
             }
           }
         }

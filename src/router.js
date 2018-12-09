@@ -37,7 +37,7 @@ const router = (props) => (
           <PrivateRoute authed={props.isLoggedIn} exact path="/profile" component={Profile} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Register} />
-          <Route exact path="/:dormID" component={DormFloor} />
+          <PrivateRoute authed={props.isLoggedIn} exact path="/:dormID" component={DormFloor} />
           <Route exact path="/" component={Home} />
         </Switch>
       </div>
