@@ -7,6 +7,11 @@ import { getRoomRequest, roomListRequest } from 'actions/dorm';
 import { moveInRequest, moveOutRequest } from 'actions/profile';
 
 const styles = theme => ({
+  content: {
+    height: 500,
+    display: 'flex',
+    width: 800,
+  },
   floor: {
     alignItems: 'stretch',
     display: 'flex',
@@ -15,6 +20,17 @@ const styles = theme => ({
   label: {
     marginRight: theme.spacing.unit * 2,
     verticalAlign: 'top'
+  },
+  left: {
+    margin: 10,
+    minWidth: 200,
+    padding: 10,
+  },
+  right: {
+    margin: 10,
+    minWidth: 250,
+    overflowX: true,
+    padding: 10
   },
   roomBox: {
     alignItems: 'center',
@@ -96,7 +112,7 @@ class DormFloor extends React.Component {
   }
 
   render() {
-    const { currentRoom, match, moveInRequest, moveOutRequest } = this.props;
+    const { classes, currentRoom, match, moveInRequest, moveOutRequest } = this.props;
     const { comments, room_id, students } = this.state;
     const dormID = match.params.dormID;
     const { capacity, name, rooms } = this.props.dormData[dormID];
@@ -116,8 +132,25 @@ class DormFloor extends React.Component {
               {`Room ${room_id.split('_')[1]}`}
             </Typography>
           </DialogTitle>
-          <DialogContent>
-
+          <DialogContent className={classes.content}>
+            <Paper className={classes.left}>
+              <Typography variant="p">Students:</Typography>
+              {students.map(cur => {
+                return <Typography>{`${cur.first_name} ${cur.last_name}: ${cur.phonenumber}`}</Typography>
+              })}
+            </Paper>
+            <Paper className={classes.right}>
+              <Typography variant="p">Comments:</Typography>
+              <Divider />
+              {comments.map(cur => {
+                return (
+                  [
+                    <Typography>{`${cur.student_id}: ${cur.comment_txt}`}</Typography>,
+                    <Divider />
+                  ]
+                );
+              })}
+            </Paper>
           </DialogContent>
           <DialogActions>
             {currentRoom === room_id ? (
@@ -189,4 +222,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DormFloor));
+export default withStyles(styles)(withRouter(connect(mapStateToProps, mapDispatchToProps)(DormFloor)));
