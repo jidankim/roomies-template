@@ -78,13 +78,16 @@ export default function event(state, action) {
         }
       });
     case types.GET_ROOM_SUCCESS:
+      console.log(action);
       return update(state, {
         list: {
           status: { $set: 'SUCCESS' },
           data: { [action.dormID]:
             { 'rooms':
-              { [action.roomID]:
-                { $merge: action.roomInfo, 'comments': { $add: [action.comments] } }
+              { [action.roomInfo.floor-1]:
+                { [parseInt(action.roomID.split('_')[1]) % 10 - 1]:
+                  { 'students': { $set: action.students }, 'comments': { $set: action.comments } }
+                }
               }
             }
           }

@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Paper, Typography } from '@material-ui/core';
-import { roomListRequest } from 'actions/dorm';
+import { getRoomRequest, roomListRequest } from 'actions/dorm';
 import { moveInRequest, moveOutRequest } from 'actions/profile';
 
 const styles = theme => ({
@@ -36,18 +36,46 @@ class DormFloor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      room_id: ''
+      comments: [],
+      room_id: '',
+      students: []
     };
   }
 
   componentDidMount() {
     const { match } = this.props;
     const dormID = match.params.dormID;
-    this.props.roomListRequest(dormID);
+    this.props.roomListRequest(dormID).then(() => {
+      if (this.props.roomListStatus === 'SUCCESS') {
+        return true;
+      } else {
+        return false;
+      }
+    });
   }
 
   handleClick = room_id => {
-    this.setState({ room_id });
+    const { match } = this.props;
+    const dormID = match.params.dormID;
+    this.setState({
+      ...this.state,
+      room_id
+    });
+    this.props.getRoomRequest(dormID, room_id).then(() => {
+      if (this.props.roomListStatus === 'SUCCESS') {
+        const i = Math.floor(parseInt(room_id.split('_')[1])/ 100) - 1;
+        const j = parseInt(room_id.split('_')[1])% 10 - 1;
+        const arrayRooms = this.props.dormData[dormID].rooms;
+        this.setState({
+          ...this.state,
+          comments: arrayRooms[i][j].comments,
+          students: arrayRooms[i][j].students
+        });
+        return true;
+      } else {
+        return false;
+      }
+    });
   }
 
   handleClose = () => {
@@ -58,19 +86,21 @@ class DormFloor extends React.Component {
 
   handleMoveIn = room_id => {
     this.props.moveInRequest(room_id).then(() => {
-      if (this.props.status === 'SUCCESS') {
-        this.props.history('/');
+      if (this.props.moveInStatus === 'SUCCESS') {
+        this.props.history.push('/');
         return true;
+      } else {
+        return false;
       }
     })
   }
 
   render() {
-    const { currentRoom, dormData, match, moveInRequest, moveOutRequest } = this.props;
-    const { room_id } = this.state;
+    const { currentRoom, match, moveInRequest, moveOutRequest } = this.props;
+    const { comments, room_id, students } = this.state;
     const dormID = match.params.dormID;
-    const { capacity, name, rooms } = dormData[dormID];
-    
+    const { capacity, name, rooms } = this.props.dormData[dormID];
+
     return (
       <div>
         <Typography gutterBottom variant="headline">
@@ -78,7 +108,7 @@ class DormFloor extends React.Component {
         </Typography>
         {rooms !== undefined && Array(rooms.length).fill().map((cur, ind) => {
           const curFl = rooms.length - ind - 1;
-          return <Floor key={curFl} fl={curFl} handleClick={this.handleClick} list={rooms[curFl]}/>
+          return <Floor key={curFl} dormID={dormID} fl={curFl} handleClick={this.handleClick} list={rooms[curFl]}/>
         })}
         <Dialog open={room_id !== ''} onClose={this.handleClose}>
           <DialogTitle>
@@ -103,14 +133,14 @@ class DormFloor extends React.Component {
 }
 
 const Floor = withStyles(styles)(props => {
-  const { classes, fl, handleClick, list } = props;
+  const { classes, dormID, fl, handleClick, list } = props;
 
   return (
     [
       <Divider key={`${fl}0`} />,
       <div key={`${fl}1`} className={classes.floor}>
         <Typography className={classes.label} variant="subheading">FL {fl+1}</Typography>
-        {list.map((cur) => <StyleRoom key={cur.room_id} handleClick={handleClick} room={cur}/>)}
+        {list.map((cur) => <StyleRoom key={cur.room_id} dormID={dormID} handleClick={handleClick} room={cur}/>)}
       </div>
     ]
   );
@@ -145,12 +175,14 @@ const mapStateToProps = state => {
   return {
     currentRoom: state.profile.userProfile.data.room_id,
     dormData: state.dorm.list.data,
-    status: state.profile.userProfile.status
+    moveInStatus: state.profile.userProfile.status,
+    roomListStatus: state.dorm.list.status
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    getRoomRequest: (dormID, roomID) => dispatch(getRoomRequest(dormID, roomID)),
     moveInRequest: newRoomID => dispatch(moveInRequest(newRoomID)),
     moveOutRequest: () => dispatch(moveOutRequest()),
     roomListRequest: dormID => dispatch(roomListRequest(dormID))

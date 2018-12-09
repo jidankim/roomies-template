@@ -100,11 +100,12 @@ export function getRoomRequest(dormID, roomID) {
     dispatch(getRoom());
 
     return axios
-      .get(`/api/dorms/${roomID}`)
+      .get(`/api/dorms/${dormID}/${roomID}`)
       .then(response => {
         dispatch(getRoomSuccess(dormID, roomID, response.data.roomInfo, response.data.students, response.data.comments));
       })
       .catch(error => {
+        console.log(error);
         dispatch(getRoomFailure());
       });
   }

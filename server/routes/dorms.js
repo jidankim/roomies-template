@@ -67,7 +67,7 @@ router.get('/:dormID', (req, res) => {
 });
 
 //Get all information and comments of a room, given Room ID
-router.get('/:roomID', (req, res) => {
+router.get('/:dormID/:roomID', (req, res) => {
     //Extract variables from the request
     var room_id = req.params.roomID;
 
@@ -79,6 +79,8 @@ router.get('/:roomID', (req, res) => {
                 console.log(err);
                 throw err;
             }
+            console.log("ROOMINFO");
+            console.log(roomInfo);
             queryString = "SELECT * FROM commentary WHERE room_id = ? ORDER BY date";
             connection.query(queryString, [room_id], (err, comments, fields) => {
                 if (err) {
@@ -86,6 +88,8 @@ router.get('/:roomID', (req, res) => {
                     console.log(err);
                     throw err;
                 }
+                console.log("COMMENTS");
+                console.log(comments);
                 queryString = "SELECT first_name, last_name, phonenumber FROM student WHERE room_id = ? ORDER BY student_id";
                 connection.query(queryString, [room_id], (err, students, fields) => {
                     if (err) {
@@ -93,6 +97,8 @@ router.get('/:roomID', (req, res) => {
                         console.log(err);
                         throw err;
                     }
+                    console.log("STUDENTS");
+                    console.log(students);
                     connection.release();
                     return res.json({roomInfo: roomInfo[0], students: students, comments: comments});
                 });
