@@ -88,7 +88,7 @@ export default function event(state, action) {
           data: { [action.dormID]:
             { 'rooms':
               { [action.roomID]:
-                { $merge: action.roomInfo, 'comments': { $add: [acion.comments] } }
+                { $merge: action.roomInfo, 'comments': { $add: [action.comments] } }
               }
             }
           }
