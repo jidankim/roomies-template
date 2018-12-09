@@ -15,7 +15,7 @@ class Home extends React.Component {
       // LOAD USER PROFILE, PREFERENCE, and DORM
       this.props.getPrefRequest();
       this.props.getProfileRequest();
-      // this.props.dormListRequest();
+      this.props.dormListRequest();
     }
 
     // LOAD NEW EVENT EVERY 5 SECONDS
@@ -204,7 +204,7 @@ class Home extends React.Component {
       >
         {this.props.isLoggedIn ? (
           <div>
-            <DormGrid dormData={mockData} />
+            <DormGrid dormData={this.props.dormData} />
             <Notification
               message={this.props.message}
               open={this.props.open}

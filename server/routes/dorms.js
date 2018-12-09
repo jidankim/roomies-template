@@ -23,7 +23,7 @@ router.get('/getAllDormitory', (req, res) => {
 });
 
 //Get all room information, given Dormitory ID
-router.get('${dormID}', (req, res) => {
+router.get('/:dormID', (req, res) => {
     //Extract variables from the request
     var dorm_id = req.params.dormID;
 

@@ -29,20 +29,20 @@ const DormGrid = props => {
 
   const images = {
     N20: {
-      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311558588.jpg',
-      title: 'Sarang'
+      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311558903.jpg',
+      title: 'Seongsil'
     },
     N17: {
-      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311558588.jpg',
-      title: 'Sarang'
+      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311558764.jpg',
+      title: 'Shilloe'
     },
     W4: {
-      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311558588.jpg',
-      title: 'Sarang'
+      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311555136.jpg',
+      title: 'Heemang'
     },
     W6: {
-      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311558588.jpg',
-      title: 'Sarang'
+      img: 'https://kds.kaist.ac.kr/static/images/goods/a1311556328.jpg',
+      title: 'Miru'
     }
   };
 
@@ -63,10 +63,10 @@ const DormGrid = props => {
                 <CardMedia
                   className={classes.media}
                   image={images[key].img}
-                  title={images[key].img}
+                  title={images[key].title}
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
+                  <Typography gutterBottom variant="subheading" component="h2">
                     {dormData[key].name}
                   </Typography>
                   <Typography component="p">

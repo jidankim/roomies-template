@@ -37,10 +37,10 @@ export default function event(state, action) {
       return update(state, {
         list: {
           status: { $set: 'SUCCESS' },
-          data: { $add: [action.dorms].map(d => {
-            let { dorm_id, ...other } = d;
-            return [ dorm_id, other ];
-          }) }
+          data: { $merge: action.dorms.reduce((acc, cur)  => {
+              return ({...acc, [cur.dorm_id]: cur });
+            }, {})
+          }
         }
       });
     case types.DORM_LIST_FAILURE:
@@ -60,10 +60,11 @@ export default function event(state, action) {
         list: {
           status: { $set: 'SUCCESS' },
           data: { [action.dormID]:
-            { 'rooms':
-              { $add: [acion.rooms].map(r => {
-                let { room_id, dorm_id, ...other } = r;
-                return [room_id, other ]; })
+            { rooms:
+              { $merge: acion.rooms.reduce((acc, cur) => {
+                  return ({...acc, [cur.room_id]: cur });
+                }, {}),
+                maxFloor: { $set: action.maxFloor }
               }
             }
           }

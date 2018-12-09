@@ -50,7 +50,7 @@ export function dormListSuccess(dorms) {
   };
 }
 
-export function dormListFailure(dorms) {
+export function dormListFailure() {
   return {
     type: DORM_LIST_FAILURE
   }
@@ -65,7 +65,7 @@ export function roomListRequest(dormID) {
     return axios
       .get(`/api/dorms/${dormID}`)
       .then(response => {
-        dispatch(roomListSuccess(dormID, response.data.results));
+        dispatch(roomListSuccess(dormID, response.data.results, response.data.maxFloor));
       })
       .catch(error => {
         dispatch(roomListFailure());
@@ -79,11 +79,12 @@ export function roomList() {
   };
 }
 
-export function roomListSuccess(dormID, rooms) {
+export function roomListSuccess(dormID, rooms, maxFloor) {
   return {
     type: ROOM_LIST_SUCCESS,
     dormID,
-    rooms
+    rooms,
+    maxFloor
   };
 }
 
