@@ -14,11 +14,19 @@ class DormFloor extends React.Component {
   }
 
   render() {
+    const { match, dormData } = this.props;
+    const dormID = match.params.dormID;
+    const roomData = dormData[dormID].rooms;
+
     return (
       <div>HELLO</div>
     );
   }
 }
+
+const Floor = props => {
+  
+};
 
 const mapStateToProps = state => {
   return {

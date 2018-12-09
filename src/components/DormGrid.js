@@ -58,7 +58,7 @@ const DormGrid = props => {
       >
         {Object.keys(dormData).map((key, index) => (
           <Grid key={index} item xs={6}>
-            <Link to={`/:${key}`}>
+            <Link to={`/${key}`}>
               <Card className={classes.card}>
                 <CardMedia
                   className={classes.media}
