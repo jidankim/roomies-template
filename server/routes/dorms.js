@@ -103,7 +103,7 @@ router.get('/${roomID}', (req, res) => {
                     console.log(err);
                     throw err;
                 }
-                queryString = "SELECT * FROM student WHERE room_id = ? ORDER BY student_id";
+                queryString = "SELECT first_name, last_name, phonenumber FROM student WHERE room_id = ? ORDER BY student_id";
                 connection.query(queryString, [room_id], (err, students, fields) => {
                     if (err) {
                         connection.release();
