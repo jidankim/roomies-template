@@ -55,7 +55,7 @@ router.post('/signup', (req, res) => {
             connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
                 if (err) throw err;
                 //Add NULL preference also when registering
-                queryString = "INSERT INTO preferences set student_id = ?";
+                queryString = "INSERT INTO preference set student_id = ?";
                 connection.query(queryString, [id], (err, results, fields) => {
                     if (err) throw err;
                     connection.release();
