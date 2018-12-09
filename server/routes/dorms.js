@@ -55,6 +55,9 @@ router.get('${dormID}', (req, res) => {
                     }
                     floorRooms.push(results[i]);
                 }
+                if (floorRooms.length != 0) {
+                    rooms.push(floorRooms);
+                }
 
                 console.log(rooms);
                 return res.json({results: rooms, maxFloor: maxFloor});
