@@ -17,7 +17,7 @@ router.post('/signup', (req, res) => {
 
     // CHECK USERNAME FORMAT
     const idRegex = /^\d{8}$/;
-    
+
     if (!idRegex.test(id)) {
         return res.status(400).json({
             error: "BAD USERNAME",
@@ -55,7 +55,7 @@ router.post('/signup', (req, res) => {
             connection.query(queryString, [id, pw, null, fn, ln, age, maj, pn], (err, results, fields) => {
                 if (err) throw err;
                 //Add NULL preference also when registering
-                queryString = "INSERT INTO preferences set student_id = ?";
+                queryString = "INSERT INTO preference set student_id = ?";
                 connection.query(queryString, [id], (err, results, fields) => {
                     if (err) throw err;
                     connection.release();
@@ -124,37 +124,6 @@ router.post('/signin', (req, res) => {
       });
 
     });
-    // Account.findOne({ username: req.body.username }, (err, account) => {
-    //     if (err) throw err;
-    //
-    //     // CHECK ACCOUNT EXISTANCY
-    //     if (!account) {
-    //         return res.status(401).json({
-    //             error: "LOGIN FAILED",
-    //             code: 1
-    //         });
-    //     }
-    //
-    //     // CHECK WHETHER THE PASSWORD IS VALID
-    //     if (!account.validateHash(req.body.password)) {
-    //         return res.status(401).json({
-    //             error: "LOGIN FAILED",
-    //             code: 1
-    //         });
-    //     }
-    //
-    //     // ALTER SESSION
-    //     let session = req.session;
-    //     session.loginInfo = {
-    //         _id: account._id,
-    //         username: account.username
-    //     };
-    //
-    //     // RETURN SUCCESS
-    //     return res.json({
-    //         success: true
-    //     });
-    // });
 });
 
 /*

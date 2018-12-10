@@ -130,4 +130,46 @@ router.put('/updatePreference', (req, res) => {
 	});
 });
 
+//Move student into a room, given Student ID and Room ID
+router.put('/moveIntoRoom', (req, res) => {
+    //Extract variables from the request
+    var student_id = parseInt(req.session.loginInfo.username);
+    console.log("body_id from server");
+    console.log(req.body);
+    var room_id = req.body.room_id;
+    console.log(room_id);
+
+    pool.getConnection((err, connection) => {
+        let queryString = "UPDATE student SET room_id = ? WHERE student_id = ?";
+        connection.query(queryString, [room_id, student_id], (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({success: true, result: room_id});
+        });
+    });
+});
+
+//Move student out of a room, given Student ID
+router.put('/moveOutOfRoom', (req, res) => {
+    //Extract variables from the request
+    var student_id = parseInt(req.session.loginInfo.username);
+
+    pool.getConnection((err, connection) => {
+        let queryString = "UPDATE student SET room_id = NULL WHERE student_id = ?";
+        connection.query(queryString, [student_id], (err, results, fields) => {
+            if (err) {
+                connection.release();
+                console.log(err);
+                throw err;
+            }
+            connection.release();
+            return res.json({success: true});
+        });
+    });
+});
+
 export default router;
